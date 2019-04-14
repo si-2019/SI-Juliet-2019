@@ -6,6 +6,7 @@ import '../styles/ChatApp.css';
 import RoomList from './RoomList';
 import { instanceLocator, testToken, testRoomId, apiUrl } from './../config.js'
 import UsersList from './UsersList';
+import NewRoomForm from './NewRoomForm'
 
 let predmeti = require('../predmeti.json');
 function findPredmetId(nameOfPredmet) {
@@ -28,12 +29,15 @@ class ChatApp extends Component {
             currentRoom: null,
             messages: [],
             users: [],
-            rooms: []
+            rooms: [],
+            joinableRooms:[],
         }
         this.addMessage = this.addMessage.bind(this);
         this.openPrivateChat = this.openPrivateChat.bind(this);
         this.joinRoomById = this.joinRoomById.bind(this);
         this.initRooms = this.initRooms.bind(this);
+        this.createRoom=this.createRoom.bind(this);
+        this.getJoinableRooms=this.getJoinableRooms.bind(this);
     }
 
     componentDidMount() {
@@ -152,11 +156,34 @@ class ChatApp extends Component {
         }).catch(error => console.error('error', error));
     }
 
+    createRoom(roomName){
+        this.setState({ messages: [] });
+        this.state.currentUser.createRoom({  
+          name:roomName,
+          private: false,
+          addUserIds: [this.state.currentUser.id]
+        })
+        .then((soba) => {
+            this.setState({ rooms: [...this.state.rooms, soba] });
+            this.joinRoomById(soba.id);
+        }); 
+    }
+    getJoinableRooms() {
+        this.currentUser.getJoinableRooms()
+        .then(joinableRooms => {
+            this.setState({
+                joinableRooms
+            })
+        })
+        
+    }
+
     render() {
         return (
             <div className="chat-app-wrapper">
                 <div className="room-wrapper">
-                    <RoomList room={this.state.currentRoom} joinRoomById={this.joinRoomById} rooms={this.state.rooms} />
+                    <RoomList room={this.state.currentRoom} joinRoomById={this.joinRoomById} rooms={this.state.rooms} joinableRooms={this.state.joinableRooms} />
+                    <NewRoomForm createRoom={this.createRoom}/>
                 </div>
                 <div className="msg-wrapper">
                     <h2 className="header">Let's Talk</h2>
