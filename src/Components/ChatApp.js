@@ -20,6 +20,7 @@ class ChatApp extends Component {
         this.addMessage = this.addMessage.bind(this);
         this.openPrivateChat = this.openPrivateChat.bind(this);
         this.joinRoomById = this.joinRoomById.bind(this);
+        this.initRooms = this.initRooms.bind(this);
     }
 
     componentDidMount() {
@@ -35,11 +36,28 @@ class ChatApp extends Component {
                 this.setState({ currentUser: currentUser })
             })
             .then(() => {
-                this.setState({ rooms: this.state.currentUser.rooms })
+                this.initRooms();
             })
             .then(() => {
                 this.joinRoomById(testRoomId);
             })
+    }
+
+    initRooms() {
+        this.state.currentUser.rooms.forEach(userRoom => {
+            this.state.currentUser.subscribeToRoom({
+                roomId: userRoom.id
+            }).then(() => {
+                if (userRoom.name === this.state.currentUser.id && userRoom.users.length > 1) {
+                    this.state.currentUser.updateRoom({
+                        roomId: userRoom.id,
+                        name: this.state.currentUser.id === userRoom.users[0].id ? userRoom.users[1].id : userRoom.users[0].id
+                    })
+                }
+
+            })
+        })
+        this.setState({ rooms: this.state.currentUser.rooms });
     }
 
     joinRoomById(roomId) {
