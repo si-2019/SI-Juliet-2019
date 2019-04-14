@@ -28,8 +28,7 @@ class App extends Component {
     chatkit.createUser({
       id: username,
       name: username,
-    })
-      .then((currentUser) => {
+    }).then((currentUser) => {
         this.setState({
           currentUsername: username,
           currentId: username,
@@ -42,8 +41,6 @@ class App extends Component {
             currentId: username,
             currentView: 'chatApp'
           })
-        } else {
-          console.log(err.status);
         }
       });
   }

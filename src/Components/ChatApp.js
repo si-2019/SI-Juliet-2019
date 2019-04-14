@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import { ChatManager, TokenProvider } from '@pusher/chatkit-client';
 import Input from './Input';
 import MessageList from './MessageList';
-import {instanceLocator, testToken, roomId} from './../config.js'
+import '../styles/ChatApp.css';
+import RoomList from './RoomList';
+import { instanceLocator, testToken, testRoomId, apiUrl } from './../config.js'
 import UsersList from './UsersList';
-import '../styles/ChatApp.css'
 
 let predmeti = require('../predmeti.json');
 function findPredmetId(nameOfPredmet) {
@@ -23,12 +24,16 @@ class ChatApp extends Component {
         super(props);
         this.state = {
             currentUser: null,
-            boUser: null,
-            currentRoom: { users: [] },
+            botUser: null,
+            currentRoom: null,
             messages: [],
-            users: []
+            users: [],
+            rooms: []
         }
         this.addMessage = this.addMessage.bind(this);
+        this.openPrivateChat = this.openPrivateChat.bind(this);
+        this.joinRoomById = this.joinRoomById.bind(this);
+        this.initRooms = this.initRooms.bind(this);
     }
 
     componentDidMount() {
@@ -39,7 +44,6 @@ class ChatApp extends Component {
                 url: testToken
             })
         })
-
         const chatManagerBot = new ChatManager({
             instanceLocator: instanceLocator,
             userId: "bot@autoreply",
@@ -53,35 +57,74 @@ class ChatApp extends Component {
             console.log(currentUser);
             return currentUser;
         })
-
-        chatManager
-            .connect()
+        chatManager.connect()
             .then(currentUser => {
                 this.setState({ currentUser: currentUser })
-                return currentUser.subscribeToRoom({
-                    roomId: roomId,
-                    messageLimit: 100,
-                    hooks: {
-                        onMessage: message => {
-                            this.setState({
-                                messages: [...this.state.messages, message],
-                            })
-                        },
-                        onPresenceChanged: () => this.forceUpdate(),
-                        onUserJoinedRoom: () => this.forceUpdate(),
-                        onUserLeftRoom: () => this.forceUpdate()     
-                    }
-                })
             })
-            .then(currentRoom => {
-                this.setState({
-                    currentRoom,
-                    users: currentRoom.users
-                })                
+            .then(() => {
+                this.initRooms();
             })
-            .catch(error => console.log(error))
-        }
+            .then(() => {
+                this.joinRoomById(testRoomId);
+            })
+    }
 
+    initRooms() {
+        this.state.currentUser.rooms.forEach(userRoom => {
+            this.state.currentUser.subscribeToRoom({
+                roomId: userRoom.id
+            }).then(() => {
+                if (userRoom.name === this.state.currentUser.id && userRoom.users.length > 1) {
+                    this.state.currentUser.updateRoom({
+                        roomId: userRoom.id,
+                        name: this.state.currentUser.id === userRoom.users[0].id ? userRoom.users[1].id : userRoom.users[0].id
+                    })
+                }
+
+             })
+        })
+        this.setState({ rooms: this.state.currentUser.rooms });
+    }
+
+    joinRoomById(roomId) {
+        this.setState({ messages: [] });
+        this.state.currentUser.subscribeToRoom({
+            roomId: roomId,
+            messageLimit: 100,
+            hooks: {
+                onMessage: message => {
+                    this.setState({
+                        messages: [...this.state.messages, message]
+                    })
+                },
+                onPresenceChanged: () => this.forceUpdate(),
+                onUserJoinedRoom: () => this.forceUpdate(),
+                onUserLeftRoom: () => this.forceUpdate()
+            }
+        }).then((room) => {
+            this.setState({
+                currentRoom: room,
+                users: room.users,
+            })
+        })
+    }
+
+    openPrivateChat(userId) {
+        this.setState({ messages: [] });
+        const room = this.state.rooms.filter(room => room.name === userId);
+        if (room.length > 0) {
+            this.joinRoomById(room[0].id);
+        } else {
+            this.state.currentUser.createRoom({
+                name: userId,
+                private: true,
+                addUserIds: [userId]
+            }).then((room) => {
+                this.setState({ rooms: [...this.state.rooms, room] });
+                this.joinRoomById(room.id);
+            });
+        }
+    }
 
     addMessage(text) {
         console.log(this.state);
@@ -106,23 +149,22 @@ class ChatApp extends Component {
                     })
                 }
             }
-        })
-          .catch(error => console.error('error', error));
-        
+        }).catch(error => console.error('error', error));
     }
 
     render() {
-
         return (
             <div className="chat-app-wrapper">
-                <div className="list-wrapper">
-                    <h1>Users</h1>
-                    <UsersList users={this.state.users}/>
+                <div className="room-wrapper">
+                    <RoomList room={this.state.currentRoom} joinRoomById={this.joinRoomById} rooms={this.state.rooms} />
                 </div>
                 <div className="msg-wrapper">
                     <h2 className="header">Let's Talk</h2>
                     <MessageList messages={this.state.messages} />
                     <Input className="input-field" onSubmit={this.addMessage} />
+                </div>
+                <div className="list-wrapper">
+                    <UsersList openPrivateChat={this.openPrivateChat} users={this.state.users} />
                 </div>
             </div>
         )
