@@ -58,7 +58,6 @@ class ChatApp extends Component {
                 onUserLeftRoom: () => this.forceUpdate()
             }
         }).then((room) => {
-            console.log(room);
             this.setState({
                 currentRoom: room,
                 users: room.users,
@@ -68,18 +67,19 @@ class ChatApp extends Component {
 
     openPrivateChat(userId) {
         this.setState({ messages: [] });
-        if (this.state.rooms.filter(room => room.name === userId).length > 0) {
-            this.joinRoomById(userId);
-            return;
+        const room = this.state.rooms.filter(room => room.name === userId);
+        if (room.length > 0) {
+            this.joinRoomById(room[0].id);
+        } else {
+            this.state.currentUser.createRoom({
+                name: userId,
+                private: true,
+                addUserIds: [userId]
+            }).then((room) => {
+                this.setState({ rooms: [...this.state.rooms, room] });
+                this.joinRoomById(room.id);
+            });
         }
-        this.state.currentUser.createRoom({
-            name: userId,
-            private: true,
-            addUserIds: [userId]
-        }).then((room) => {
-            this.setState({ rooms: [...this.state.rooms, room] });
-            this.joinRoomById(room.id);
-        });
     }
 
     addMessage(text) {
