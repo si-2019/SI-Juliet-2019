@@ -81,7 +81,7 @@ class ChatApp extends Component {
                     })
                 }
 
-             })
+            })
         })
         this.setState({ rooms: this.state.currentUser.rooms });
     }
