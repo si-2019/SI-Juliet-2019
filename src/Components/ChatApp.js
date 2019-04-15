@@ -94,7 +94,10 @@ class ChatApp extends Component {
         this.state.currentUser.createRoom({
             name: roomName,
             private: true
-        }).then(room => this.subscribeToRoom(room.id))
+        }).then(room => {
+            this.setState({ rooms: [...this.state.rooms, room] });
+            this.joinRoomById(room.id);
+        })
         .catch(err=> console.log("err wth cr room", err))
     }
 

@@ -28,7 +28,7 @@ class CreateRoom extends Component{
             <form onSubmit={this.handleSubmit} className="create-room-form">
             <input className="input-group mb-3 message-input" type="text" style={inputStyle}
             placeholder="Create room" onChange={this.handleChange} value={this.state.roomName} />
-            <input className="btn btn-outline-primary" style={buttonStyle} type="submit" value="Send" />
+            <input className="btn btn-outline-primary" style={buttonStyle} type="submit" value="Create" />
         </form>
         )
     }
