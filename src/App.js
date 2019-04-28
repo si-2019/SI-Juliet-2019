@@ -5,6 +5,7 @@ import Signup from './Components/Signup';
 import ChatApp from './Components/ChatApp';
 import {instanceLocator, secretKey} from './config.js';
 import { default as Chatkit } from '@pusher/chatkit-server';
+import './App.css'
 
 const chatkit = new Chatkit({
   instanceLocator: instanceLocator,
@@ -27,8 +28,7 @@ class App extends Component {
     chatkit.createUser({
       id: username,
       name: username,
-    })
-      .then((currentUser) => {
+    }).then((currentUser) => {
         this.setState({
           currentUsername: username,
           currentId: username,
@@ -41,8 +41,6 @@ class App extends Component {
             currentId: username,
             currentView: 'chatApp'
           })
-        } else {
-          console.log(err.status);
         }
       });
   }

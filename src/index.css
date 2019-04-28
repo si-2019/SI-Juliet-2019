@@ -1,11 +1,11 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  font-family: 'Nunito', sans-serif;
+  height: 100%;
 }
 
 .chat-button {
-  position: absolute;
   right: 10px;
   bottom: 10px;
   background: #5E0565;
@@ -20,16 +20,16 @@ body {
 }
 
 .form-container {
-  height: 400px;
   border: 1px solid #5E0565;
+  width: 100%;
 }
+
 .form-container h1 {
   padding: 10px;
   background-color: #5E0565;
   font-size: 20px;
   color: white;
   margin: 0;
-  margin-bottom: 10px;
 }
 
 .form {
@@ -52,14 +52,6 @@ body {
   border-radius: 5px;
   font-size: 16px;
   cursor: pointer;
-}
-
-.App {
-  position: fixed;
-  right: 10px;
-  bottom: 0;
-  width: 350px;
-  border:1px solid #ccc;
 }
 
 .form {
@@ -94,8 +86,8 @@ body {
   padding: 20px;
   color: white;
   margin-top: 0;
-  text-align: left;
-  border-bottom: 1px solid #5E0565;
+  text-align: center;
+  border-bottom: 3px solid grey;
   background-color: #5E0565;
 }
 
@@ -103,8 +95,7 @@ body {
   list-style-type: none;
   padding: 0px 20px;
   overflow: scroll;
-  max-height: calc(100vh - 150px);
-  margin-bottom: 35px;
+  max-height: calc(100vh - 195px);
 }
 
 .message-sender  {
@@ -119,25 +110,25 @@ body {
 }
 
 .message-input  {
-  width: 70%;
+  width: 60%;
   height: 50px;
   border: 0;
   border-top: 1px solid #e0e0e0;
   font-size: 18px;
-  padding-left: 2px
+  padding-left: 5%;
 }
 
 .message-submit  {
   width: 30%;
   background-color: #5E0565;
   color: white;
-  font-size: 16px;
+  font-size: 1.5em;
   cursor: pointer;
 }
 
 .input-field {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
   display: flex;
+  flex-direction: row;
+  padding: 2%;
+  text-align: center;
 }

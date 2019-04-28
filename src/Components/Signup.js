@@ -18,15 +18,21 @@ import React, {Component} from 'react';
         }
         render() {
             return(
-                <div className="form-container">
+                <div style={signupStyle} className="form-container">
                     <h1>Let's Talk</h1>
                     <form onSubmit={this.handleSubmit} className="form">
                         <label htmlFor="email">What is your email?</label>
                         <input type="email" name="username" onChange={this.handleChange} className="input" />
-                        <button className="submit">Submit</button>
+                        <button className="btn btn-outline-primary submit">Submit</button>
                     </form>
                 </div>
             )
         }
+    }
+
+    const signupStyle = {
+        width: '50%',
+        margin: 'auto',
+        marginTop: '10rem'
     }
     export default Signup;
