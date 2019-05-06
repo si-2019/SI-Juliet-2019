@@ -3,6 +3,7 @@ import '../styles/MessageList.css';
 
 class MessageList extends Component {
 
+    
     scrollToBottom = () => {
         this.messagesEnd.scrollIntoView({ behavior: "smooth" });
     }
@@ -13,7 +14,8 @@ class MessageList extends Component {
 
     componentDidUpdate() {
         this.scrollToBottom();
-    }
+    } 
+    
 
     render() {
         return (
