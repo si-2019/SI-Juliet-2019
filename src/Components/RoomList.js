@@ -14,7 +14,7 @@ class RoomList extends Component {
         if(this.props.rooms && this.props.room){
             return(
                 <div style={{color: 'white'}}>
-                <h1 style={{marginTop: '5rem', marginBottom: '1rem', float: 'left'}}>Rooms</h1>
+                <h1 style={{marginTop: '5rem', marginBottom: '1rem'}}>Rooms</h1>
                     <ul style={listStyle}>
                         <h4>Public rooms</h4>
                         {this.props.rooms.filter(room => !room.isPrivate).map((room, index) => {

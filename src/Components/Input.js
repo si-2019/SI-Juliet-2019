@@ -13,6 +13,7 @@ class Input extends Component {
         this.setState({
             message: e.target.value
         })
+        this.props.onChange(e)
     }
     handleSubmit(e) {
         e.preventDefault();

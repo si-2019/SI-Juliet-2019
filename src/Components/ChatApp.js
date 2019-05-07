@@ -6,6 +6,7 @@ import '../styles/ChatApp.css';
 import RoomList from './RoomList';
 import { instanceLocator, testToken, testRoomId, apiUrl } from './../config.js'
 import UsersList from './UsersList';
+import TypingIndicator from './TypingIndicator';
 import '../styles/ChatApp.css';
 import CreateRoom from './CreateRoom';
 
@@ -30,13 +31,15 @@ class ChatApp extends Component {
             currentRoom: null,
             messages: [],
             users: [],
-            rooms: []
+            rooms: [],
+            typingUsers: []
         }
         this.addMessage = this.addMessage.bind(this);
         this.openPrivateChat = this.openPrivateChat.bind(this);
         this.joinRoomById = this.joinRoomById.bind(this);
         this.createRoom = this.createRoom.bind(this);
         this.initRooms = this.initRooms.bind(this);
+        this.sendTypingEvent = this.sendTypingEvent.bind(this);
     }
     
     componentDidMount() {
@@ -102,7 +105,21 @@ class ChatApp extends Component {
                 },
                 onPresenceChanged: () => this.forceUpdate(),
                 onUserJoinedRoom: () => this.forceUpdate(),
-                onUserLeftRoom: () => this.forceUpdate()
+                onUserLeftRoom: () => this.forceUpdate(),
+                onUserStartedTyping: user => {
+                    console.log(user.name + ' poceo kucati....');
+                    this.setState({
+                      typingUsers: [...this.state.typingUsers, user.name],
+                    })
+                },
+                onUserStoppedTyping: user => {
+                    console.log(user.name + ' prestao kucati...');
+                    this.setState({   
+                        typingUsers: this.state.typingUsers.filter(
+                            username => username !== user.name
+                        ),
+                    })
+                },
             }
         }).then((room) => {
             this.setState({
@@ -165,6 +182,10 @@ class ChatApp extends Component {
         .catch(err=> console.log("err wth cr room", err))
     }
 
+    sendTypingEvent(event) {
+        this.state.currentUser.isTypingIn({ roomId: this.state.currentRoom.id }).catch(error => console.error('error', error))
+    }
+
     render() {
         return (
             <div className="chat-app-wrapper">
@@ -175,7 +196,8 @@ class ChatApp extends Component {
                 <div className="msg-wrapper">
                     <h2 className="header">Let's Talk</h2>
                     <MessageList messages={this.state.messages} />
-                    <Input className="input-field" onSubmit={this.addMessage} />
+                    <TypingIndicator typingUsers={this.state.typingUsers} />
+                    <Input className="input-field" onSubmit={this.addMessage} onChange={this.sendTypingEvent}/>
                 </div>
                 <div className="list-wrapper">
                     <UsersList openPrivateChat={this.openPrivateChat} users={this.state.users} />
