@@ -8,7 +8,7 @@ import { instanceLocator, testToken, testRoomId, apiUrl } from './../config.js'
 import UsersList from './UsersList';
 import '../styles/ChatApp.css';
 import CreateRoom from './CreateRoom';
-
+import AddUser from './AddUser';
 let predmeti = require('../predmeti.json');
 function findPredmetId(nameOfPredmet) {
     for(var i = 0; i < Object.keys(predmeti).length; i++) {
@@ -37,6 +37,7 @@ class ChatApp extends Component {
         this.joinRoomById = this.joinRoomById.bind(this);
         this.createRoom = this.createRoom.bind(this);
         this.initRooms = this.initRooms.bind(this);
+        this.addUser = this.addUser.bind(this);
     }
     
     componentDidMount() {
@@ -164,13 +165,32 @@ class ChatApp extends Component {
         })
         .catch(err=> console.log("err wth cr room", err))
     }
+    addUser(userName){
+        const rid = this.state.currentRoom.id;
+        this.state.currentUser.addUserToRoom({
+            userId: userName,
+            roomId: rid,
+            hooks: {
+                onUserJoinedRoom: () => this.forceUpdate()
+            }
+          })
+            .then(() => {
+              this.joinRoomById(rid);
+            })
+            .catch(err => {
+              console.log('Error adding user to room:'+ err)
+            })
+    }
 
     render() {
         return (
             <div className="chat-app-wrapper">
                 <div className="room-wrapper">
                     <RoomList room={this.state.currentRoom} joinRoomById={this.joinRoomById} rooms={this.state.rooms} />
-                    <CreateRoom createRoom={this.createRoom}/>
+                    <div>                        
+                        <CreateRoom createRoom={this.createRoom}/>
+                        <AddUser  addUser={this.addUser}/>
+                    </div>
                 </div>
                 <div className="msg-wrapper">
                     <h2 className="header">Let's Talk</h2>
