@@ -6,6 +6,8 @@ import '../styles/ChatApp.css';
 import RoomList from './RoomList';
 import { instanceLocator, testToken, testRoomId, apiUrl } from './../config.js'
 import UsersList from './UsersList';
+import '../styles/ChatApp.css';
+import CreateRoom from './CreateRoom';
 
 let predmeti = require('../predmeti.json');
 function findPredmetId(nameOfPredmet) {
@@ -33,9 +35,10 @@ class ChatApp extends Component {
         this.addMessage = this.addMessage.bind(this);
         this.openPrivateChat = this.openPrivateChat.bind(this);
         this.joinRoomById = this.joinRoomById.bind(this);
+        this.createRoom = this.createRoom.bind(this);
         this.initRooms = this.initRooms.bind(this);
     }
-
+    
     componentDidMount() {
         const chatManager = new ChatManager({
             instanceLocator: instanceLocator,
@@ -151,12 +154,23 @@ class ChatApp extends Component {
             }
         }).catch(error => console.error('error', error));
     }
+    createRoom(roomName){
+        this.state.currentUser.createRoom({
+            name: roomName,
+            private: true
+        }).then(room => {
+            this.setState({ rooms: [...this.state.rooms, room] });
+            this.joinRoomById(room.id);
+        })
+        .catch(err=> console.log("err wth cr room", err))
+    }
 
     render() {
         return (
             <div className="chat-app-wrapper">
                 <div className="room-wrapper">
                     <RoomList room={this.state.currentRoom} joinRoomById={this.joinRoomById} rooms={this.state.rooms} />
+                    <CreateRoom createRoom={this.createRoom}/>
                 </div>
                 <div className="msg-wrapper">
                     <h2 className="header">Let's Talk</h2>
@@ -166,6 +180,7 @@ class ChatApp extends Component {
                 <div className="list-wrapper">
                     <UsersList openPrivateChat={this.openPrivateChat} users={this.state.users} />
                 </div>
+                
             </div>
         )
     }
