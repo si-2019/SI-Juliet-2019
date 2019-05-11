@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 
-export class NewRoomForm extends Component {
+export class NewPublicRoomForm extends Component {
     constructor(){
         super()
         this.state={
@@ -15,7 +15,7 @@ export class NewRoomForm extends Component {
     }
     handleSubmit(e){
         e.preventDefault();
-        this.props.createRoom(this.state.roomName);
+        this.props.createPublicRoom(this.state.roomName);
         this.setState({roomName:'NewPublicRoom...'})
     }
   render() {
@@ -29,4 +29,4 @@ export class NewRoomForm extends Component {
     )
   }
 }
-export default NewRoomForm
+export default NewPublicRoomForm
