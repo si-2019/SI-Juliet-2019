@@ -6,23 +6,30 @@ class UsersList extends Component {
         super(props);
     
         this.state = {
-            users: this.props.users
+            users: this.props.users, 
+            input: ''
         }
     }
-
+    onChangeHandler(e){
+        this.setState({
+          input: e.target.value,
+        })
+      }
     render(){
+        const listSrc = this.props.users.filter(d => this.state.input === '' || d.id.includes(this.state.input));
         if(this.props.users){
             return(
-                <div style={{color: 'white'}}>
+                <div style={{color: 'white'}}>                
                 <h1 style={{marginTop: '5rem', marginBottom: '1rem'}}>Users</h1>
                     <ul>
+                    <input placeholder="Pretraži korisnike" value={this.state.input} type="text" onChange={this.onChangeHandler.bind(this)}/>
                         <h4>Online users:</h4>
-                        {this.props.users.filter((user) => user.presence.state === 'online').map((user, index) => {
+                        {listSrc.filter((user) => user.presence.state === 'online').map((user, index) => {
                             return <li onClick={() => this.props.openPrivateChat(user.id)} 
                             className="user" key={index} style={{cursor: 'pointer'}}> {user.name} </li>
                         })}
                         <h4>Offline users:</h4>
-                        {this.props.users.filter((user) => user.presence.state === 'offline').map((user, index) => {
+                        {listSrc.filter((user) => user.presence.state === 'offline').map((user, index) => {
                             return <li onClick={() => this.props.openPrivateChat(user.id)}
                             className="user" key={index} style={{cursor: 'pointer'}}> {user.name} </li>
                         })}
