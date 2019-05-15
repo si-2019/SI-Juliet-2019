@@ -8,7 +8,7 @@ const db = require('./src/DBComponents/db.js');
 const app = express();
 const upload = multer();
 
-db.sequelize.sync()
+db.sequelize.sync({ force: true })
 .then(() => console.log('Konektovano na bazu.'))
 .catch(e => console.log(e));
 
@@ -25,7 +25,7 @@ app.post('/upload', upload.any(), (req, res) => {
       posiljaoc: req.body.sender,
       soba: req.body.room,
       mimetype: req.files[0].mimetype,
-      file: req.files[0]
+      file: req.files[0].buffer
     }
 
     filesTable.create(newRow)
@@ -41,15 +41,9 @@ app.get('/download/:name', (req, res) => {
       naziv: req.params.name
     }
   }).then(data => {
-      res.json(data);
+      res.status(200).json(data);
     })
     .catch(e => res.status(400).send(e))
 })
 
-app.listen(31910, () => console.log("Server pokrenut na portu 31910"));
-
-
-
-
-
-
+app.listen(31910, () => console.log('Server pokrenut na portu 31910'));

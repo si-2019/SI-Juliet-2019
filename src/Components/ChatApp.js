@@ -43,7 +43,7 @@ class ChatApp extends Component {
         this.initRooms = this.initRooms.bind(this);
         this.sendTypingEvent = this.sendTypingEvent.bind(this);
         this.uploadFile = this.uploadFile.bind(this);
-        this.getFile = this.getFile.bind(this);
+        this.downloadClick = this.downloadClick.bind(this);
     }
     
     componentDidMount() {
@@ -207,12 +207,29 @@ class ChatApp extends Component {
 
         Axios.post('http://localhost:31910/upload', fData, config).then(res => {
             window.alert('Uspješno upisano u bazu!');
-            sendMockMessage(file);
+            this.addMessage('Downloaduj file: ' + file.name);
+            
+            console.log(res);
         }).catch(() => window.alert('Greška...'));
     }
-    
-    getFile(id){
 
+    downloadClick(name){
+        const url = 'http://localhost:31910/download/' + name;
+        console.log(url);
+
+        Axios.get(url).then(res => {
+            console.log(res);
+            let resultByte = res.data.file.data;
+            var bytes = new Uint8Array(resultByte);
+            var blob = new Blob([bytes], {type: res.data.mimetype});
+
+            console.log(blob);
+
+            var link = document.createElement("a");
+            link.href = window.URL.createObjectURL(blob);
+            link.download = res.data.naziv;
+            link.click();
+        }).catch(e => console.log(e));
     }
 
     render() {
@@ -224,7 +241,7 @@ class ChatApp extends Component {
                 </div>
                 <div className="msg-wrapper">
                     <h2 className="header">Let's Talk</h2>
-                    <MessageList messages={this.state.messages} />
+                    <MessageList messages={this.state.messages} downloadClick={this.downloadClick}/>
                     <TypingIndicator typingUsers={this.state.typingUsers} />
                     <Input className="input-field" onSubmit={this.addMessage} onChange={this.sendTypingEvent}/>
                     <UploadFile onSubmit={this.uploadFile} />

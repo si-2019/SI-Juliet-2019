@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
         posiljaoc: Sequelize.STRING,
         soba: Sequelize.STRING,
         mimetype: Sequelize.STRING,
-        file: Sequelize.BLOB
+        file: DataTypes.BLOB('long')
     }, {freezeTableName : true})
 
     return files;
