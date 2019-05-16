@@ -9,6 +9,8 @@ import UsersList from './UsersList';
 import TypingIndicator from './TypingIndicator';
 import '../styles/ChatApp.css';
 import CreateRoom from './CreateRoom';
+import UploadFile from './UploadFile';
+import Axios from 'axios';
 
 let predmeti = require('../predmeti.json');
 function findPredmetId(nameOfPredmet) {
@@ -40,6 +42,8 @@ class ChatApp extends Component {
         this.createRoom = this.createRoom.bind(this);
         this.initRooms = this.initRooms.bind(this);
         this.sendTypingEvent = this.sendTypingEvent.bind(this);
+        this.uploadFile = this.uploadFile.bind(this);
+        this.downloadClick = this.downloadClick.bind(this);
     }
     
     componentDidMount() {
@@ -171,6 +175,7 @@ class ChatApp extends Component {
             }
         }).catch(error => console.error('error', error));
     }
+
     createRoom(roomName){
         this.state.currentUser.createRoom({
             name: roomName,
@@ -186,6 +191,47 @@ class ChatApp extends Component {
         this.state.currentUser.isTypingIn({ roomId: this.state.currentRoom.id }).catch(error => console.error('error', error))
     }
 
+    uploadFile(file){
+        const fData = new FormData();
+        fData.append('file', new Blob([file], {type: file.type}));
+        fData.append('name', file.name);
+        fData.append('sender', this.state.currentUser.id);
+        fData.append('room', this.state.currentRoom.id);
+
+        console.log(fData);
+        let config = {
+            header : {
+              'Content-Type' : 'multipart/form-data'
+            }
+        }
+
+        Axios.post('http://localhost:31910/upload', fData, config).then(res => {
+            window.alert('Uspješno upisano u bazu!');
+            this.addMessage('Downloaduj file: ' + file.name);
+            
+            console.log(res);
+        }).catch(() => window.alert('Greška...'));
+    }
+
+    downloadClick(name){
+        const url = 'http://localhost:31910/download/' + name;
+        console.log(url);
+
+        Axios.get(url).then(res => {
+            console.log(res);
+            let resultByte = res.data.file.data;
+            var bytes = new Uint8Array(resultByte);
+            var blob = new Blob([bytes], {type: res.data.mimetype});
+
+            console.log(blob);
+
+            var link = document.createElement("a");
+            link.href = window.URL.createObjectURL(blob);
+            link.download = res.data.naziv;
+            link.click();
+        }).catch(e => console.log(e));
+    }
+
     render() {
         return (
             <div className="chat-app-wrapper">
@@ -195,9 +241,10 @@ class ChatApp extends Component {
                 </div>
                 <div className="msg-wrapper">
                     <h2 className="header">Let's Talk</h2>
-                    <MessageList messages={this.state.messages} />
+                    <MessageList messages={this.state.messages} downloadClick={this.downloadClick}/>
                     <TypingIndicator typingUsers={this.state.typingUsers} />
                     <Input className="input-field" onSubmit={this.addMessage} onChange={this.sendTypingEvent}/>
+                    <UploadFile onSubmit={this.uploadFile} />
                 </div>
                 <div className="list-wrapper">
                     <UsersList openPrivateChat={this.openPrivateChat} users={this.state.users} />

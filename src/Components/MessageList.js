@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import '../styles/MessageList.css';
 
 class MessageList extends Component {
+    constructor(props){
+        super(props);
 
+        this.handleDownloadClick = this.handleDownloadClick.bind(this);
+    }
     
     scrollToBottom = () => {
         this.messagesEnd.scrollIntoView({ behavior: "smooth" });
@@ -16,6 +20,11 @@ class MessageList extends Component {
         this.scrollToBottom();
     } 
     
+    handleDownloadClick(message){
+        this.props.downloadClick(
+            message.text.substr(message.text.indexOf(':') + 2, message.text.length)
+        )
+    }
 
     render() {
         return (
@@ -25,9 +34,13 @@ class MessageList extends Component {
                         <li className="list-group-item" style={messageStyle} key={index}>
                             <h4 className="message-sender" onClick={this.props.openPrivateChat}>{message.senderId}</h4>
                             <p style={messageTextStyle} className="message-text">{message.text}</p>
+                            {
+                                message.text.substr(0,16) === 'Downloaduj file:' ?
+                                <button className="btn btn-link" onClick={() => {this.handleDownloadClick(message)}}>Download</button> :
+                                null
+                            }
                         </li>
                     ))}
-                    <li></li>
                     <div style={{ float: "left", clear: "both" }}
                         ref={(el) => { this.messagesEnd = el; }}>
                     </div>
@@ -52,5 +65,10 @@ const listStyle = {
 
 const messageStyle = {
     alignContent: 'center'
+}
+
+const dwnStyle = {
+    borderRadius: 5,
+    color: 'red'
 }
 export default MessageList;
