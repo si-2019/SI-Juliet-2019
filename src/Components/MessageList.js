@@ -17,6 +17,8 @@ class MessageList extends Component {
             this.deleteStyleArray.push(false);
         })
 
+        console.log(props.currentId);
+
         this.handleDownloadClick = this.handleDownloadClick.bind(this);
         this.handleDeleteClick = this.handleDeleteClick.bind(this);
         this.downloadHover = this.downloadHover.bind(this);
@@ -31,9 +33,11 @@ class MessageList extends Component {
         this.scrollToBottom();
     }
 
-    /* componentDidUpdate() {
+    /*
+    componentDidUpdate() {
         this.scrollToBottom();
-    } */
+    } 
+    */
     
     handleDownloadClick(message){
         this.props.downloadClick(
@@ -77,19 +81,29 @@ class MessageList extends Component {
                             {
                                 message.text.substr(0,16) === 'Downloaduj file:' ?
                                 <div style={wrapperStyle}>
-                                    <MdFileDownload size='2em' onClick={() => {this.handleDownloadClick(message)}} style={downloadStyle}
-                                        onMouseEnter={() => this.downloadHover(index)} onMouseLeave={() => this.downloadHover(index)} />
+                                    <div style={{flex: 1}}>
 
-                                    <div className="text-primary" style={this.state.downloadStyleArray[index] ? hintVisible : hintHidden}>
-                                        Download file...
+                                        <MdFileDownload size='2em' onClick={() => {this.handleDownloadClick(message)}} style={downloadStyle}
+                                            onMouseEnter={() => this.downloadHover(index)} onMouseLeave={() => this.downloadHover(index)} />
+
+                                        <div className="text-primary" style={this.state.downloadStyleArray[index] ? hintVisible : hintHidden}>
+                                            Download file...
+                                        </div>
                                     </div>
 
-                                    <MdDelete size='2em' onClick={() => {this.handleDeleteClick(message, index)}} style={deleteStyle}
-                                        onMouseEnter={() => this.deleteHover(index)} onMouseLeave={() => this.deleteHover(index)}/>
+                                    {
+                                        message.senderId === this.props.currentId ? 
+                                        <div style={{flex: 1}}>
+                                            <MdDelete size='2em' onClick={() => {this.handleDeleteClick(message, index)}} style={deleteStyle}
+                                                onMouseEnter={() => this.deleteHover(index)} onMouseLeave={() => this.deleteHover(index)}/>
 
-                                    <div className="text-primary" style={this.state.deleteStyleArray[index] ? hintVisible : hintHidden}>
-                                        Delete file...
-                                    </div>
+                                            <div className="text-primary" style={this.state.deleteStyleArray[index] ? hintVisible : hintHidden}>
+                                                Delete file...
+                                            </div>
+                                        </div>
+                                        :
+                                        null
+                                    }
                                 </div>
                                 :
                                 null
@@ -129,7 +143,8 @@ const wrapperStyle = {
 }
 
 const downloadStyle = {
-    flex: 1
+    flex: 1,
+    alignItems: 'center'
 }
 
 const deleteStyle = {

@@ -263,7 +263,8 @@ class ChatApp extends Component {
                 </div>
                 <div className="msg-wrapper">
                     <h2 className="header">Let's Talk</h2>
-                    <MessageList messages={this.state.messages} downloadClick={this.downloadClick} deleteClick={this.deleteClick}/>
+                    <MessageList currentId={this.props.currentId} 
+                        messages={this.state.messages} downloadClick={this.downloadClick} deleteClick={this.deleteClick}/>
                     <TypingIndicator typingUsers={this.state.typingUsers} />
                     <Input className="input-field" onSubmit={this.addMessage} onChange={this.sendTypingEvent}/>
                     <UploadFile onSubmit={this.uploadFile} />
@@ -271,7 +272,6 @@ class ChatApp extends Component {
                 <div className="list-wrapper">
                     <UsersList openPrivateChat={this.openPrivateChat} users={this.state.users} />
                 </div>
-                
             </div>
         )
     }

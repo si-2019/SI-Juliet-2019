@@ -7,7 +7,7 @@ const app = express();
 const upload = multer();
 const Chatkit = require('@pusher/chatkit-server')
 
-db.sequelize.sync({ force: true })
+db.sequelize.sync()
 .then(() => console.log('Konektovano na bazu.'))
 .catch(e => console.log(e));
 
