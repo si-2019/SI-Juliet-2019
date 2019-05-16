@@ -27,7 +27,7 @@ class UploadFile extends Component{
                 files: []
             })
 
-            document.getElementsByName('file')[0].value = null; // cistimo polja
+            document.getElementsByName('file')[0].value = null; 
         }
     }
 
