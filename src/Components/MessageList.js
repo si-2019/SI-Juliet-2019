@@ -33,11 +33,11 @@ class MessageList extends Component {
         this.scrollToBottom();
     }
 
-    /*
+ 
     componentDidUpdate() {
         this.scrollToBottom();
     } 
-    */
+    
     
     handleDownloadClick(message){
         this.props.downloadClick(
@@ -82,23 +82,24 @@ class MessageList extends Component {
                                 message.text.substr(0,16) === 'Downloaduj file:' ?
                                 <div style={wrapperStyle}>
                                     <div style={{flex: 1}}>
-
                                         <MdFileDownload size='2em' onClick={() => {this.handleDownloadClick(message)}} style={downloadStyle}
                                             onMouseEnter={() => this.downloadHover(index)} onMouseLeave={() => this.downloadHover(index)} />
 
                                         <div className="text-primary" style={this.state.downloadStyleArray[index] ? hintVisible : hintHidden}>
-                                            Download file...
+                                            Download file
                                         </div>
                                     </div>
 
                                     {
                                         message.senderId === this.props.currentId ? 
-                                        <div style={{flex: 1}}>
-                                            <MdDelete size='2em' onClick={() => {this.handleDeleteClick(message, index)}} style={deleteStyle}
-                                                onMouseEnter={() => this.deleteHover(index)} onMouseLeave={() => this.deleteHover(index)}/>
+                                        <div style={{flex: 1, alignItems: 'right'}}>
+                                            <div style={{float: "right"}}>
+                                                <MdDelete size='2em' onClick={() => {this.handleDeleteClick(message, index)}} style={deleteStyle}
+                                                    onMouseEnter={() => this.deleteHover(index)} onMouseLeave={() => this.deleteHover(index)}/>
 
-                                            <div className="text-primary" style={this.state.deleteStyleArray[index] ? hintVisible : hintHidden}>
-                                                Delete file...
+                                                <div className="text-primary" style={this.state.deleteStyleArray[index] ? hintVisible : hintHidden}>
+                                                    Delete file
+                                                </div>
                                             </div>
                                         </div>
                                         :
