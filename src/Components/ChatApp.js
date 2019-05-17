@@ -4,13 +4,14 @@ import Input from './Input';
 import MessageList from './MessageList';
 import '../styles/ChatApp.css';
 import RoomList from './RoomList';
-import { instanceLocator, testToken, testRoomId, apiUrl } from './../config.js'
+import { instanceLocator, testToken, testRoomId, apiUrl, secretKey } from './../config.js'
 import UsersList from './UsersList';
 import TypingIndicator from './TypingIndicator';
 import '../styles/ChatApp.css';
 import CreateRoom from './CreateRoom';
 import UploadFile from './UploadFile';
 import Axios from 'axios';
+import Chatkit from '@pusher/chatkit-server';
 
 let predmeti = require('../predmeti.json');
 function findPredmetId(nameOfPredmet) {
@@ -23,6 +24,11 @@ function findPredmetId(nameOfPredmet) {
     }
     return -1; 
 }
+
+const chatkit = new Chatkit({
+    instanceLocator: instanceLocator,
+    key: secretKey
+  })
 
 class ChatApp extends Component {
     constructor(props) {
@@ -44,6 +50,7 @@ class ChatApp extends Component {
         this.sendTypingEvent = this.sendTypingEvent.bind(this);
         this.uploadFile = this.uploadFile.bind(this);
         this.downloadClick = this.downloadClick.bind(this);
+        this.deleteClick = this.deleteClick.bind(this);
     }
     
     componentDidMount() {
@@ -103,6 +110,9 @@ class ChatApp extends Component {
             messageLimit: 100,
             hooks: {
                 onMessage: message => {
+                    if(message.text === 'DELETED'){
+                        return;
+                    }
                     this.setState({
                         messages: [...this.state.messages, message]
                     })
@@ -223,13 +233,25 @@ class ChatApp extends Component {
             var bytes = new Uint8Array(resultByte);
             var blob = new Blob([bytes], {type: res.data.mimetype});
 
-            console.log(blob);
-
             var link = document.createElement("a");
             link.href = window.URL.createObjectURL(blob);
             link.download = res.data.naziv;
             link.click();
         }).catch(e => console.log(e));
+    }
+
+    deleteClick(message, index){
+        Axios.post('http://localhost:31910/deleteMessage', {
+            message_id: message.id
+        })
+        .then(res => console.log(res))
+        .catch(e => console.log(e));
+
+        let msgTmp = this.state.messages.slice(0, index).concat(this.state.messages.slice(index + 1, this.state.messages.length));
+
+        this.setState({
+            messages: msgTmp
+        })
     }
 
     render() {
@@ -241,7 +263,8 @@ class ChatApp extends Component {
                 </div>
                 <div className="msg-wrapper">
                     <h2 className="header">Let's Talk</h2>
-                    <MessageList messages={this.state.messages} downloadClick={this.downloadClick}/>
+                    <MessageList currentId={this.props.currentId} 
+                        messages={this.state.messages} downloadClick={this.downloadClick} deleteClick={this.deleteClick}/>
                     <TypingIndicator typingUsers={this.state.typingUsers} />
                     <Input className="input-field" onSubmit={this.addMessage} onChange={this.sendTypingEvent}/>
                     <UploadFile onSubmit={this.uploadFile} />
@@ -249,7 +272,6 @@ class ChatApp extends Component {
                 <div className="list-wrapper">
                     <UsersList openPrivateChat={this.openPrivateChat} users={this.state.users} />
                 </div>
-                
             </div>
         )
     }
