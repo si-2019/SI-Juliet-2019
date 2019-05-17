@@ -133,3 +133,26 @@ body {
   margin: 0%;
   text-align: center;
 }
+.toggle-emoji {
+  border: none;
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-emoji svg {
+  width: 28px;
+  height: 28px;
+}
+.emoji-popup {
+  bottom: 110px !important; 
+  transform: none !important; 
+  position: fixed !important; 
+  right: 75px !important; 
+  left: auto !important; 
+  top: auto !important; 
+}

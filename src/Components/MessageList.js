@@ -1,41 +1,33 @@
 import React, { Component } from 'react';
 import '../styles/MessageList.css';
+import { MdFileDownload, MdDelete } from 'react-icons/md'
 
 class MessageList extends Component {
-    constructor(props) {
+    constructor(props){
         super(props);
-        
-        this.state = {
-            pinnedMessages: []
-        }
-    }
 
-    pinMessage (message) {
-        if(!this.state.pinnedMessages.includes(message)) {
-            this.setState({ 
-                pinnedMessages: this.state.pinnedMessages.concat([message])
-            }, () => {
-                console.log(this.state.pinnedMessages);
-                //localStorage.setItem('PinovanePoruke', JSON.stringify(this.state.pinnedMessages));
-            });
-            
-            console.log("Pinnaj je");
-            
+        this.state = {
+            downloadHover: false,
+            downloadStyleArray: [],
+            deleteStyleArray: []
         }
-        else {  
-            console.log("nemoj");
-            this.setState({
-                pinnedMessages: this.state.pinnedMessages.filter(function(m) { 
-                    console.log(m.id + ' ?? ' + message.id);
-                    return m != message || m.id != message.id
-                }
-            )}, () => { 
-                console.log(this.state.pinnedMessages); 
-                //localStorage.setItem('PinovanePoruke', JSON.stringify(this.state.pinnedMessages)); 
-            });
-        }    
+
+        props.messages.forEach(function(value){
+            this.downloadStyleArray.push(false);
+            this.deleteStyleArray.push(false);
+        })
+
+        console.log(props.currentId);
+
+        this.handleDownloadClick = this.handleDownloadClick.bind(this);
+        this.handleDeleteClick = this.handleDeleteClick.bind(this);
+        this.downloadHover = this.downloadHover.bind(this);
+        this.deleteHover = this.deleteHover.bind(this);
+        this.handlePinMessage = this.handlePinMessage.bind(this);
     }
-    
+    handlePinMessage (message) {
+        this.props.pinMessage(message);
+    }
     scrollToBottom = () => {
         this.messagesEnd.scrollIntoView({ behavior: "smooth" });
     }
@@ -43,11 +35,9 @@ class MessageList extends Component {
     componentDidMount() {
         localStorage.clear();
         this.scrollToBottom();
-        //var niz = localStorage.getItem('PinovanePoruke');
-        //var novi = JSON.parse(niz);
-        //this.setState({pinnedMessages: niz != null ? novi : []});
     }
 
+ 
     componentDidUpdate() {
         this.scrollToBottom();
     } 
@@ -55,37 +45,91 @@ class MessageList extends Component {
         
     }
     
+    
+    handleDownloadClick(message){
+        this.props.downloadClick(
+            message.text.substr(message.text.indexOf(':') + 2, message.text.length)
+        )
+    }
 
-    render() {
-        let messages = this.state.pinnedMessages;
-        let roomId = -1;
-        const allMessages = this.props.messages;
-        if (allMessages.length != 0) roomId = allMessages[0].roomId;
-        messages.filter(m => m.id == roomId); 
+    handleDeleteClick(message, index){
+        this.props.deleteClick(message, index);
+    }
+
+    downloadHover(index){
+        let arrTmp = this.state.downloadStyleArray;
+        arrTmp[index] = !arrTmp[index];
+
+        this.setState({
+            downloadStyleArray: arrTmp
+        })
+
+    }
+
+    deleteHover(index){
+        let listTmp = this.state.deleteStyleArray;
+        listTmp[index] = !listTmp[index];
+
+        this.setState({
+            deleteStyleArray: listTmp
+        })
+    }
+
+
+    render() { 
         return (
             <div className="container">
                 <ul style={listStyle} className="list-group message-list">
                     {this.props.messages.map((message, index) => (
-                        <li className="list-group-item" style={messageStyle} key={index} onClick={() => this.pinMessage(message, index)}>
+                        <li className="list-group-item" style={messageStyle} key={index}>
                             <h4 className="message-sender" onClick={this.props.openPrivateChat}>{message.senderId}</h4>
-                            <p style={messageTextStyle} className="message-text">{message.text}</p>
-                        </li>
-                    ))}
-                    <li></li>
+                            <p style={messageTextStyle} className="message-text" onClick={() => this.handlePinMessage(message)}>{message.text}</p>
+                            {
+                                message.text.substr(0,16) === 'Downloaduj file:' ?
+                                <div style={wrapperStyle}>
+                                    <div style={{flex: 1}}>
+                                        <MdFileDownload size='2em' onClick={() => {this.handleDownloadClick(message)}} style={downloadStyle}
+                                            onMouseEnter={() => this.downloadHover(index)} onMouseLeave={() => this.downloadHover(index)} />
+
+                                        <div className="text-primary" style={this.state.downloadStyleArray[index] ? hintVisible : hintHidden}>
+                                            Download file
+                                        </div>
+                                    </div>
+
+                                    {
+                                        message.senderId === this.props.currentId ? 
+                                        <div style={{flex: 1, alignItems: 'right'}}>
+                                            <div style={{float: "right"}}>
+                                                <MdDelete size='2em' onClick={() => {this.handleDeleteClick(message, index)}} style={deleteStyle}
+                                                    onMouseEnter={() => this.deleteHover(index)} onMouseLeave={() => this.deleteHover(index)}/>
+
+                                                <div className="text-primary" style={this.state.deleteStyleArray[index] ? hintVisible : hintHidden}>
+                                                    Delete file
+                                                </div>
+                                            </div>
+                                        </div>
+                                        :
+                                        null
+                                    }
+                                </div>
+                                :
+                                null
+                            }
+                        </li>                        
+                        ))
+                    }                    
                     <div style={{ float: "left", clear: "both" }}
                         ref={(el) => { this.messagesEnd = el; }}>
                     </div>
                 </ul>
-                <div>
-                    {messages.map(message => (
-                        <div>{message.senderId + ' :  ' + message.text}</div>
-                    ))}
-                </div>
+                
             </div>
         )
     }
 }
+/*\
 
+                */
 const messageTextStyle = {
     color: 'black',
     border: "1px solid #7856AD",
@@ -102,4 +146,29 @@ const listStyle = {
 const messageStyle = {
     alignContent: 'center'
 }
+
+const wrapperStyle = {
+    display: 'flex',
+    flexDirection: 'row'
+}
+
+const downloadStyle = {
+    flex: 1,
+    alignItems: 'center'
+}
+
+const deleteStyle = {
+    flex: 1
+}
+
+const hintHidden = {
+    flex: 1,
+    visibility: 'hidden'
+}
+
+const hintVisible = {
+    flex: 1,
+    visibility: 'visible'
+}
+
 export default MessageList;
