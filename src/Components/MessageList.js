@@ -33,10 +33,10 @@ class MessageList extends Component {
         this.scrollToBottom();
     } 
 
-    /*
+    
     componentDidUpdate() {
         this.scrollToBottom();
-    }  */
+    } 
     
     
     handleDownloadClick(message){
@@ -67,7 +67,6 @@ class MessageList extends Component {
             deleteStyleArray: listTmp
         })
     }
-
 
     render() {
         return (
