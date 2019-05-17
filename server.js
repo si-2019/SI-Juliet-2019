@@ -59,6 +59,7 @@ app.post('/deleteMessage', (req, res) => {
   .catch(err => res.send(err))
 })
 
+<<<<<<< HEAD
 
 app.get('/pinovanePoruke/:name', (req, res) => {
   let pinovanePorukeTabela = db.pinovanePoruke;
@@ -104,5 +105,26 @@ app.delete('/pinujPoruku/:name', (req, res) => {
     })
     .catch(e => res.status(400).send(e))
 });
+=======
+app.post('/assignRoleAsAdmin', (req, res) => {
+  chatkit.assignGlobalRoleToUser({
+    userId: req.body.user_id,
+    name: 'admin'
+  }).then(res => res.sendStatus(200))
+  .catch(err => res.send(err));
+})
+
+app.get('/roles', (req, res) => {
+  chatkit.getUserRoles({
+    id: req.body.user_id
+  })
+  .then(data => {
+    res.status(200).json(data);
+  })
+  .catch(err => res.send(err))
+})
+
+
+>>>>>>> 7be6b39674c006f577b6ba8d7b8fdc75996c775d
 
 app.listen(31910, () => console.log('Server pokrenut na portu 31910'));

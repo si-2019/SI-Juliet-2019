@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import '../styles/MessageList.css';
 import { MdFileDownload, MdDelete } from 'react-icons/md'
+import Axios from 'axios';
 
 class MessageList extends Component {
     constructor(props){
@@ -9,7 +10,8 @@ class MessageList extends Component {
         this.state = {
             downloadHover: false,
             downloadStyleArray: [],
-            deleteStyleArray: []
+            deleteStyleArray: [],
+            adminUser: false
         }
 
         props.messages.forEach(function(value){
@@ -35,9 +37,9 @@ class MessageList extends Component {
     componentDidMount() {
         localStorage.clear();
         this.scrollToBottom();
-    }
+    } 
 
- 
+    
     componentDidUpdate() {
         this.scrollToBottom();
     } 
@@ -75,8 +77,7 @@ class MessageList extends Component {
         })
     }
 
-
-    render() { 
+    render() {
         return (
             <div className="container">
                 <ul style={listStyle} className="list-group message-list">
@@ -97,7 +98,7 @@ class MessageList extends Component {
                                     </div>
 
                                     {
-                                        message.senderId === this.props.currentId ? 
+                                        message.senderId === this.props.currentId || this.state.adminUser ? 
                                         <div style={{flex: 1, alignItems: 'right'}}>
                                             <div style={{float: "right"}}>
                                                 <MdDelete size='2em' onClick={() => {this.handleDeleteClick(message, index)}} style={deleteStyle}
@@ -127,9 +128,7 @@ class MessageList extends Component {
         )
     }
 }
-/*\
 
-                */
 const messageTextStyle = {
     color: 'black',
     border: "1px solid #7856AD",
