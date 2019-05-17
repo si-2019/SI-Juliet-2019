@@ -59,6 +59,51 @@ app.post('/deleteMessage', (req, res) => {
   .catch(err => res.send(err))
 })
 
+
+app.get('/pinovanePoruke/:name', (req, res) => {
+  let pinovanePorukeTabela = db.pinovanePoruke;
+  pinovanePorukeTabela.count({
+    where: {
+      messageId: req.params.name
+    }
+  }).then(data => {
+      res.status(200).json(data);
+    })
+    .catch(e => res.status(400).send(e))
+});
+app.get('/pinovanePoruke', (req, res) => {
+  let pinovanePorukeTabela = db.pinovanePoruke;
+  pinovanePorukeTabela.findAll({
+  }).then(data => {
+      res.status(200).json(data);
+    })
+    .catch(e => res.status(400).send(e))
+});
+app.post('/pinujPoruku', (req, res) => {
+  let pinovanePorukeTabela = db.pinovanePoruke;
+  let newRow = {
+    messageCreatedAt: req.body.messageCreatedAt,
+    messageId: req.body.messageId,
+    roomId: req.body.roomId,
+    senderId: req.body.senderId,
+    text: req.body.text
+  }
+  console.log(newRow);
+  pinovanePorukeTabela.create(newRow)
+  .then(x => console.log(x))
+  .catch(err => res.send(err));
+});
+app.delete('/pinujPoruku/:name', (req, res) => {
+  let pinovanePorukeTabela = db.pinovanePoruke;
+  pinovanePorukeTabela.destroy({
+    where: {
+      messageId: req.params.name
+    }
+  }).then(data => {
+      res.status(200).json(data);
+    })
+    .catch(e => res.status(400).send(e))
+});
 app.post('/assignRoleAsAdmin', (req, res) => {
   chatkit.assignGlobalRoleToUser({
     userId: req.body.user_id,

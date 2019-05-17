@@ -40,7 +40,8 @@ class ChatApp extends Component {
             messages: [],
             users: [],
             rooms: [],
-            typingUsers: []
+            typingUsers: [], 
+            pinnedMessages: []
         }
         this.addMessage = this.addMessage.bind(this);
         this.openPrivateChat = this.openPrivateChat.bind(this);
@@ -51,8 +52,12 @@ class ChatApp extends Component {
         this.uploadFile = this.uploadFile.bind(this);
         this.downloadClick = this.downloadClick.bind(this);
         this.deleteClick = this.deleteClick.bind(this);
+        this.pinMessage = this.pinMessage.bind(this);
     }
     
+    componentWillMount() {
+        
+    }
     componentDidMount() {
         const chatManager = new ChatManager({
             instanceLocator: instanceLocator,
@@ -84,6 +89,17 @@ class ChatApp extends Component {
             .then(() => {
                 this.joinRoomById(testRoomId);
             })
+        const url = 'http://localhost:31910/pinovanePoruke';
+            //console.log(url);
+        Axios.get(url).then(res => {
+            console.log(res.data);
+            this.setState({ 
+                pinnedMessages: this.state.pinnedMessages.concat(res.data)
+            }, () => {
+                console.log(this.state.pinnedMessages);
+                //localStorage.setItem('PinovanePoruke', JSON.stringify(this.state.pinnedMessages));
+            });
+        }).catch(e => {console.log(e)});
     }
 
     initRooms() {
@@ -253,6 +269,70 @@ class ChatApp extends Component {
             messages: msgTmp
         })
     }
+    pinMessage(message) {
+        const url = 'http://localhost:31910/pinovanePoruke/' + message.id;
+        //console.log(url);
+        Axios.get(url).then(res => {
+            if (res.data == 0) { // ne postoji u bazi
+                let trenutnaPoruka = {
+                    messageCreatedAt: message.createdAt,
+                    messageId: message.id + '',
+                    roomId: message.roomId,
+                    senderId: message.senderId,
+                    text: message.text
+                };
+                this.setState({ 
+                    pinnedMessages: this.state.pinnedMessages.concat([trenutnaPoruka])
+                }, () => {
+                    console.log(this.state.pinnedMessages);
+                    //localStorage.setItem('PinovanePoruke', JSON.stringify(this.state.pinnedMessages));
+                    Axios.post('http://localhost:31910/pinujPoruku', {
+                        messageCreatedAt: message.createdAt,
+                        messageId: message.id + '',
+                        roomId: message.roomId,
+                        senderId: message.senderId,
+                        text: message.text
+                    })
+                    .then(res => {})
+                    .catch(e => console.log(e));
+                });
+                
+            } 
+            else { // postoji u bazi
+                this.setState({
+                    pinnedMessages: this.state.pinnedMessages.filter(function(m) { 
+                        console.log(m.messageId + ' ?? ' + message.id);
+                        return m.messageId != message.id;
+                    }
+                )}, () => { 
+                    console.log(this.state.pinnedMessages); 
+                    //localStorage.setItem('PinovanePoruke', JSON.stringify(this.state.pinnedMessages)); 
+                });
+                const url2 = 'http://localhost:31910/pinujPoruku/' + message.id;
+                Axios.delete(url2).then(res => {}).catch(e => {console.log(e)});
+            } 
+        });
+        /*
+
+        if(!this.state.pinnedMessages.includes(message)) {
+            
+            
+            console.log("Pinnaj je");
+            
+        }
+        else {  
+            console.log("nemoj");
+            this.setState({
+                pinnedMessages: this.state.pinnedMessages.filter(function(m) { 
+                    console.log(m.id + ' ?? ' + message.id);
+                    return m != message || m.id != message.id
+                }
+            )}, () => { 
+                console.log(this.state.pinnedMessages); 
+                //localStorage.setItem('PinovanePoruke', JSON.stringify(this.state.pinnedMessages)); 
+            });
+        }    */
+    }
 
     render() {
         return (
@@ -260,12 +340,26 @@ class ChatApp extends Component {
                 <div className="room-wrapper">
                     <RoomList room={this.state.currentRoom} joinRoomById={this.joinRoomById} rooms={this.state.rooms} />
                     <CreateRoom createRoom={this.createRoom}/>
+                    <div style={{
+                        'overflow-y': 'scroll', 
+                        'height': '250px'
+                    }}>
+                        <p> Pinovane poruke: </p>
+                        <ul>
+                        {this.state.pinnedMessages.filter(message => message.roomId == this.state.currentRoom.id).map(message => (
+                            <div style={{
+                                'border' : '1px solid white',
+                            }}><li>{message.senderId + ' : ' + message.text}</li></div>
+                        ))}
+                        </ul>
+                </div>
                 </div>
                 <div className="msg-wrapper">
                     <h2 className="header">Let's Talk</h2>
                     <MessageList currentId={this.props.currentId} 
-                        messages={this.state.messages} downloadClick={this.downloadClick} deleteClick={this.deleteClick}/>
+                        messages={this.state.messages} pinMessage={this.pinMessage} downloadClick={this.downloadClick} deleteClick={this.deleteClick}/>
                     <TypingIndicator typingUsers={this.state.typingUsers} />
+                    
                     <Input className="input-field" onSubmit={this.addMessage} onChange={this.sendTypingEvent}/>
                     <UploadFile onSubmit={this.uploadFile} />
                 </div>

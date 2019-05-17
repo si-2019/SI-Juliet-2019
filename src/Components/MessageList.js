@@ -25,13 +25,17 @@ class MessageList extends Component {
         this.handleDeleteClick = this.handleDeleteClick.bind(this);
         this.downloadHover = this.downloadHover.bind(this);
         this.deleteHover = this.deleteHover.bind(this);
+        this.handlePinMessage = this.handlePinMessage.bind(this);
     }
-    
+    handlePinMessage (message) {
+        this.props.pinMessage(message);
+    }
     scrollToBottom = () => {
         this.messagesEnd.scrollIntoView({ behavior: "smooth" });
     }
 
     componentDidMount() {
+        localStorage.clear();
         this.scrollToBottom();
     } 
 
@@ -39,6 +43,9 @@ class MessageList extends Component {
     componentDidUpdate() {
         this.scrollToBottom();
     } 
+    componentWillUnmount() {
+        
+    }
     
     
     handleDownloadClick(message){
@@ -74,11 +81,10 @@ class MessageList extends Component {
         return (
             <div className="container">
                 <ul style={listStyle} className="list-group message-list">
-                    {
-                        this.props.messages.map((message, index) => (
+                    {this.props.messages.map((message, index) => (
                         <li className="list-group-item" style={messageStyle} key={index}>
                             <h4 className="message-sender" onClick={this.props.openPrivateChat}>{message.senderId}</h4>
-                            <p style={messageTextStyle} className="message-text">{message.text}</p>
+                            <p style={messageTextStyle} className="message-text" onClick={() => this.handlePinMessage(message)}>{message.text}</p>
                             {
                                 message.text.substr(0,16) === 'Downloaduj file:' ?
                                 <div style={wrapperStyle}>
@@ -117,6 +123,7 @@ class MessageList extends Component {
                         ref={(el) => { this.messagesEnd = el; }}>
                     </div>
                 </ul>
+                
             </div>
         )
     }
