@@ -31,12 +31,12 @@ class MessageList extends Component {
 
     componentDidMount() {
         this.scrollToBottom();
-    }
+    } 
 
- 
+    /*
     componentDidUpdate() {
         this.scrollToBottom();
-    } 
+    }  */
     
     
     handleDownloadClick(message){
