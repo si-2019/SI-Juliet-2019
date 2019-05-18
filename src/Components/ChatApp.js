@@ -39,6 +39,7 @@ class ChatApp extends Component {
             botUser: null,
             currentRoom: {},
             messages: [],
+            messageToSend: '',
             users: [],
             rooms: [],
             typingUsers: [], 
@@ -58,6 +59,7 @@ class ChatApp extends Component {
         this.pinMessage = this.pinMessage.bind(this);
         this.handleColorChange = this.handleColorChange.bind(this);
         this.toggleColorPicker = this.toggleColorPicker.bind(this);
+        this.handleReply = this.handleReply.bind(this);
     }
     toggleColorPicker() {
         this.setState({
@@ -204,7 +206,6 @@ class ChatApp extends Component {
     }
 
     addMessage(text) {
-        console.log(this.state);
         this.state.currentUser.sendMessage({
             text: text,
             roomId: this.state.currentRoom.id
@@ -296,6 +297,11 @@ class ChatApp extends Component {
             messages: msgTmp
         })
     }
+
+    handleReply(message) {
+        this.setState({ messageToSend: `Replying to ${message.senderId}: "${message.text}"\n>` });
+    }
+
     pinMessage(message) {
         const url = 'http://localhost:31910/pinovanePoruke/' + message.id;
         //console.log(url);
@@ -375,7 +381,7 @@ class ChatApp extends Component {
                     <RoomList room={this.state.currentRoom} joinRoomById={this.joinRoomById} rooms={this.state.rooms} />
                     <CreateRoom createRoom={this.createRoom}/>
                     <div style={{
-                        'overflow-y': 'scroll', 
+                        'overflowY': 'scroll', 
                         'height': '250px'
                     }}>
                         <p> Pinovane poruke: </p>
@@ -390,11 +396,11 @@ class ChatApp extends Component {
                 </div>
                 <div className="msg-wrapper">
                     <h2 style={{'background': colorScheme}} className="header">Let's Talk</h2>
-                    <MessageList currentId={this.props.currentId} 
+                    <MessageList currentId={this.props.currentId} replyToMessage={this.handleReply}
                         messages={this.state.messages} pinMessage={this.pinMessage} downloadClick={this.downloadClick} deleteClick={this.deleteClick}/>
                     <TypingIndicator typingUsers={this.state.typingUsers} />
                     
-                    <Input className="input-field" onSubmit={this.addMessage} onChange={this.sendTypingEvent}/>
+                    <Input className="input-field" onSubmit={this.addMessage} onChange={this.sendTypingEvent} replyingTo={this.state.messageToSend}/>
                     <UploadFile onSubmit={this.uploadFile} />
                     <ul className="colors-popup">
                     {showColorPicker ? (

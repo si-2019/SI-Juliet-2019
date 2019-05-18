@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import '../styles/MessageList.css';
-import { MdFileDownload, MdDelete } from 'react-icons/md'
+import { MdFileDownload, MdDelete } from 'react-icons/md';
+import { IconButton, Tooltip } from '@material-ui/core';
+import { Reply, Place } from '@material-ui/icons';
 
 class MessageList extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
 
         this.state = {
@@ -14,7 +16,7 @@ class MessageList extends Component {
             messages: []
         }
 
-        props.messages.forEach(function(value){
+        props.messages.forEach(function (value) {
             this.downloadStyleArray.push(false);
             this.deleteStyleArray.push(false);
         })
@@ -26,18 +28,23 @@ class MessageList extends Component {
         this.downloadHover = this.downloadHover.bind(this);
         this.deleteHover = this.deleteHover.bind(this);
         this.handlePinMessage = this.handlePinMessage.bind(this);
+        this.replyToMessage = this.replyToMessage.bind(this);
     }
 
-    handlePinMessage (message) {
+    handlePinMessage(message) {
         this.props.pinMessage(message);
+    }
+
+    replyToMessage(message) {
+        this.props.replyToMessage(message);
     }
 
     scrollToBottom = () => {
         this.messagesEnd.scrollIntoView({ behavior: "smooth" });
     }
 
-    componentWillMount(){
-        if(this.props.currentId === 'admin@admin')
+    componentWillMount() {
+        if (this.props.currentId === 'admin@admin')
             this.setState({
                 adminUser: true
             })
@@ -48,23 +55,23 @@ class MessageList extends Component {
         this.setState({
             messages: this.props.messages
         })
-    } 
-
-    componentWillReceiveProps(nextProps){
-        if(this.props.messages !== nextProps.messages || !this.state.messages.length) this.scrollToBottom();
     }
-        
-    handleDownloadClick(message){
+
+    componentWillReceiveProps(nextProps) {
+        if (this.props.messages !== nextProps.messages || !this.state.messages.length) this.scrollToBottom();
+    }
+
+    handleDownloadClick(message) {
         this.props.downloadClick(
             message.text.substr(message.text.indexOf(':') + 2, message.text.length)
         )
     }
 
-    handleDeleteClick(message, index){
+    handleDeleteClick(message, index) {
         this.props.deleteClick(message, index);
     }
 
-    downloadHover(index){
+    downloadHover(index) {
         let arrTmp = this.state.downloadStyleArray;
         arrTmp[index] = !arrTmp[index];
 
@@ -74,7 +81,7 @@ class MessageList extends Component {
 
     }
 
-    deleteHover(index){
+    deleteHover(index) {
         let listTmp = this.state.deleteStyleArray;
         listTmp[index] = !listTmp[index];
 
@@ -88,48 +95,62 @@ class MessageList extends Component {
             <div className="container">
                 <ul style={listStyle} className="list-group message-list">
                     {this.props.messages.map((message, index) => (
-                        <li className="list-group-item" style={messageStyle} key={index}>
+                        <li onMouseEnter={this.showMessageActions} onMouseLeave={this.hideMessageActions}
+                            className="list-group-item" style={messageStyle} key={index}>
                             <h4 className="message-sender" onClick={this.props.openPrivateChat}>{message.senderId}</h4>
-                            <p style={messageTextStyle} className="message-text" onClick={() => this.handlePinMessage(message)}>{message.text}</p>
+                            <p style={messageTextStyle} className="message-text" >
+                                {message.text}
+                                <Tooltip title="Pinuj poruku">
+                                    <IconButton onClick={() => this.handlePinMessage(message)} 
+                                     style={{marginLeft: '1rem'}}>
+                                        <Place />
+                                    </IconButton>
+                                </Tooltip>
+                                <Tooltip title="Odgovori na poruku">
+                                    <IconButton onClick={() => this.replyToMessage(message)} style={{marginLeft: '-1rem'}}>
+                                        <Reply />
+                                    </IconButton>
+                                </Tooltip>
+                            </p>
                             {
-                                message.text.substr(0,16) === 'Downloaduj file:' ?
-                                <div style={wrapperStyle}>
-                                    <div style={{flex: 1}}>
-                                        <MdFileDownload size='2em' onClick={() => {this.handleDownloadClick(message)}} style={downloadStyle}
-                                            onMouseEnter={() => this.downloadHover(index)} onMouseLeave={() => this.downloadHover(index)} />
+                                message.text.substr(0, 16) === 'Downloaduj file:' ?
+                                    <div style={wrapperStyle}>
+                                        <div style={{ flex: 1 }}>
+                                            <MdFileDownload size='2em' onClick={() => { this.handleDownloadClick(message) }} style={downloadStyle}
+                                                onMouseEnter={() => this.downloadHover(index)} onMouseLeave={() => this.downloadHover(index)} />
 
-                                        <div className="text-primary" style={this.state.downloadStyleArray[index] ? hintVisible : hintHidden}>
-                                            Download file
+                                            <div className="text-primary" style={this.state.downloadStyleArray[index] ? hintVisible : hintHidden}>
+                                                Download file
                                         </div>
-                                    </div>
+                                        </div>
 
-                                    {
-                                        message.senderId === this.props.currentId || this.state.adminUser ? 
-                                        <div style={{flex: 1, alignItems: 'right'}}>
-                                            <div style={{float: "right"}}>
-                                                <MdDelete size='2em' onClick={() => {this.handleDeleteClick(message, index)}} style={deleteStyle}
-                                                    onMouseEnter={() => this.deleteHover(index)} onMouseLeave={() => this.deleteHover(index)}/>
+                                        {
+                                            message.senderId === this.props.currentId || this.state.adminUser ?
+                                                <div style={{ flex: 1, alignItems: 'right' }}>
+                                                    <div style={{ float: "right" }}>
+                                                        <MdDelete size='2em' onClick={() => { this.handleDeleteClick(message, index) }} style={deleteStyle}
+                                                            onMouseEnter={() => this.deleteHover(index)} onMouseLeave={() => this.deleteHover(index)} />
 
-                                                <div className="text-primary" style={this.state.deleteStyleArray[index] ? hintVisible : hintHidden}>
-                                                    Delete file
+                                                        <div className="text-primary" style={this.state.deleteStyleArray[index] ? hintVisible : hintHidden}>
+                                                            Delete file
                                                 </div>
-                                            </div>
-                                        </div>
-                                        :
-                                        null
-                                    }
-                                </div>
-                                :
-                                null
+                                                    </div>
+                                                </div>
+                                                :
+                                                null
+                                        }
+                                    </div>
+                                    :
+                                    null
                             }
-                        </li>                        
-                        ))
-                    }                    
+                        </li>
+                    ))
+                    }
                     <div style={{ float: "left", clear: "both" }}
                         ref={(el) => { this.messagesEnd = el; }}>
                     </div>
                 </ul>
-                
+
             </div>
         )
     }
