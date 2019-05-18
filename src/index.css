@@ -88,7 +88,7 @@ body {
   margin-top: 0;
   text-align: center;
   border-bottom: 3px solid grey;
-  background-color: #5E0565;
+  /*background-color: #5E0565;*/
 }
 
 .message-list  {
@@ -143,7 +143,19 @@ body {
   align-items: center;
   justify-content: center;
 }
-
+.toggle-colors {
+  border: none;
+  width: 50px;
+  height: 50px;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.toggle-colors svg {
+  width: 28px;
+  height: 28px;
+}
 .toggle-emoji svg {
   width: 28px;
   height: 28px;
@@ -156,3 +168,12 @@ body {
   left: auto !important; 
   top: auto !important; 
 }
+.colors-popup {
+  bottom: 1pc !important; 
+  transform: none !important; 
+  position: fixed !important; 
+  right: auto !important; 
+  left: auto !important; 
+  top: auto !important; 
+}
+
