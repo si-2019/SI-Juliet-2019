@@ -94,7 +94,7 @@ class MessageList extends Component {
                             <p style={messageTextStyle} className="message-text" onClick={() => this.handlePinMessage(message)}>
                                 {message.text}
                             </p>
-                            <p> { format(new Date(message.createdAt), 'DD.MM.YYYY, HH:MM') } </p>
+                            <p className="timeDiv"> { format(new Date(message.createdAt), 'DD.MM.YYYY, HH:MM') } </p>
                             {
                                 message.text.substr(0,16) === 'Downloaduj file:' ?
                                 <div style={wrapperStyle}>
