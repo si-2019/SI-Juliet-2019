@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import '../styles/MessageList.css';
 import { MdFileDownload, MdDelete } from 'react-icons/md'
+import { format } from 'date-fns'
 
 class MessageList extends Component {
     constructor(props){
@@ -90,7 +91,10 @@ class MessageList extends Component {
                     {this.props.messages.map((message, index) => (
                         <li className="list-group-item" style={messageStyle} key={index}>
                             <h4 className="message-sender" onClick={this.props.openPrivateChat}>{message.senderId}</h4>
-                            <p style={messageTextStyle} className="message-text" onClick={() => this.handlePinMessage(message)}>{message.text}</p>
+                            <p style={messageTextStyle} className="message-text" onClick={() => this.handlePinMessage(message)}>
+                                {message.text}
+                            </p>
+                            <p className="timeDiv"> { format(new Date(message.createdAt), 'DD.MM.YYYY, HH:MM') } </p>
                             {
                                 message.text.substr(0,16) === 'Downloaduj file:' ?
                                 <div style={wrapperStyle}>
