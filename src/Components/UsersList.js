@@ -20,8 +20,8 @@ class UsersList extends Component {
         if(this.props.users){
             return(
                 <div style={{color: 'white'}}>                
-                <h1 style={{marginTop: '5rem', marginBottom: '1rem'}}>Users</h1>
-                    <ul>
+                <h2 style={{marginTop: '5rem', marginBottom: '1rem'}}>Users</h2>
+                    <ul style={{overflowY: 'scroll', overflowX: 'hidden', height:'400px'}}>
                     <input placeholder="Pretraži korisnike" value={this.state.input} type="text" onChange={this.onChangeHandler.bind(this)}/>
                         <h4>Online users:</h4>
                         {listSrc.filter((user) => user.presence.state === 'online').map((user, index) => {
@@ -34,6 +34,7 @@ class UsersList extends Component {
                             className="user" key={index} style={{cursor: 'pointer'}}> {user.name} </li>
                         })}
                     </ul>
+                    
                 </div>
             )
         }
