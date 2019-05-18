@@ -121,7 +121,48 @@ app.get('/roles', (req, res) => {
   })
   .catch(err => res.send(err))
 })
-
-
-
+app.get('/colorscheme/:name', (req, res) => {
+  let chatColorsTabela = db.chatColorScheme;
+  chatColorsTabela.count({
+    where: {
+      userId: req.params.name
+    }
+  }).then(data => {
+      res.status(200).json(data);
+    })
+    .catch(e => res.status(400).send(e))
+});
+app.get('/colorschemeUser/:name', (req, res) => {
+  let chatColorsTabela = db.chatColorScheme;
+  chatColorsTabela.findOne({
+    where: {
+      userId: req.params.name
+    }
+  }).then(data => {
+      res.status(200).json(data);
+    })
+    .catch(e => res.status(400).send(e))
+});
+app.post('/colorscheme', (req, res) => {
+  let chatColorsTabela = db.chatColorScheme;
+  let newRow = {
+    userId: req.body.userId,
+    colorId: req.body.colorId.hex,
+  }
+  console.log(newRow);
+  chatColorsTabela.create(newRow)
+  .then(x => console.log(x))
+  .catch(err => res.send(err));
+});
+app.delete('/colorscheme/:name', (req, res) => {
+  let chatColorsTabela = db.chatColorScheme;
+  chatColorsTabela.destroy({
+    where: {
+      userId: req.params.name
+    }
+  }).then(data => {
+      res.status(200).json(data);
+    })
+    .catch(e => res.status(400).send(e))
+});
 app.listen(31910, () => console.log('Server pokrenut na portu 31910'));

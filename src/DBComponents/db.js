@@ -19,5 +19,6 @@ db.sequelize = sequelize;
 //import modela
 db.files = sequelize.import(path.join(__dirname, 'Files.js'));
 db.pinovanePoruke = sequelize.import(path.join(__dirname, 'Pinovane.js'));
+db.chatColorScheme = sequelize.import(path.join(__dirname, 'ColorScheme.js'));
 
 module.exports = db;

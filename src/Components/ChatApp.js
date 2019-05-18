@@ -12,7 +12,8 @@ import CreateRoom from './CreateRoom';
 import UploadFile from './UploadFile';
 import Axios from 'axios';
 import Chatkit from '@pusher/chatkit-server';
-
+import {SwatchesPicker} from 'react-color';
+import { Droplet } from 'react-feather';
 let predmeti = require('../predmeti.json');
 function findPredmetId(nameOfPredmet) {
     for(var i = 0; i < Object.keys(predmeti).length; i++) {
@@ -36,12 +37,14 @@ class ChatApp extends Component {
         this.state = {
             currentUser: null,
             botUser: null,
-            currentRoom: null,
+            currentRoom: {},
             messages: [],
             users: [],
             rooms: [],
             typingUsers: [], 
-            pinnedMessages: []
+            pinnedMessages: [], 
+            colorForUser: null, 
+            showColorPicker: false
         }
         this.addMessage = this.addMessage.bind(this);
         this.openPrivateChat = this.openPrivateChat.bind(this);
@@ -53,6 +56,13 @@ class ChatApp extends Component {
         this.downloadClick = this.downloadClick.bind(this);
         this.deleteClick = this.deleteClick.bind(this);
         this.pinMessage = this.pinMessage.bind(this);
+        this.handleColorChange = this.handleColorChange.bind(this);
+        this.toggleColorPicker = this.toggleColorPicker.bind(this);
+    }
+    toggleColorPicker() {
+        this.setState({
+            showColorPicker: !this.state.showColorPicker,
+        });
     }
     
     componentWillMount() {
@@ -81,7 +91,23 @@ class ChatApp extends Component {
         })
         chatManager.connect()
             .then(currentUser => {
-                this.setState({ currentUser: currentUser })
+                this.setState({ currentUser: currentUser }, () => { 
+                    console.log(this.state.currentUser.id);
+                    Axios.get('http://localhost:31910/colorscheme/' + this.state.currentUser.id).then(res => {
+                        if (res.data == 0) { // korisnik nema svoj colorscheme
+                            this.setState({
+                                colorForUser: null
+                            });
+                        } else { 
+                            Axios.get('http://localhost:31910/colorschemeUser/' + this.state.currentUser.id).then(res => {
+                                console.log(res.data.colorId);
+                                this.setState({
+                                    colorForUser: res.data.colorId
+                                })
+                            });
+                        }
+                    }) 
+                })
             })
             .then(() => {
                 this.initRooms();
@@ -100,6 +126,7 @@ class ChatApp extends Component {
                 //localStorage.setItem('PinovanePoruke', JSON.stringify(this.state.pinnedMessages));
             });
         }).catch(e => {console.log(e)});
+        
     }
 
     initRooms() {
@@ -312,32 +339,39 @@ class ChatApp extends Component {
                 Axios.delete(url2).then(res => {}).catch(e => {console.log(e)});
             } 
         });
-        /*
-
-        if(!this.state.pinnedMessages.includes(message)) {
-            
-            
-            console.log("Pinnaj je");
-            
-        }
-        else {  
-            console.log("nemoj");
-            this.setState({
-                pinnedMessages: this.state.pinnedMessages.filter(function(m) { 
-                    console.log(m.id + ' ?? ' + message.id);
-                    return m != message || m.id != message.id
-                }
-            )}, () => { 
-                console.log(this.state.pinnedMessages); 
-                //localStorage.setItem('PinovanePoruke', JSON.stringify(this.state.pinnedMessages)); 
-            });
-        }    */
     }
-
+    handleColorChange(color, event) {
+        console.log(color);
+        this.setState({
+            colorForUser: color.hex,
+        }, () => {
+            Axios.get('http://localhost:31910/colorscheme/' + this.state.currentUser.id).then(res => {
+                if (res.data == 0) {
+                    console.log("Tu sam");
+                    Axios.post('http://localhost:31910/colorscheme', {
+                        colorId: color, 
+                        userId: this.state.currentUser.id
+                    });
+                } else {
+                    Axios.delete('http://localhost:31910/colorscheme/' + this.state.currentUser.id).then(res => {
+                        Axios.post('http://localhost:31910/colorscheme', {
+                            colorId: color, 
+                            userId: this.state.currentUser.id
+                        });
+                    }).catch(e => console.log(e));
+                };
+            })
+            
+        });
+    }
     render() {
+        let colorScheme = this.state.colorForUser != null ? this.state.colorForUser : "#5E0565";
+        const {
+            showColorPicker,
+        } = this.state;
         return (
             <div className="chat-app-wrapper">
-                <div className="room-wrapper">
+                <div style={{'background': colorScheme}} className="room-wrapper">
                     <RoomList room={this.state.currentRoom} joinRoomById={this.joinRoomById} rooms={this.state.rooms} />
                     <CreateRoom createRoom={this.createRoom}/>
                     <div style={{
@@ -355,15 +389,27 @@ class ChatApp extends Component {
                 </div>
                 </div>
                 <div className="msg-wrapper">
-                    <h2 className="header">Let's Talk</h2>
+                    <h2 style={{'background': colorScheme}} className="header">Let's Talk</h2>
                     <MessageList currentId={this.props.currentId} 
                         messages={this.state.messages} pinMessage={this.pinMessage} downloadClick={this.downloadClick} deleteClick={this.deleteClick}/>
                     <TypingIndicator typingUsers={this.state.typingUsers} />
                     
                     <Input className="input-field" onSubmit={this.addMessage} onChange={this.sendTypingEvent}/>
                     <UploadFile onSubmit={this.uploadFile} />
+                    <ul className="colors-popup">
+                    {showColorPicker ? (
+                        <SwatchesPicker onChange={this.handleColorChange}/> 
+                    ) : null}
+                    </ul>
+                    <button
+                        type="button"
+                        className="toggle-colors"
+                        onClick={this.toggleColorPicker}>
+                        <Droplet />
+                    </button>
+                    
                 </div>
-                <div className="list-wrapper">
+                <div style={{'background': colorScheme}} className="list-wrapper">
                     <UsersList openPrivateChat={this.openPrivateChat} users={this.state.users} />
                 </div>
             </div>
