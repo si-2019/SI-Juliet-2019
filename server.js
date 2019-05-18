@@ -15,6 +15,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(cors());
 
+app.get('/files', (req, res) => {
+  let filesTable = db.files;
+
+  filesTable.findAll({}).then(data => res.status(200).json(data))
+    .catch(err => res.send(err));
+})
+
 app.post('/upload', upload.any(), (req, res) => {
     let filesTable = db.files;
 

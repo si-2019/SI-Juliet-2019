@@ -373,15 +373,12 @@ class ChatApp extends Component {
                 <div style={{'background': colorScheme}} className="room-wrapper">
                     <RoomList room={this.state.currentRoom} joinRoomById={this.joinRoomById} rooms={this.state.rooms} />
                     <CreateRoom createRoom={this.createRoom}/>
-                    <div style={{
-                        'overflow-y': 'scroll', 
-                        'height': '250px'
-                    }}>
-                        <h2 style={{marginTop: '1rem', marginBottom: '1rem'}}>Pinned messages</h2>
-                        <ul>
+                    <div>
+                        <h3 style={{marginTop: '1rem', marginBottom: '1rem'}}>Pinned messages</h3>
+                        <ul style={{'max-height': '200px', overflowY: 'scroll', overflowWrap: 'break-word'}}>
                             {this.state.pinnedMessages.filter(message => message.roomId == this.state.currentRoom.id).map(message => (
                                 <div style={{
-                                    'border' : '1px solid white',
+                                    'border' : '1px solid white'
                                 }}><li>{message.senderId + ' : ' + message.text}</li></div>
                             ))}
                         </ul>
@@ -410,7 +407,7 @@ class ChatApp extends Component {
                 </div>
                 <div style={{'background': colorScheme}} className="list-wrapper">
                     <UsersList openPrivateChat={this.openPrivateChat} users={this.state.users} />
-                    <FileSidebar dummy={'Hahaha'}/>
+                    <FileSidebar downloadClick={this.downloadClick}/>
                 </div>
             </div>
         )

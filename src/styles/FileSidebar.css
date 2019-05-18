@@ -1,0 +1,9 @@
+.file {
+    padding: 1% 2% 1% 1%;
+    overflow-wrap: break-word;
+    cursor: pointer;
+}
+
+.file:hover {
+    background-color: #7856AD
+}
