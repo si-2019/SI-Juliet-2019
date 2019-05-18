@@ -3,6 +3,7 @@ import '../styles/MessageList.css';
 import { MdFileDownload, MdDelete } from 'react-icons/md';
 import { IconButton, Tooltip } from '@material-ui/core';
 import { Reply, Place } from '@material-ui/icons';
+import { format } from 'date-fns'
 
 class MessageList extends Component {
     constructor(props) {
@@ -112,6 +113,7 @@ class MessageList extends Component {
                                     </IconButton>
                                 </Tooltip>
                             </p>
+                            <p className="timeDiv"> { format(new Date(message.createdAt), 'DD.MM.YYYY, HH:MM') } </p>
                             {
                                 message.text.substr(0, 16) === 'Downloaduj file:' ?
                                     <div style={wrapperStyle}>

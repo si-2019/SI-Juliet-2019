@@ -18,3 +18,10 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #5E0565; 
   }
+
+  .timeDiv{
+    border: 1px solid black;
+    border-radius: 5%;
+    text-align: center;
+    width: 25%
+  }
