@@ -3,7 +3,7 @@ import '../styles/MessageList.css';
 import { MdFileDownload, MdDelete } from 'react-icons/md';
 import { IconButton, Tooltip } from '@material-ui/core';
 import { Reply, Place } from '@material-ui/icons';
-import { format } from 'date-fns'
+import { format } from 'date-fns';
 
 class MessageList extends Component {
     constructor(props) {
