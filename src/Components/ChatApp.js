@@ -11,10 +11,12 @@ import '../styles/ChatApp.css';
 import CreateRoom from './CreateRoom';
 import UploadFile from './UploadFile';
 import Axios from 'axios';
-import Chatkit from '@pusher/chatkit-server';
 import {SwatchesPicker} from 'react-color';
 import { Droplet } from 'react-feather';
+import FileSidebar from './FileSidebar';
+
 let predmeti = require('../predmeti.json');
+
 function findPredmetId(nameOfPredmet) {
     for(var i = 0; i < Object.keys(predmeti).length; i++) {
         for(var j = 0; j < Object.keys(predmeti[i].name).length; j++) {
@@ -25,11 +27,6 @@ function findPredmetId(nameOfPredmet) {
     }
     return -1; 
 }
-
-const chatkit = new Chatkit({
-    instanceLocator: instanceLocator,
-    key: secretKey
-  })
 
 class ChatApp extends Component {
     constructor(props) {
@@ -60,6 +57,7 @@ class ChatApp extends Component {
         this.toggleColorPicker = this.toggleColorPicker.bind(this);
     }
     toggleColorPicker() {
+        console.log(this.state.showColorPicker);
         this.setState({
             showColorPicker: !this.state.showColorPicker,
         });
@@ -68,6 +66,7 @@ class ChatApp extends Component {
     componentWillMount() {
         
     }
+
     componentDidMount() {
         const chatManager = new ChatManager({
             instanceLocator: instanceLocator,
@@ -343,7 +342,7 @@ class ChatApp extends Component {
     handleColorChange(color, event) {
         console.log(color);
         this.setState({
-            colorForUser: color.hex,
+            colorForUser: color.hex
         }, () => {
             Axios.get('http://localhost:31910/colorscheme/' + this.state.currentUser.id).then(res => {
                 if (res.data == 0) {
@@ -378,13 +377,13 @@ class ChatApp extends Component {
                         'overflow-y': 'scroll', 
                         'height': '250px'
                     }}>
-                        <p> Pinovane poruke: </p>
+                        <h2 style={{marginTop: '1rem', marginBottom: '1rem'}}>Pinned messages</h2>
                         <ul>
-                        {this.state.pinnedMessages.filter(message => message.roomId == this.state.currentRoom.id).map(message => (
-                            <div style={{
-                                'border' : '1px solid white',
-                            }}><li>{message.senderId + ' : ' + message.text}</li></div>
-                        ))}
+                            {this.state.pinnedMessages.filter(message => message.roomId == this.state.currentRoom.id).map(message => (
+                                <div style={{
+                                    'border' : '1px solid white',
+                                }}><li>{message.senderId + ' : ' + message.text}</li></div>
+                            ))}
                         </ul>
                 </div>
                 </div>
@@ -396,10 +395,10 @@ class ChatApp extends Component {
                     
                     <Input className="input-field" onSubmit={this.addMessage} onChange={this.sendTypingEvent}/>
                     <UploadFile onSubmit={this.uploadFile} />
-                    <ul className="colors-popup">
-                    {showColorPicker ? (
+                    <ul className="colors-popup" onMouseLeave={this.toggleColorPicker} >
+                    {this.state.showColorPicker ? 
                         <SwatchesPicker onChange={this.handleColorChange}/> 
-                    ) : null}
+                    : null}
                     </ul>
                     <button
                         type="button"
@@ -411,6 +410,7 @@ class ChatApp extends Component {
                 </div>
                 <div style={{'background': colorScheme}} className="list-wrapper">
                     <UsersList openPrivateChat={this.openPrivateChat} users={this.state.users} />
+                    <FileSidebar dummy={'Hahaha'}/>
                 </div>
             </div>
         )
