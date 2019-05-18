@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import '../styles/MessageList.css';
 import { MdFileDownload, MdDelete } from 'react-icons/md'
-import Axios from 'axios';
 
 class MessageList extends Component {
     constructor(props){
@@ -11,7 +10,8 @@ class MessageList extends Component {
             downloadHover: false,
             downloadStyleArray: [],
             deleteStyleArray: [],
-            adminUser: false
+            adminUser: false,
+            messages: []
         }
 
         props.messages.forEach(function(value){
@@ -27,27 +27,33 @@ class MessageList extends Component {
         this.deleteHover = this.deleteHover.bind(this);
         this.handlePinMessage = this.handlePinMessage.bind(this);
     }
+
     handlePinMessage (message) {
         this.props.pinMessage(message);
     }
+
     scrollToBottom = () => {
         this.messagesEnd.scrollIntoView({ behavior: "smooth" });
     }
 
+    componentWillMount(){
+        if(this.props.currentId === 'admin@admin')
+            this.setState({
+                adminUser: true
+            })
+    }
+
     componentDidMount() {
         localStorage.clear();
-        this.scrollToBottom();
+        this.setState({
+            messages: this.props.messages
+        })
     } 
 
-    
-    componentDidUpdate() {
-        this.scrollToBottom();
-    } 
-    componentWillUnmount() {
-        
+    componentWillReceiveProps(nextProps){
+        if(this.props.messages !== nextProps.messages || !this.state.messages.length) this.scrollToBottom();
     }
-    
-    
+        
     handleDownloadClick(message){
         this.props.downloadClick(
             message.text.substr(message.text.indexOf(':') + 2, message.text.length)
