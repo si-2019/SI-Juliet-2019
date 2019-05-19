@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
         messageId: {
             type: Sequelize.STRING,
             unique: true
-        }
+        },
         roomId: Sequelize.STRING, 
         senderId: Sequelize.STRING, 
         text: Sequelize.STRING
