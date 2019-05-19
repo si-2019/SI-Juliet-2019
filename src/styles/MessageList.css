@@ -25,3 +25,7 @@
     text-align: center;
     width: 25%
   }
+
+  .actions {
+    margin-bottom: -1rem;
+  }

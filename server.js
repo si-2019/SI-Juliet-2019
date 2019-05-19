@@ -6,6 +6,7 @@ const db = require('./src/DBComponents/db.js');
 const app = express();
 const upload = multer();
 const Chatkit = require('@pusher/chatkit-server')
+const sequelize = require('sequelize');
 
 db.sequelize.sync()
 .then(() => console.log('Konektovano na bazu.'))
@@ -172,4 +173,47 @@ app.delete('/colorscheme/:name', (req, res) => {
     })
     .catch(e => res.status(400).send(e))
 });
+
+app.get('/thread/:messageId', (req, res) => {
+  db.threads.findOne({
+    where: {
+      messageId: req.param('messageId')
+    }
+  }).then(result => {
+    db.threadMessage.findAll({
+      where: {
+        threadId: result.id
+      }
+    }).then(messages => {
+      res.status(200).json(messages);
+    });
+  }).catch(err => {
+    res.status(400).send(err);
+  })
+});
+
+app.post('/thread', (req, res) => {
+  db.threads.create({
+    messageId: req.body.messageId
+  }).then(() => {
+      res.status(200).send("New thread created")
+  }).catch(err => res.status(400).send(err));
+})
+
+app.put('/thread/:messageId', (req, res) => {
+  db.threads.findOne({
+    where: {
+      messageId: req.param('messageId')
+    }
+  }).then(result => {
+    db.threadMessage.create({
+        sender: req.body.sender,
+        text: req.body.text,
+        threadId: result.id
+    }).then(message => {
+      res.status(200).send(JSON.stringify(message));
+    });
+  });
+});
+
 app.listen(31910, () => console.log('Server pokrenut na portu 31910'));

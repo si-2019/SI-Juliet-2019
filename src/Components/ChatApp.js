@@ -59,7 +59,6 @@ class ChatApp extends Component {
         this.handleReply = this.handleReply.bind(this);
     }
     toggleColorPicker() {
-        console.log(this.state.showColorPicker);
         this.setState({
             showColorPicker: !this.state.showColorPicker,
         });
@@ -87,13 +86,11 @@ class ChatApp extends Component {
         
         chatManagerBot.connect().then(currentUser => {
             this.setState({botUser: currentUser})
-            console.log(currentUser);
             return currentUser;
         })
         chatManager.connect()
             .then(currentUser => {
                 this.setState({ currentUser: currentUser }, () => { 
-                    console.log(this.state.currentUser.id);
                     Axios.get('http://localhost:31910/colorscheme/' + this.state.currentUser.id).then(res => {
                         if (res.data == 0) { // korisnik nema svoj colorscheme
                             this.setState({
@@ -101,7 +98,6 @@ class ChatApp extends Component {
                             });
                         } else { 
                             Axios.get('http://localhost:31910/colorschemeUser/' + this.state.currentUser.id).then(res => {
-                                console.log(res.data.colorId);
                                 this.setState({
                                     colorForUser: res.data.colorId
                                 })
@@ -117,13 +113,11 @@ class ChatApp extends Component {
                 this.joinRoomById(testRoomId);
             })
         const url = 'http://localhost:31910/pinovanePoruke';
-            //console.log(url);
+            
         Axios.get(url).then(res => {
-            console.log(res.data);
             this.setState({ 
                 pinnedMessages: this.state.pinnedMessages.concat(res.data)
             }, () => {
-                console.log(this.state.pinnedMessages);
                 //localStorage.setItem('PinovanePoruke', JSON.stringify(this.state.pinnedMessages));
             });
         }).catch(e => {console.log(e)});
@@ -213,7 +207,7 @@ class ChatApp extends Component {
                 var name = text.substr(11);
                 var predmetGodina = name.split(", ");
                 var predmetId = findPredmetId(predmetGodina[0]);
-                if (predmetId != -1) {
+                if (predmetId !== -1) {
                     this.state.botUser.sendMessage({
                         text: "https://zamger.etf.unsa.ba/?sta=izvjestaj/predmet&predmet=" + predmetId + "&ag=" + 
                         (parseInt(predmetGodina[1]) - 2005) + "&sm_arhiva=0",
@@ -251,7 +245,6 @@ class ChatApp extends Component {
         fData.append('sender', this.state.currentUser.id);
         fData.append('room', this.state.currentRoom.id);
 
-        console.log(fData);
         let config = {
             header : {
               'Content-Type' : 'multipart/form-data'
@@ -262,16 +255,13 @@ class ChatApp extends Component {
             window.alert('Uspješno upisano u bazu!');
             this.addMessage('Downloaduj file: ' + file.name);
             
-            console.log(res);
         }).catch(() => window.alert('Greška...'));
     }
 
     downloadClick(name){
         const url = 'http://localhost:31910/download/' + name;
-        console.log(url);
 
         Axios.get(url).then(res => {
-            console.log(res);
             let resultByte = res.data.file.data;
             var bytes = new Uint8Array(resultByte);
             var blob = new Blob([bytes], {type: res.data.mimetype});
@@ -287,7 +277,6 @@ class ChatApp extends Component {
         Axios.post('http://localhost:31910/deleteMessage', {
             message_id: message.id
         })
-        .then(res => console.log(res))
         .catch(e => console.log(e));
 
         let msgTmp = this.state.messages.slice(0, index).concat(this.state.messages.slice(index + 1, this.state.messages.length));
@@ -316,7 +305,6 @@ class ChatApp extends Component {
                 this.setState({ 
                     pinnedMessages: this.state.pinnedMessages.concat([trenutnaPoruka])
                 }, () => {
-                    console.log(this.state.pinnedMessages);
                     //localStorage.setItem('PinovanePoruke', JSON.stringify(this.state.pinnedMessages));
                     Axios.post('http://localhost:31910/pinujPoruku', {
                         messageCreatedAt: message.createdAt,
@@ -333,11 +321,9 @@ class ChatApp extends Component {
             else { // postoji u bazi
                 this.setState({
                     pinnedMessages: this.state.pinnedMessages.filter(function(m) { 
-                        console.log(m.messageId + ' ?? ' + message.id);
                         return m.messageId != message.id;
                     }
                 )}, () => { 
-                    console.log(this.state.pinnedMessages); 
                     //localStorage.setItem('PinovanePoruke', JSON.stringify(this.state.pinnedMessages)); 
                 });
                 const url2 = 'http://localhost:31910/pinujPoruku/' + message.id;
@@ -346,13 +332,11 @@ class ChatApp extends Component {
         });
     }
     handleColorChange(color, event) {
-        console.log(color);
         this.setState({
             colorForUser: color.hex
         }, () => {
             Axios.get('http://localhost:31910/colorscheme/' + this.state.currentUser.id).then(res => {
                 if (res.data == 0) {
-                    console.log("Tu sam");
                     Axios.post('http://localhost:31910/colorscheme', {
                         colorId: color, 
                         userId: this.state.currentUser.id
@@ -381,9 +365,9 @@ class ChatApp extends Component {
                     <CreateRoom createRoom={this.createRoom}/>
                     <div>
                         <h3 style={{marginTop: '1rem', marginBottom: '1rem'}}>Pinned messages</h3>
-                        <ul style={{'max-height': '200px', overflowY: 'scroll', overflowWrap: 'break-word'}}>
-                            {this.state.pinnedMessages.filter(message => message.roomId == this.state.currentRoom.id).map(message => (
-                                <div style={{
+                        <ul style={{maxHeight: '200px', overflowY: 'scroll', overflowWrap: 'break-word'}}>
+                            {this.state.pinnedMessages.filter(message => message.roomId == this.state.currentRoom.id).map((message,index) => (
+                                <div key={index} style={{
                                     'border' : '1px solid white'
                                 }}><li>{message.senderId + ' : ' + message.text}</li></div>
                             ))}

@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import '../styles/MessageList.css';
 import { MdFileDownload, MdDelete } from 'react-icons/md';
 import { IconButton, Tooltip } from '@material-ui/core';
-import { Reply, Place } from '@material-ui/icons';
+import { Reply, Place, Message } from '@material-ui/icons';
 import { format } from 'date-fns';
+import ThreadDialog from './ThreadDialog';
+import Axios from 'axios';
 
 class MessageList extends Component {
     constructor(props) {
@@ -14,15 +16,16 @@ class MessageList extends Component {
             downloadStyleArray: [],
             deleteStyleArray: [],
             adminUser: false,
-            messages: []
+            messages: [],
+            openThread: false,
+            selectedMessage: {},
+            threadMessages: []
         }
 
         props.messages.forEach(function (value) {
             this.downloadStyleArray.push(false);
             this.deleteStyleArray.push(false);
-        })
-
-        console.log(props.currentId);
+        });
 
         this.handleDownloadClick = this.handleDownloadClick.bind(this);
         this.handleDeleteClick = this.handleDeleteClick.bind(this);
@@ -38,6 +41,47 @@ class MessageList extends Component {
 
     replyToMessage(message) {
         this.props.replyToMessage(message);
+    }
+
+    handleDialogOpen = (message) => {
+        Axios.post(`http://localhost:31910/thread`, { messageId: message.id })
+            .then(() => {
+                this.setState({ threadMessages: [] });
+                this.getThreadMessages(message);
+            }).catch(err => {
+                if (err.response.status === 400) {
+                    this.setState({ threadMessages: [] });
+                    this.getThreadMessages(message);
+                }
+            })
+    }
+
+    handleDialogClose = () => {
+        this.setState({ openThread: false });
+    }
+
+    getThreadMessages = (message) => {
+        Axios.get(`http://localhost:31910/thread/${message.id}`)
+            .then(res => {
+                this.setState({ openThread: true, selectedMessage: message, threadMessages: res.data });
+            }).catch(err => {
+                console.error(err);
+            });
+    }
+
+    addThreadMessage = (message) => {
+        Axios.put(`http://localhost:31910/thread/${this.state.selectedMessage.id}`, {
+            sender: this.props.currentId,
+            text: message
+        }).then(res => {
+            console.log(res);
+            let newMessage = {
+                sender: res.data.sender,
+                text: res.data.text,
+                threadId: res.data.threadId
+            }
+            this.setState({ threadMessages: [...this.state.threadMessages, newMessage ]});
+        });
     }
 
     scrollToBottom = () => {
@@ -96,24 +140,41 @@ class MessageList extends Component {
             <div className="container">
                 <ul style={listStyle} className="list-group message-list">
                     {this.props.messages.map((message, index) => (
-                        <li onMouseEnter={this.showMessageActions} onMouseLeave={this.hideMessageActions}
+                        <li
                             className="list-group-item" style={messageStyle} key={index}>
                             <h4 className="message-sender" onClick={this.props.openPrivateChat}>{message.senderId}</h4>
                             <p style={messageTextStyle} className="message-text" >
                                 {message.text}
+                            </p>
+                            <div className="actions">
                                 <Tooltip title="Pinuj poruku">
-                                    <IconButton onClick={() => this.handlePinMessage(message)} 
-                                     style={{marginLeft: '1rem'}}>
+                                    <IconButton color="primary" onClick={() => this.handlePinMessage(message)}
+                                        style={{ float: 'right' }}>
                                         <Place />
                                     </IconButton>
                                 </Tooltip>
                                 <Tooltip title="Odgovori na poruku">
-                                    <IconButton onClick={() => this.replyToMessage(message)} style={{marginLeft: '-1rem'}}>
+                                    <IconButton color="primary" onClick={() => this.replyToMessage(message)}
+                                        style={{ float: 'right' }}>
                                         <Reply />
                                     </IconButton>
                                 </Tooltip>
-                            </p>
-                            <p className="timeDiv"> { format(new Date(message.createdAt), 'DD.MM.YYYY, HH:MM') } </p>
+                                <Tooltip title="Pokreni thread">
+                                    <IconButton color="primary" onClick={() => this.handleDialogOpen(message)}
+                                        style={{ float: 'right' }}>
+                                        <Message />
+                                    </IconButton>
+                                </Tooltip>
+                                <ThreadDialog
+                                    open={this.state.openThread}
+                                    onClose={this.handleDialogClose}
+                                    onSubmit={this.addThreadMessage}
+                                    message={this.state.selectedMessage}
+                                    messagelist={this.state.threadMessages}
+                                    current={this.props.currentId}
+                                />
+                            </div>
+                            <p className="timeDiv"> {format(new Date(message.createdAt), 'DD.MM.YYYY, HH:MM')} </p>
                             {
                                 message.text.substr(0, 16) === 'Downloaduj file:' ?
                                     <div style={wrapperStyle}>
