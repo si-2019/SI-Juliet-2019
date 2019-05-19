@@ -25,8 +25,9 @@ class Input extends Component {
     
     constructor(props) {
         super(props);
+        console.log(props);
         this.state = {
-            message: "",
+            message: '',
             showEmojiPicker: false,
         }
         this.handleChange = this.handleChange.bind(this);
@@ -34,6 +35,13 @@ class Input extends Component {
         this.addEmoji = addEmoji.bind(this);
         this.toggleEmojiPicker = toggleEmojiPicker.bind(this);
     }
+
+    componentWillReceiveProps(prevProps) {
+        if(this.props.replyingTo !== prevProps.replyingTo) {
+            this.setState({ message: prevProps.replyingTo });
+        }
+    }
+
     handleChange(e) {
         this.setState({
             message: e.target.value
