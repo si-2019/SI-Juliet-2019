@@ -74,7 +74,6 @@ class MessageList extends Component {
             sender: this.props.currentId,
             text: message
         }).then(res => {
-            console.log(res);
             let newMessage = {
                 sender: res.data.sender,
                 text: res.data.text,
