@@ -25,7 +25,6 @@ class Input extends Component {
     
     constructor(props) {
         super(props);
-        console.log(props);
         this.state = {
             message: '',
             showEmojiPicker: false,
