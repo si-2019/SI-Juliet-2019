@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import '../styles/MessageList.css';
-import { MdFileDownload, MdDelete } from 'react-icons/md';
 import { IconButton, Tooltip } from '@material-ui/core';
-import { Reply, Place, Message } from '@material-ui/icons';
+import { Reply, Place, Message, CloudDownload, Delete } from '@material-ui/icons';
 import { format } from 'date-fns';
 import ThreadDialog from './ThreadDialog';
 import Axios from 'axios';
@@ -153,24 +152,48 @@ class MessageList extends Component {
                                 {message.text}
                             </p>
                             <div className="actions">
-                                <Tooltip title="Pinuj poruku">
+                                {
+                                    message.text.substr(0, 16) === 'Downloaduj file:' ?
+                                    <div>
+                                        <Tooltip title="Download file">
+                                            <IconButton color="primary" onClick={() => this.handleDownloadClick(message)}
+                                                style={{ float: 'right' }}>
+                                                <CloudDownload />
+                                            </IconButton>
+                                        </Tooltip>
+                                        {
+                                            message.senderId === this.props.currentId || this.state.adminUser ?
+                                            <Tooltip title="Delete file">
+                                                <IconButton color="primary" onClick={() => this.handleDeleteClick(message, index)}
+                                                    style={{ float: 'right' }}>
+                                                    <Delete />
+                                                </IconButton>
+                                            </Tooltip>
+                                            : null
+                                        }
+                                    </div>
+                                    : null
+                                }
+
+                                <Tooltip title="Pin message">
                                     <IconButton color="primary" onClick={() => this.handlePinMessage(message)}
                                         style={{ float: 'right' }}>
                                         <Place />
                                     </IconButton>
                                 </Tooltip>
-                                <Tooltip title="Odgovori na poruku">
+                                <Tooltip title="Reply">
                                     <IconButton color="primary" onClick={() => this.replyToMessage(message)}
                                         style={{ float: 'right' }}>
                                         <Reply />
                                     </IconButton>
                                 </Tooltip>
-                                <Tooltip title="Pokreni thread">
+                                <Tooltip title="Start thread">
                                     <IconButton color="primary" onClick={() => this.handleDialogOpen(message)}
                                         style={{ float: 'right' }}>
                                         <Message />
                                     </IconButton>
                                 </Tooltip>
+
                                 <ThreadDialog
                                     open={this.state.openThread}
                                     onClose={this.handleDialogClose}
@@ -180,38 +203,7 @@ class MessageList extends Component {
                                     current={this.props.currentId}
                                 />
                             </div>
-                            <p className="timeDiv"> {format(new Date(message.createdAt), 'DD.MM.YYYY, HH:MM')} </p>
-                            {
-                                message.text.substr(0, 16) === 'Downloaduj file:' ?
-                                    <div style={wrapperStyle}>
-                                        <div style={{ flex: 1 }}>
-                                            <MdFileDownload size='2em' onClick={() => { this.handleDownloadClick(message) }} style={downloadStyle}
-                                                onMouseEnter={() => this.downloadHover(index)} onMouseLeave={() => this.downloadHover(index)} />
-
-                                            <div className="text-primary" style={this.state.downloadStyleArray[index] ? hintVisible : hintHidden}>
-                                                Download file
-                                        </div>
-                                        </div>
-
-                                        {
-                                            message.senderId === this.props.currentId || this.state.adminUser ?
-                                                <div style={{ flex: 1, alignItems: 'right' }}>
-                                                    <div style={{ float: "right" }}>
-                                                        <MdDelete size='2em' onClick={() => { this.handleDeleteClick(message, index) }} style={deleteStyle}
-                                                            onMouseEnter={() => this.deleteHover(index)} onMouseLeave={() => this.deleteHover(index)} />
-
-                                                        <div className="text-primary" style={this.state.deleteStyleArray[index] ? hintVisible : hintHidden}>
-                                                            Delete file
-                                                </div>
-                                                    </div>
-                                                </div>
-                                                :
-                                                null
-                                        }
-                                    </div>
-                                    :
-                                    null
-                            }
+                            <p className="timeDiv"> {format(new Date(message.createdAt), 'DD.MM.YYYY. - HH:mm')} </p>
                         </li>
                     ))
                     }
@@ -240,30 +232,6 @@ const listStyle = {
 
 const messageStyle = {
     alignContent: 'center'
-}
-
-const wrapperStyle = {
-    display: 'flex',
-    flexDirection: 'row'
-}
-
-const downloadStyle = {
-    flex: 1,
-    alignItems: 'center'
-}
-
-const deleteStyle = {
-    flex: 1
-}
-
-const hintHidden = {
-    flex: 1,
-    visibility: 'hidden'
-}
-
-const hintVisible = {
-    flex: 1,
-    visibility: 'visible'
 }
 
 export default MessageList;

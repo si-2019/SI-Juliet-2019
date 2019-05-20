@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import { MdFileUpload, MdImage } from 'react-icons/md'
+import { IconButton, Tooltip } from '@material-ui/core';
+import { AddAPhoto, CloudUpload } from '@material-ui/icons';
 
 class UploadFile extends Component{
     constructor(props){
@@ -83,11 +85,21 @@ class UploadFile extends Component{
     render(){
         return(
             <form onSubmit={this.handleSubmit} className="row" name="fileForm" encType="multipart/form-data" style={formStyle}>
-                <MdFileUpload size='2.5em' onClick={() => {this.handleUploadClick()}}/>
+                <Tooltip title="Upload file">
+                    <IconButton color="primary" onClick={() => {this.handleUploadClick()}}>
+                        <CloudUpload />
+                    </IconButton>
+                </Tooltip>
                 <div> {this.state.fileName} </div>
 
-                <MdImage size='2.5em' onClick={() => {this.handleImageUpload()}}/>  
+
+                <Tooltip title="Upload image">
+                    <IconButton color="primary" onClick={() => {this.handleImageUpload()}}>
+                        <AddAPhoto />
+                    </IconButton>
+                </Tooltip>
                 <div> {this.state.imageName} </div>
+
 
                 <input className="col" type="file" name="image" files={this.state.images} onChange={this.handleImageChange} 
                     accept={['image/jpeg', 'image/png', 'image/gif']} style={fileStyle}/>
@@ -95,7 +107,7 @@ class UploadFile extends Component{
                 <input className="col" type="file" name="file" files={this.state.files} onChange={this.handleChange} 
                     style={fileStyle} />
 
-                <input className="col btn-outline-primary" type="submit" value="Upload" style={uploadStyle}/>     
+                <button className="col btn btn-outline-primary rounded submit" style={uploadStyle}>Upload</button>
             </form>
         )
     }
