@@ -19,7 +19,8 @@ class MessageList extends Component {
             messages: [],
             openThread: false,
             selectedMessage: {},
-            threadMessages: []
+            threadMessages: [], 
+            input: ''
         }
 
         props.messages.forEach(function (value) {
@@ -133,12 +134,18 @@ class MessageList extends Component {
             deleteStyleArray: listTmp
         })
     }
-
+    onChangeHandler(e){
+        this.setState({
+          input: e.target.value,
+        })
+      }
     render() {
+        const listSrc = this.props.messages.filter(d => this.state.input === '' || d.text.toLowerCase().includes(this.state.input.toLowerCase()) || format(new Date(d.createdAt), 'DD.MM.YYYY').includes(this.state.input));
         return (
             <div className="container">
+            <input className="pretragaText" placeholder="Pretraži poruke po frazi ili po datumu u formatu DD.MM.YYYY" value={this.state.input} type="text" onChange={this.onChangeHandler.bind(this)}/>
                 <ul style={listStyle} className="list-group message-list">
-                    {this.props.messages.map((message, index) => (
+                    {listSrc.map((message, index) => (
                         <li
                             className="list-group-item" style={messageStyle} key={index}>
                             <h4 className="message-sender" onClick={this.props.openPrivateChat}>{message.senderId}</h4>

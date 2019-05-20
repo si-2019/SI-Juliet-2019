@@ -29,3 +29,8 @@
   .actions {
     margin-bottom: -1rem;
   }
+  .pretragaText{
+    width: 500px; 
+    height: 50px;
+    background-color: lightgray; 
+  }
