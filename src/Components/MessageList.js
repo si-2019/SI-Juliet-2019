@@ -173,7 +173,7 @@ class MessageList extends Component {
                                     current={this.props.currentId}
                                 />
                             </div>
-                            <p className="timeDiv"> {format(new Date(message.createdAt), 'DD.MM.YYYY, HH:MM')} </p>
+                            <p className="timeDiv"> {format(new Date(message.createdAt), 'DD.MM.YYYY. - HH:mm')} </p>
                             {
                                 message.text.substr(0, 16) === 'Downloaduj file:' ?
                                     <div style={wrapperStyle}>
