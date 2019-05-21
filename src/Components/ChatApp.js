@@ -30,7 +30,8 @@ class ChatApp extends Component {
             currentRoom: null,
             messages: [],
             users: [],
-            rooms: []
+            rooms: [],
+            hasErrorAddUser: null
         }
         this.addMessage = this.addMessage.bind(this);
         this.openPrivateChat = this.openPrivateChat.bind(this);
@@ -176,9 +177,10 @@ class ChatApp extends Component {
           })
             .then(() => {
               this.joinRoomById(rid);
+              this.setState({hasErrorAddUser:false});
             })
             .catch(err => {
-              console.log('Error adding user to room:'+ err)
+              this.setState({hasErrorAddUser:true});
             })
     }
 
@@ -187,11 +189,16 @@ class ChatApp extends Component {
             <div className="chat-app-wrapper">
                 <div className="room-wrapper">
                     <RoomList room={this.state.currentRoom} joinRoomById={this.joinRoomById} rooms={this.state.rooms} />
-                    <div>                        
-                        <CreateRoom createRoom={this.createRoom}/>
-                        <AddUser  addUser={this.addUser}/>
+                    <div className="create-room-wrapper"> 
+                                        
+                        <CreateRoom  style={createRoomStyle} createRoom={this.createRoom}/>
+                        <AddUser style={addUserStyle} addUser={this.addUser}/>
+                        {this.state.hasErrorAddUser?<p style={{gridColumn: 1/3}}>Error adding user</p>:null} 
                     </div>
+                        
+                    
                 </div>
+
                 <div className="msg-wrapper">
                     <h2 className="header">Let's Talk</h2>
                     <MessageList messages={this.state.messages} />
@@ -205,5 +212,12 @@ class ChatApp extends Component {
         )
     }
 }
-
+const createRoomStyle ={
+   
+    gridColumn: 1/2
+}
+const addUserStyle = {
+   
+    gridColumn: 2/3
+}
 export default ChatApp;

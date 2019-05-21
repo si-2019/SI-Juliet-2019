@@ -27,7 +27,7 @@ class AddUser extends Component{
         return (
             <form onSubmit={this.handleSubmit} className="add-user-form">
             <input className="input-group mb-3 message-input" type="text" style={inputStyle}
-            placeholder="Add User" onChange={this.handleChange} value={this.state.roomName} />
+            placeholder="Add User" onChange={this.handleChange} value={this.state.userName} />
             <input className="btn btn-outline-primary" style={buttonStyle} type="submit" value="Add" />
         </form>
         )
