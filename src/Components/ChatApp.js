@@ -9,6 +9,7 @@ import UsersList from './UsersList';
 import TypingIndicator from './TypingIndicator';
 import '../styles/ChatApp.css';
 import CreateRoom from './CreateRoom';
+import AddUser from './AddUser';
 import UploadFile from './UploadFile';
 import Axios from 'axios';
 import {SwatchesPicker} from 'react-color';
@@ -40,16 +41,19 @@ class ChatApp extends Component {
             messageToSend: '',
             users: [],
             rooms: [],
+            hasErrorAddUser: null,
             typingUsers: [], 
             pinnedMessages: [], 
             colorForUser: null, 
-            showColorPicker: false
+            showColorPicker: false,
+            joinableRooms:[]
         }
         this.addMessage = this.addMessage.bind(this);
         this.openPrivateChat = this.openPrivateChat.bind(this);
         this.joinRoomById = this.joinRoomById.bind(this);
         this.createRoom = this.createRoom.bind(this);
         this.initRooms = this.initRooms.bind(this);
+        this.addUser = this.addUser.bind(this);
         this.sendTypingEvent = this.sendTypingEvent.bind(this);
         this.uploadFile = this.uploadFile.bind(this);
         this.downloadClick = this.downloadClick.bind(this);
@@ -106,7 +110,14 @@ class ChatApp extends Component {
                             });
                         }
                     }) 
+                    currentUser.getJoinableRooms()
+                    .then(joinableRooms => {
+                        this.setState({
+                            joinableRooms
+                        })
+                    })
                 })
+                
             })
             .then(() => {
                 this.initRooms();
@@ -234,6 +245,23 @@ class ChatApp extends Component {
             this.joinRoomById(room.id);
         })
         .catch(err=> console.log("err wth cr room", err))
+    }
+    addUser(userName){
+        const rid = this.state.currentRoom.id;
+        this.state.currentUser.addUserToRoom({
+            userId: userName,
+            roomId: rid,
+            hooks: {
+                onUserJoinedRoom: () => this.forceUpdate()
+            }
+          })
+            .then(() => {
+              this.joinRoomById(rid);
+              this.setState({hasErrorAddUser:false});
+            })
+            .catch(err => {
+              this.setState({hasErrorAddUser:true});
+            })
     }
 
     createPublicRoom(roomName){
@@ -374,8 +402,12 @@ class ChatApp extends Component {
         return (
             <div className="chat-app-wrapper">
                 <div style={{'background': colorScheme}} className="room-wrapper">
-                    <RoomList room={this.state.currentRoom} joinRoomById={this.joinRoomById} rooms={this.state.rooms} />
-                    <CreateRoom createRoom={this.createRoom}/>
+                    <RoomList room={this.state.currentRoom} joinRoomById={this.joinRoomById} rooms={this.state.rooms} joinableRooms={this.state.joinableRooms} />
+                    <div className="create-room-wrapper">                     
+                        <CreateRoom  style={createRoomStyle} createRoom={this.createRoom}/>
+                        <AddUser style={addUserStyle} addUser={this.addUser}/>
+                        {this.state.hasErrorAddUser?<p style={{gridColumn: 1/3}}>Error adding user</p>:null} 
+                    </div>
                     <NewPublicRoomForm createPublicRoom={this.createPublicRoom}/>
                     <div>
                         <h3 style={{marginTop: '1rem', marginBottom: '1rem'}}>Pinned messages</h3>
@@ -388,6 +420,7 @@ class ChatApp extends Component {
                         </ul>
                 </div>
                 </div>
+
                 <div className="msg-wrapper">
                     <h2 style={{'background': colorScheme}} className="header">Let's Talk</h2>
                     <MessageList currentId={this.props.currentId} replyToMessage={this.handleReply}
@@ -417,5 +450,12 @@ class ChatApp extends Component {
         )
     }
 }
-
+const createRoomStyle ={
+   
+    gridColumn: 1/2
+}
+const addUserStyle = {
+   
+    gridColumn: 2/3
+}
 export default ChatApp;

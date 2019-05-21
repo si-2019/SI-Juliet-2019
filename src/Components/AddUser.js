@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import '../styles/CreateRoom.css';
-class CreateRoom extends Component{
+import '../styles/AddUser.css';
+class AddUser extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            roomName: ""
+            userName: ""
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -13,24 +13,22 @@ class CreateRoom extends Component{
 
     handleChange(e) {
         this.setState({
-            roomName: e.target.value
+            userName: e.target.value
         })
     }
     handleSubmit(e) {
         e.preventDefault();
-        this.props.createRoom(this.state.roomName);
+        this.props.addUser(this.state.userName);
         this.setState({
-            roomName: ''
+            userName: ''
         })
     }
     render() {
         return (
-        
-            <form onSubmit={this.handleSubmit} className="create-room-form">
-            
+            <form onSubmit={this.handleSubmit} className="add-user-form">
             <input className="input-group mb-3 message-input" type="text" style={inputStyle}
-            placeholder="Create room" onChange={this.handleChange} value={this.state.roomName} />
-            <input className="btn btn-outline-primary" style={buttonStyle} type="submit" value="Create" />
+            placeholder="Add User" onChange={this.handleChange} value={this.state.userName} />
+            <input className="btn btn-outline-primary" style={buttonStyle} type="submit" value="Add" />
         </form>
         )
     }
@@ -44,4 +42,4 @@ const inputStyle = {
     width: '100%',
     padding: '0'
 }
-export default CreateRoom;
+export default AddUser;

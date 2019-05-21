@@ -20,7 +20,7 @@ export class NewPublicRoomForm extends Component {
     }
   render() {
     return (
-      <div className="new-room-form">
+      <div className="new-room-form" style={{margin: '1%' }}>
         <form onSubmit={this.handleSubmit}>
             <input onChange={this.handleChange} type='text' placeholder='NewPublicRoom...' value={this.state.roomName} />
             <button id='create-room-btn' type="submit">+</button>
