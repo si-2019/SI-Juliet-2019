@@ -13,9 +13,9 @@ class RoomList extends Component {
     render(){
         if(this.props.rooms && this.props.room){
             return(
-                <div style={{color: 'white'}}>
-                <h1 style={{marginTop: '5rem', marginBottom: '1rem', float: 'left'}}>Rooms</h1>
-                    <ul style={listStyle}>
+                <div style={{color: 'white' }}>
+                <h2 style={{marginTop: '5rem', marginBottom: '1rem'}}>Rooms</h2>
+                <ul style={{overflowY: 'scroll', overflowX: 'hidden', height:'400px'}}>
                         <h4>Public rooms</h4>
                         {this.props.rooms.filter(room => !room.isPrivate).map((room, index) => {
                             const active = this.props.room.id === room.id ? "active" : "";
@@ -43,11 +43,6 @@ class RoomList extends Component {
             )
         }
     }
-}
-
-const listStyle = {
-    listStyleType: 'none',
-    float: 'left'
 }
 
 export default RoomList;

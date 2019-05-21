@@ -23,7 +23,7 @@ import React, {Component} from 'react';
                     <form onSubmit={this.handleSubmit} className="form">
                         <label htmlFor="email">What is your email?</label>
                         <input type="email" name="username" onChange={this.handleChange} className="input" />
-                        <button className="btn btn-outline-primary submit">Submit</button>
+                        <button className="btn btn-outline-primary submit" style={{marginTop:'2%'}}>Submit</button>
                     </form>
                 </div>
             )
