@@ -7,9 +7,20 @@ class UsersList extends Component {
     
         this.state = {
             users: this.props.users, 
-            input: ''
+            input: '',
+            hover: false
         }
+        this.mouseOver = this.mouseOver.bind(this);
+        this.mouseOut = this.mouseOut.bind(this);
     }
+    
+    mouseOver = () => {
+        this.setState({hover: true});
+    }
+    mouseOut() {
+        this.setState({hover: false});
+    }
+
     onChangeHandler(e){
         this.setState({
           input: e.target.value,
@@ -23,6 +34,12 @@ class UsersList extends Component {
                 <h2 style={{marginTop: '5rem', marginBottom: '1rem'}}>Users</h2>
                     <ul style={{overflowY: 'scroll', overflowX: 'hidden', height:'400px'}}>
                     <input placeholder="Pretraži korisnike" value={this.state.input} type="text" onChange={this.onChangeHandler.bind(this)}/>
+                        <h4>Favorite users:</h4>
+                        {listSrc.filter((user) => user.presence.state === 'online').map((user, index) => {
+                            return <li onClick={() => console.log(user)} 
+                            className="user" key={index} style={{cursor: 'pointer'}}> {user.name} </li>
+                        })}
+                        
                         <h4>Online users:</h4>
                         {listSrc.filter((user) => user.presence.state === 'online').map((user, index) => {
                             return <li onClick={() => this.props.openPrivateChat(user.id)} 
