@@ -15,6 +15,7 @@ import Axios from 'axios';
 import {SwatchesPicker} from 'react-color';
 import { Droplet } from 'react-feather';
 import FileSidebar from './FileSidebar';
+import NewPublicRoomForm from './NewPublicRoomForm';
 
 let predmeti = require('../predmeti.json');
 
@@ -44,7 +45,8 @@ class ChatApp extends Component {
             typingUsers: [], 
             pinnedMessages: [], 
             colorForUser: null, 
-            showColorPicker: false
+            showColorPicker: false,
+            joinableRooms:[]
         }
         this.addMessage = this.addMessage.bind(this);
         this.openPrivateChat = this.openPrivateChat.bind(this);
@@ -60,6 +62,7 @@ class ChatApp extends Component {
         this.handleColorChange = this.handleColorChange.bind(this);
         this.toggleColorPicker = this.toggleColorPicker.bind(this);
         this.handleReply = this.handleReply.bind(this);
+        this.createPublicRoom = this.createPublicRoom.bind(this);
     }
     toggleColorPicker() {
         this.setState({
@@ -107,7 +110,14 @@ class ChatApp extends Component {
                             });
                         }
                     }) 
+                    currentUser.getJoinableRooms()
+                    .then(joinableRooms => {
+                        this.setState({
+                            joinableRooms
+                        })
+                    })
                 })
+                
             })
             .then(() => {
                 this.initRooms();
@@ -254,6 +264,17 @@ class ChatApp extends Component {
             })
     }
 
+    createPublicRoom(roomName){
+        this.state.currentUser.createRoom({
+            name: roomName,
+            private: false
+        }).then(room => {
+            this.setState({ rooms: [...this.state.rooms, room] });
+            this.joinRoomById(room.id);
+        })
+        .catch(err=> console.log("err wth cr room", err))
+    }
+
     sendTypingEvent(event) {
         this.state.currentUser.isTypingIn({ roomId: this.state.currentRoom.id }).catch(error => console.error('error', error))
     }
@@ -381,13 +402,13 @@ class ChatApp extends Component {
         return (
             <div className="chat-app-wrapper">
                 <div style={{'background': colorScheme}} className="room-wrapper">
-                    <RoomList room={this.state.currentRoom} joinRoomById={this.joinRoomById} rooms={this.state.rooms} />
-                    <div className="create-room-wrapper"> 
-                                        
+                    <RoomList room={this.state.currentRoom} joinRoomById={this.joinRoomById} rooms={this.state.rooms} joinableRooms={this.state.joinableRooms} />
+                    <div className="create-room-wrapper">                     
                         <CreateRoom  style={createRoomStyle} createRoom={this.createRoom}/>
                         <AddUser style={addUserStyle} addUser={this.addUser}/>
                         {this.state.hasErrorAddUser?<p style={{gridColumn: 1/3}}>Error adding user</p>:null} 
                     </div>
+                    <NewPublicRoomForm createPublicRoom={this.createPublicRoom}/>
                     <div>
                         <h3 style={{marginTop: '1rem', marginBottom: '1rem'}}>Pinned messages</h3>
                         <ul style={{maxHeight: '200px', overflowY: 'scroll', overflowWrap: 'break-word'}}>
