@@ -43,7 +43,8 @@ class ChatApp extends Component {
             typingUsers: [], 
             pinnedMessages: [], 
             colorForUser: null, 
-            showColorPicker: false
+            showColorPicker: false,
+            joinableRooms:[]
         }
         this.addMessage = this.addMessage.bind(this);
         this.openPrivateChat = this.openPrivateChat.bind(this);
@@ -106,7 +107,14 @@ class ChatApp extends Component {
                             });
                         }
                     }) 
+                    currentUser.getJoinableRooms()
+                    .then(joinableRooms => {
+                        this.setState({
+                            joinableRooms
+                        })
+                    })
                 })
+                
             })
             .then(() => {
                 this.initRooms();
@@ -374,7 +382,7 @@ class ChatApp extends Component {
         return (
             <div className="chat-app-wrapper">
                 <div style={{'background': colorScheme}} className="room-wrapper">
-                    <RoomList room={this.state.currentRoom} joinRoomById={this.joinRoomById} rooms={this.state.rooms} />
+                    <RoomList room={this.state.currentRoom} joinRoomById={this.joinRoomById} rooms={this.state.rooms} joinableRooms={this.state.joinableRooms} />
                     <CreateRoom createRoom={this.createRoom}/>
                     <NewPublicRoomForm createPublicRoom={this.createPublicRoom}/>
                     <div>
