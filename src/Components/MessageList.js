@@ -101,8 +101,8 @@ class MessageList extends Component {
         })
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (this.props.messages !== nextProps.messages || !this.state.messages.length) this.scrollToBottom();
+    componentDidUpdate() {
+        this.scrollToBottom();
     }
 
     handleDownloadClick(message) {
@@ -139,10 +139,11 @@ class MessageList extends Component {
         })
       }
     render() {
-        const listSrc = this.props.messages.filter(d => this.state.input === '' || d.text.toLowerCase().includes(this.state.input.toLowerCase()) || format(new Date(d.createdAt), 'DD.MM.YYYY').includes(this.state.input));
+        const listSrc = this.props.messages.filter(d => this.state.input === '' || d.text.toLowerCase().includes(this.state.input.toLowerCase()) || format(new Date(d.createdAt), 'DD.MM.YYYY').includes(this.state.input)
+                                                        || d.senderId === this.state.input.toLowerCase());
         return (
             <div className="container">
-            <input className="pretragaText" placeholder="Pretraži poruke po frazi ili po datumu u formatu DD.MM.YYYY" value={this.state.input} type="text" onChange={this.onChangeHandler.bind(this)}/>
+            <input className="pretragaText" placeholder="Pretraži po frazi, pošiljaocu ili po datumu u formatu DD.MM.YYYY" value={this.state.input} type="text" onChange={this.onChangeHandler.bind(this)}/>
                 <ul style={listStyle} className="list-group message-list">
                     {listSrc.map((message, index) => (
                         <li
