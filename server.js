@@ -222,8 +222,10 @@ app.post('/updateAvatar', (req,res) =>{
   chatkit.updateUser({
     id:req.body.currentUId,
     avatarURL:req.body.url
-  }).then(()=>{
-    alert('Avatar update-ovan!');
+  }).then((user)=>{
+    console.log('_:');
+    console.log(user);
+   
   }).catch((err)=>{
     console.log(err);
   });

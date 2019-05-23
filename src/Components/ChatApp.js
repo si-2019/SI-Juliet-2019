@@ -248,6 +248,8 @@ class ChatApp extends Component {
                 Axios.post('http://localhost:31910/updateAvatar', {
                     url: url,
                     currentUId:this.state.currentUser.id
+                }).then({
+                    
                 })
                .catch(e => console.log(e));            
                 return ;
