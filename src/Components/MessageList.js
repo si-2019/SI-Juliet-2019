@@ -97,10 +97,6 @@ class MessageList extends Component {
             })
     }
 
-    componentWillReceiveProps(newProps){
-        console.log(newProps);
-    }
-
     componentDidMount() {
         localStorage.clear();
         

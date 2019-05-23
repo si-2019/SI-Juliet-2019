@@ -241,6 +241,19 @@ class ChatApp extends Component {
                     })
                 }
             }
+            else if(text.substr(0,11) === '@setAvatar '){
+
+
+                let url = text.substr(text.indexOf(' ') +1,text.length); 
+                Axios.post('http://localhost:31910/updateAvatar', {
+                    url: url,
+                    currentUId:this.state.currentUser.id
+                }).then({
+                    
+                })
+               .catch(e => console.log(e));            
+                return ;
+            }
         }).catch(error => console.error('error', error));
     }
 
