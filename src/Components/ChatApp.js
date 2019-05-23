@@ -478,7 +478,7 @@ class ChatApp extends Component {
                 </div>
                 <div style={{'background': colorScheme}} className="list-wrapper">
                     <UsersList openPrivateChat={this.openPrivateChat} users={this.state.users} />
-                    <FileSidebar downloadClick={this.downloadClick}/>
+                    <FileSidebar downloadClick={this.downloadClick} />
                 </div>
             </div>
         )

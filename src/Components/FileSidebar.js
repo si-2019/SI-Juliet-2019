@@ -8,10 +8,13 @@ class FileSidebar extends Component {
         super(props);
 
         this.state = {
-            files: []
+            files: [],
+            input:''
+
         }
 
         this.handleItemClick = this.handleItemClick.bind(this);
+        this.onChangeHandler = this.onChangeHandler.bind(this);
     }
 
     componentWillMount(){
@@ -27,16 +30,22 @@ class FileSidebar extends Component {
     handleItemClick(name){
         this.props.downloadClick(name);
     }
+    onChangeHandler(e){
+        this.setState({
+          input: e.target.value,
+        })
+    }
 
     render(){
+        const resultFiles = this.state.files.filter(f => this.state.input === '' || f.naziv.toLowerCase().includes(this.state.input.toLowerCase()));
         return(
             <div>
                 <h3 style={{marginTop: '1rem', marginBottom: '1rem'}}>Shared files</h3>
-
+                <input className="pretragaFajlovaText" placeholder="Search files..." value={this.state.input} type="text" onChange={this.onChangeHandler.bind(this)}/>
                 <ul style={{maxHeight: '300px', overflowY: 'scroll'}}>
                 {
-                    this.state.files ? 
-                        this.state.files.map((file, index) => (
+                    resultFiles ? 
+                    resultFiles.map((file, index) => (
                             <li key={index} className='file' onClick={() => {this.handleItemClick(file.naziv)}}> 
                                 { file.posiljaoc + ': ' + file.naziv} 
                             </li>
