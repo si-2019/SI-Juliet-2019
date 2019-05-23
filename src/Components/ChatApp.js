@@ -71,10 +71,6 @@ class ChatApp extends Component {
         });
     }
     
-    componentWillMount() {
-        
-    }
-
     componentDidMount() {
         const chatManager = new ChatManager({
             instanceLocator: instanceLocator,
@@ -220,6 +216,7 @@ class ChatApp extends Component {
     }
 
     addMessage(text) {
+        console.log(this.state.currentUser);
         this.state.currentUser.sendMessage({
             text: text,
             roomId: this.state.currentRoom.id
@@ -242,17 +239,32 @@ class ChatApp extends Component {
                 }
             }
             else if(text.substr(0,11) === '@setAvatar '){
-
-
                 let url = text.substr(text.indexOf(' ') +1,text.length); 
                 Axios.post('http://localhost:31910/updateAvatar', {
                     url: url,
                     currentUId:this.state.currentUser.id
-                }).then({
-                    
+                }).then(res => {
+                    window.alert('Avatar changed.');
+
+                    let userCopy = this.state.currentUser;
+                    userCopy.avatarURL = url;
+
+                    let usersCopy = this.state.users;
+
+                    usersCopy.map((user, index) => {
+                        if(user.id === this.state.currentUser.id) user.avatarURL = url;
+                    });
+
+                    console.log(usersCopy);
+
+                    this.setState({
+                        currentUser: userCopy,
+                        users: usersCopy
+                    })
+
+                    this.forceUpdate();
                 })
                .catch(e => console.log(e));            
-                return ;
             }
         }).catch(error => console.error('error', error));
     }

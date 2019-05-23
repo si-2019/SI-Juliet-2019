@@ -222,12 +222,10 @@ app.post('/updateAvatar', (req,res) =>{
   chatkit.updateUser({
     id:req.body.currentUId,
     avatarURL:req.body.url
-  }).then((user)=>{
-    console.log('_:');
-    console.log(user);
-   
+  }).then(() => {
+    res.sendStatus(200);
   }).catch((err)=>{
-    console.log(err);
+    res.json(err);
   });
 })
 app.listen(31910, () => console.log('Server pokrenut na portu 31910'));
