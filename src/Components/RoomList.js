@@ -7,7 +7,8 @@ class RoomList extends Component {
     
         this.state = {
             joinableRooms:this.props.joinableRooms,
-            rooms: this.props.rooms
+            rooms: this.props.rooms,
+            user: this.props.user
         }
     }
 
@@ -40,7 +41,7 @@ class RoomList extends Component {
                             return <li className={"room" + active} onClick={() => this.props.joinRoomById(room.id)} 
                             key={index}>
                                 <h5 style={{whiteSpace: 'nowrap', textOverflow: 'elipsis'}}>
-                                {room.name}</h5> 
+                                {room.name}</h5><div><p>Unread messages:{}</p></div>
                             </li>
                         })}
                     </ul>
