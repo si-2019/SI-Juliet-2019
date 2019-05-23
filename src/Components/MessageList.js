@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import '../styles/MessageList.css';
 import { IconButton, Tooltip } from '@material-ui/core';
-import { Reply, Place, Message, CloudDownload, Delete } from '@material-ui/icons';
+import { Reply, Place, Message, CloudDownload, Delete, SlowMotionVideo, SlowMotionVideoOutlined } from '@material-ui/icons';
 import { format } from 'date-fns';
 import ThreadDialog from './ThreadDialog';
 import Axios from 'axios';
+import { thisTypeAnnotation } from 'babel-types';
 
 class MessageList extends Component {
     constructor(props) {
@@ -16,6 +17,8 @@ class MessageList extends Component {
             deleteStyleArray: [],
             adminUser: false,
             messages: [],
+            users: [],
+            avatars: [],
             openThread: false,
             selectedMessage: {},
             threadMessages: [], 
@@ -94,11 +97,18 @@ class MessageList extends Component {
             })
     }
 
+    componentWillReceiveProps(newProps){
+        console.log(newProps);
+    }
+
     componentDidMount() {
         localStorage.clear();
+        
         this.setState({
-            messages: this.props.messages
+            messages: this.props.messages,
+            users: this.props.users
         })
+
     }
 
     componentDidUpdate() {
@@ -137,7 +147,8 @@ class MessageList extends Component {
         this.setState({
           input: e.target.value,
         })
-      }
+    }
+
     render() {
         const listSrc = this.props.messages.filter(d => this.state.input === '' || d.text.toLowerCase().includes(this.state.input.toLowerCase()) || format(new Date(d.createdAt), 'DD.MM.YYYY').includes(this.state.input)
                                                         || d.senderId === this.state.input.toLowerCase());
@@ -149,6 +160,11 @@ class MessageList extends Component {
                         <li
                             className="list-group-item" style={messageStyle} key={index}>
                             <h4 className="message-sender" onClick={this.props.openPrivateChat}>{message.senderId}</h4>
+                            {
+                               this.props.usersAvatars.get(message.senderId) ? 
+                                    <img src={this.props.usersAvatars.get(message.senderId)} style={imgStyle} alt="Nema slike"/> :
+                                    null
+                            }
                             <p style={messageTextStyle} className="message-text" >
                                 {message.text}
                             </p>
@@ -233,6 +249,14 @@ const listStyle = {
 
 const messageStyle = {
     alignContent: 'center'
+}
+
+const imgStyle = {
+    height: '50px',
+    width: '50px',
+    borderRadius: '50%',
+    border: '1px solid black',
+    marginTop:'6px'
 }
 
 export default MessageList;
