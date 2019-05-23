@@ -244,7 +244,7 @@ class ChatApp extends Component {
                     url: url,
                     currentUId:this.state.currentUser.id
                 }).then(res => {
-                    window.alert('Avatar changed.');
+                    window.alert('Avatar will change next time you log in.');
 
                     let userCopy = this.state.currentUser;
                     userCopy.avatarURL = url;
@@ -254,8 +254,6 @@ class ChatApp extends Component {
                     usersCopy.map((user, index) => {
                         if(user.id === this.state.currentUser.id) user.avatarURL = url;
                     });
-
-                    console.log(usersCopy);
 
                     this.setState({
                         currentUser: userCopy,
@@ -458,7 +456,7 @@ class ChatApp extends Component {
                     <h2 style={{'background': colorScheme}} className="header">Let's Talk</h2>
                     <MessageList currentId={this.props.currentId} replyToMessage={this.handleReply}
                         messages={this.state.messages} pinMessage={this.pinMessage} downloadClick={this.downloadClick} deleteClick={this.deleteClick}
-                        usersAvatars={this.state.usersAvatars}/>
+                        usersAvatars={this.state.usersAvatars} />
                     <TypingIndicator typingUsers={this.state.typingUsers} />
                     
                     <Input className="input-field" onSubmit={this.addMessage} onChange={this.sendTypingEvent} replyingTo={this.state.messageToSend}/>
