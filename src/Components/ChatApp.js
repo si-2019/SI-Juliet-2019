@@ -216,7 +216,6 @@ class ChatApp extends Component {
     }
 
     addMessage(text) {
-        console.log(this.state.currentUser);
         this.state.currentUser.sendMessage({
             text: text,
             roomId: this.state.currentRoom.id
@@ -263,6 +262,19 @@ class ChatApp extends Component {
                     this.forceUpdate();
                 })
                .catch(e => console.log(e));            
+            }
+            else if(text.includes('@poll ')) {
+                let questionsAndOptions = text.match(/".*?"/);
+                console.log(questionsAndOptions);
+                Axios.post('http://localhost:31910/poll/create', {
+                    roomId: this.state.currentRoom.id,
+                    question: questionsAndOptions.shift(),
+                    options: questionsAndOptions
+                }).then(res => {
+                    console.log(res.data);
+                }).catch(err => {
+                    console.error(err);
+                })
             }
         }).catch(error => console.error('error', error));
     }
@@ -322,7 +334,7 @@ class ChatApp extends Component {
               'Content-Type' : 'multipart/form-data'
             }
         }
-
+        
         Axios.post('http://localhost:31910/upload', fData, config).then(res => {
             window.alert('Uspješno upisano u bazu!');
             this.addMessage('Downloaduj file: ' + file.name);
@@ -346,8 +358,10 @@ class ChatApp extends Component {
     }
 
     deleteClick(message, index){
-        Axios.post('http://localhost:31910/deleteMessage', {
-            message_id: message.id
+        Axios.delete('http://localhost:31910/deleteMessage', {
+            data: {
+                message_id: message.id
+            }
         })
         .catch(e => console.log(e));
 

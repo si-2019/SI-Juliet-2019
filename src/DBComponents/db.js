@@ -22,10 +22,17 @@ db.pinovanePoruke = sequelize.import(path.join(__dirname, 'Pinovane.js'));
 db.chatColorScheme = sequelize.import(path.join(__dirname, 'ColorScheme.js'));
 db.threads = sequelize.import(path.join(__dirname, 'Threads.js'));
 db.threadMessage = sequelize.import(path.join(__dirname, 'ThreadMessage.js'));
+db.polls = sequelize.import(path.join(__dirname, 'Polls.js'));
+db.pollOptions = sequelize.import(path.join(__dirname, 'PollOptions.js'));
 
 db.threads.hasMany(db.threadMessage, { 
     foreignKey: 'threadId', 
     as: 'messages' 
+});
+
+db.polls.hasMany(db.pollOptions, {
+    foreignKey: 'pollId',
+    as: 'options'
 });
 
 module.exports = db;
