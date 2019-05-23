@@ -28,8 +28,8 @@ class Input extends Component {
         this.state = {
             message: '',
             showEmojiPicker: false,
-            buttonValue:'Pošalji',
-            porukaPlaceholder:'Unesite poruku...'
+            buttonValue:'Send',
+            porukaPlaceholder:'Say "Hi" to everyone'
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -46,8 +46,8 @@ class Input extends Component {
     handleChange(e) {
         this.setState({
             message: e.target.value,
-            buttonValue: 'Pošalji',
-            porukaPlaceholder: 'Unesite poruku...'
+            buttonValue: 'Send',
+            porukaPlaceholder: 'Say "Hi" to everyone'
         })
         this.props.onChange(e)
     }

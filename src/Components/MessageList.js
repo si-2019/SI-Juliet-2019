@@ -255,7 +255,8 @@ const imgStyle = {
     height: '50px',
     width: '50px',
     borderRadius: '50%',
-    border: '1px solid black'
+    border: '1px solid black',
+    marginTop:'6px'
 }
 
 export default MessageList;
