@@ -28,6 +28,7 @@ class Input extends Component {
         this.state = {
             message: '',
             showEmojiPicker: false,
+            buttonValue:'Pošalji'
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -43,7 +44,8 @@ class Input extends Component {
 
     handleChange(e) {
         this.setState({
-            message: e.target.value
+            message: e.target.value,
+            buttonValue: e.target.value
         })
         this.props.onChange(e)
     }
@@ -74,7 +76,7 @@ class Input extends Component {
                     onClick={this.toggleEmojiPicker}>
                     <Smile />
                 </button>
-                <input className="btn btn-outline-primary" style={buttonStyle} type="submit" value="Send" />
+                <input className="btn btn-outline-primary" style={buttonStyle} type="submit" value={this.state.buttonValue} />
             </form>
         )
     }
