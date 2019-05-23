@@ -37,7 +37,12 @@ class FileSidebar extends Component {
     }
 
     render(){
-        const resultFiles = this.state.files.filter(f => this.state.input === '' || f.naziv.toLowerCase().includes(this.state.input.toLowerCase()));
+
+
+
+
+        //Filter
+        const resultFiles = this.state.files.filter(f => this.state.input === '' || f.naziv.toLowerCase().includes(this.state.input.toLowerCase()) || f.posiljaoc.toLowerCase()===this.state.input.toLowerCase() );
         return(
             <div>
                 <h3 style={{marginTop: '1rem', marginBottom: '1rem'}}>Shared files</h3>
