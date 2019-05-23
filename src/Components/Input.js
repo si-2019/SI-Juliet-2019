@@ -28,7 +28,8 @@ class Input extends Component {
         this.state = {
             message: '',
             showEmojiPicker: false,
-            buttonValue:'Pošalji'
+            buttonValue:'Pošalji',
+            porukaPlaceholder:'Unesite poruku...'
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -45,7 +46,8 @@ class Input extends Component {
     handleChange(e) {
         this.setState({
             message: e.target.value,
-            buttonValue: e.target.value
+            buttonValue: 'Pošalji',
+            porukaPlaceholder: 'Unesite poruku...'
         })
         this.props.onChange(e)
     }
@@ -63,7 +65,7 @@ class Input extends Component {
         return (
             <form onSubmit={this.handleSubmit} className="input-field">
                 <input className="input-group mb-3 message-input" type="text" style={inputStyle}
-                placeholder="Write something..." onChange={this.handleChange} value={this.state.message} />
+                placeholder={this.state.porukaPlaceholder} onChange={this.handleChange} value={this.state.message} />
                 
                 <ul className="emoji-popup">
                     {showEmojiPicker ? (
