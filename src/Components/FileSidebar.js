@@ -46,7 +46,7 @@ class FileSidebar extends Component {
         return(
             <div>
                 <h3 style={{marginTop: '1rem', marginBottom: '1rem'}}>Shared files</h3>
-                <input className="pretragaFajlovaText" placeholder="Search files..." value={this.state.input} type="text" onChange={this.onChangeHandler.bind(this)}/>
+                <input className="pretragaFajlovaText" placeholder="Search files..." style={fileSearchCSS} value={this.state.input} type="text" onChange={this.onChangeHandler.bind(this)}/>
                 <ul style={{maxHeight: '300px', overflowY: 'scroll'}}>
                 {
                     resultFiles ? 
@@ -64,4 +64,8 @@ class FileSidebar extends Component {
     }
 }
 
+const fileSearchCSS ={
+    paddingLeft:'2%',
+    marginBottom:'1%'
+};
 export default FileSidebar;
