@@ -16,6 +16,7 @@ import {SwatchesPicker} from 'react-color';
 import { Droplet } from 'react-feather';
 import FileSidebar from './FileSidebar';
 import NewPublicRoomForm from './NewPublicRoomForm';
+import EventPlanner  from './EventPlanner';
 
 let predmeti = require('../predmeti.json');
 
@@ -541,6 +542,7 @@ class ChatApp extends Component {
                     <UsersList openPrivateChat={this.openPrivateChat} blockAUser={this.blockAUser} users={this.state.users} />
                     {this.state.hasErrorBlockUser?<p>This user doesn't exist</p>:null}
                     <FileSidebar downloadClick={this.downloadClick}/>
+                    <EventPlanner currentId={this.props.currentId}/> 
                 </div>
             </div>
         )

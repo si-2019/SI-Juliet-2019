@@ -41,7 +41,7 @@ class UsersList extends Component {
                 <div style={{color: 'white'}}>                
                 <h2 style={{marginTop: '5rem', marginBottom: '1rem'}}>Users</h2>
                     <ul style={{overflowY: 'scroll', overflowX: 'hidden', height:'400px'}}>
-                    <input placeholder="Pretraži korisnike" value={this.state.input} type="text" onChange={this.onChangeHandler.bind(this)}/>                           
+                    <input placeholder="Pretraži korisnike" style={userSearch} value={this.state.input} type="text" onChange={this.onChangeHandler.bind(this)}/>
                         <h4>Online users:</h4>
                         {listSrc.filter((user) => user.presence.state === 'online').map((user, index) => {
                             return <li onClick={() => this.props.openPrivateChat(user.id)} 
@@ -70,6 +70,11 @@ class UsersList extends Component {
     }
 }
 const inpStyle = {
+    borderRadius : '0.25rem',
+    height: '40px',
+    margin: '2px'
+}
+const userSearch = {
     borderRadius : '0.25rem',
     height: '40px',
     margin: '2px'
