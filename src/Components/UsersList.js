@@ -7,8 +7,27 @@ class UsersList extends Component {
     
         this.state = {
             users: this.props.users, 
-            input: ''
+            input: '',
+            user: ''
         }
+        this.handleChange = this.handleChange.bind(this);
+    }
+    onSubmit(e){
+        e.preventDefault();
+        this.props.blockAUser(this.state.user);
+        this.setState({
+            user: ''
+        })
+    }
+    onChangeHandlerBlock(e){
+        this.setState({
+            user: e.target.value,
+          });
+    }
+    handleChange(e) {
+        this.setState({
+            user: e.target.value
+        })
     }
     onChangeHandler(e){
         this.setState({
@@ -26,15 +45,20 @@ class UsersList extends Component {
                         <h4>Online users:</h4>
                         {listSrc.filter((user) => user.presence.state === 'online').map((user, index) => {
                             return <li onClick={() => this.props.openPrivateChat(user.id)} 
-                            className="user" key={index} style={{cursor: 'pointer'}}> {user.name} </li>
+                            className="user" key={index} style={{cursor: 'pointer'}}>{user.name}</li>
+                                               
+                           
                         })}
                         <h4>Offline users:</h4>
                         {listSrc.filter((user) => user.presence.state === 'offline').map((user, index) => {
                             return <li onClick={() => this.props.openPrivateChat(user.id)}
-                            className="user" key={index} style={{cursor: 'pointer'}}> {user.name} </li>
+                            className="user" key={index} style={{cursor: 'pointer'}}> {user.name}</li>                                               
                         })}
                     </ul>
-                    
+                    <form  onSubmit={this.onSubmit.bind(this)} >
+                        <input  type="text" style={inpStyle} placeholder="Block User" onChange={this.handleChange} value={this.state.user} />
+                        <input className="btn btn-outline-primary" type="submit" value="Block this user" />
+                    </form>
                 </div>
             )
         }
@@ -45,5 +69,14 @@ class UsersList extends Component {
         }
     }
 }
-
+const inpStyle = {
+    borderRadius : '0.25rem',
+    height: '40px',
+    margin: '2px'
+}
+const userSearch = {
+    borderRadius : '0.25rem',
+    height: '40px',
+    margin: '2px'
+}
 export default UsersList;

@@ -44,11 +44,13 @@ class ChatApp extends Component {
             usersAvatars: new Map(),
             rooms: [],
             hasErrorAddUser: null,
+            hasErrorBlockUser: false,
             typingUsers: [], 
             pinnedMessages: [], 
             colorForUser: null, 
             showColorPicker: false,
-            joinableRooms:[]
+            joinableRooms:[],
+            blockedUsers: []
         }
         this.addMessage = this.addMessage.bind(this);
         this.openPrivateChat = this.openPrivateChat.bind(this);
@@ -65,6 +67,7 @@ class ChatApp extends Component {
         this.toggleColorPicker = this.toggleColorPicker.bind(this);
         this.handleReply = this.handleReply.bind(this);
         this.createPublicRoom = this.createPublicRoom.bind(this);
+        this.blockAUser = this.blockAUser.bind(this);
     }
     toggleColorPicker() {
         this.setState({
@@ -163,8 +166,8 @@ class ChatApp extends Component {
                         return;
                     }
                     this.setState({
-                        messages: [...this.state.messages, message]
-                    })
+                        messages: [...this.state.messages, message]                      
+                    })                  
                 },
                 onPresenceChanged: () => this.forceUpdate(),
                 onUserJoinedRoom: () => this.forceUpdate(),
@@ -208,7 +211,7 @@ class ChatApp extends Component {
             this.state.currentUser.createRoom({
                 name: userId,
                 private: true,
-                addUserIds: [userId]
+                addUserIds: [userId]               
             }).then((room) => {
                 this.setState({ rooms: [...this.state.rooms, room] });
                 this.joinRoomById(room.id);
@@ -221,7 +224,7 @@ class ChatApp extends Component {
         this.state.currentUser.sendMessage({
             text: text,
             roomId: this.state.currentRoom.id
-        }).then(() => {
+        }).then(() => {       
             if(text.substr(0, 11) === "@izvjestaj ") {
                 var name = text.substr(11);
                 var predmetGodina = name.split(", ");
@@ -271,7 +274,7 @@ class ChatApp extends Component {
     createRoom(roomName){
         this.state.currentUser.createRoom({
             name: roomName,
-            private: true
+            private: true            
         }).then(room => {
             this.setState({ rooms: [...this.state.rooms, room] });
             this.joinRoomById(room.id);
@@ -295,14 +298,14 @@ class ChatApp extends Component {
               this.setState({hasErrorAddUser:true});
             })
     }
-
+    
     createPublicRoom(roomName){
         this.state.currentUser.createRoom({
             name: roomName,
-            private: false
+            private: false           
         }).then(room => {
             this.setState({ rooms: [...this.state.rooms, room] });
-            this.joinRoomById(room.id);
+            this.joinRoomById(room.id);            
         })
         .catch(err=> console.log("err wth cr room", err))
     }
@@ -426,6 +429,66 @@ class ChatApp extends Component {
             
         });
     }
+    blockAUser(userID){
+        const UsersToBlock = this.state.users.filter(user => user.id === userID);
+        const roomIfDelete = this.state.currentRoom.id;
+        if(this.state.currentUser.id === userID){
+            this.setState({ rooms: [...this.state.rooms.filter(roomaa => roomaa.id !== roomIfDelete)] });
+            this.state.currentUser.leaveRoom({ roomId: this.state.currentRoom.id })
+            .then(room => {
+                if(room.users.length === 0){
+                    this.state.currentUser.deleteRoom({ roomId: this.state.currentRoom.id })
+                    .then(() => {
+                        
+                        console.log('Deleted room with ID: ');
+                        
+                    })
+                    .catch(err => {
+                        console.log(`Err`);
+                    })
+                    
+                    
+                }
+                })
+                .catch(err => {
+                console.log(`Error leaving room ${this.state.currentRoom.id}: ${err}`)
+                })
+            this.setState({hasErrorBlockUser:false});
+            this.joinRoomById(this.state.rooms[0].id);
+        }else if(UsersToBlock.length !== 0){
+            this.setState({
+                blockedUsers: [...this.state.blockedUsers, UsersToBlock[0]]
+            })
+            this.state.currentUser.removeUserFromRoom({
+                userId: userID,
+                roomId: this.state.currentRoom.id
+              })
+                .then(() => {
+                    this.joinRoomById(this.state.currentRoom.id);
+                    this.setState({hasErrorBlockUser:false});
+                    if(this.state.currentRoom.users.length === 0){
+                        this.state.currentUser.deleteRoom({ roomId: this.state.currentRoom.id })
+                        .then(() => {
+                            console.log('Deleted room with ID: '+ this.state.currentRoom.id);
+                                                    
+                    
+                        })
+                        .catch(err => {
+                            console.log(`Error deleted room ${this.state.currentRoom.id}: ${err}`)
+                        })
+                        
+                    }
+                
+                })
+                .catch(err => {
+                  console.log('Error removing user from room:'+ err);
+                })
+            
+        }else{
+        this.setState({hasErrorBlockUser:true});
+        console.log('No such user');
+    }
+    }
     render() {
         let colorScheme = this.state.colorForUser != null ? this.state.colorForUser : "#5E0565";
         const {
@@ -433,12 +496,12 @@ class ChatApp extends Component {
         } = this.state;
         return (
             <div className="chat-app-wrapper">
-                <div style={{'background': colorScheme}} className="room-wrapper">
-                    <RoomList room={this.state.currentRoom} joinRoomById={this.joinRoomById} rooms={this.state.rooms} joinableRooms={this.state.joinableRooms} />
+                <div style={{'background': colorScheme}} className="room-wrapper">               
+                    <RoomList room={this.state.currentRoom} joinRoomById={this.joinRoomById} rooms={this.state.rooms} joinableRooms={this.state.joinableRooms} user={this.state.currentUser}/>
                     <div className="create-room-wrapper">                     
                         <CreateRoom  style={createRoomStyle} createRoom={this.createRoom}/>
-                        <AddUser style={addUserStyle} addUser={this.addUser}/>
-                        {this.state.hasErrorAddUser?<p style={{gridColumn: 1/3}}>Error adding user</p>:null} 
+                        <AddUser style={addUserStyle} addUser={this.addUser}/>                       
+                        {this.state.hasErrorAddUser?<p style={{gridColumn: 1/3}}>This user doesn't exist</p>:null} 
                     </div>
                     <NewPublicRoomForm createPublicRoom={this.createPublicRoom}/>
                     <div>
@@ -476,8 +539,9 @@ class ChatApp extends Component {
                     
                 </div>
                 <div style={{'background': colorScheme}} className="list-wrapper">
-                    <UsersList openPrivateChat={this.openPrivateChat} users={this.state.users} />
-                    <FileSidebar downloadClick={this.downloadClick} />
+                    <UsersList openPrivateChat={this.openPrivateChat} blockAUser={this.blockAUser} users={this.state.users} />
+                    {this.state.hasErrorBlockUser?<p>This user doesn't exist</p>:null}
+                    <FileSidebar downloadClick={this.downloadClick}/>
                     <EventPlanner currentId={this.props.currentId}/> 
                 </div>
             </div>
