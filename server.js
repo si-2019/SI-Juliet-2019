@@ -216,4 +216,16 @@ app.put('/thread/:messageId', (req, res) => {
   });
 });
 
+app.post('/updateAvatar', (req,res) =>{
+  console.log('Evo radi!');
+
+  chatkit.updateUser({
+    id:req.body.currentUId,
+    avatarURL:req.body.url
+  }).then(() => {
+    res.sendStatus(200);
+  }).catch((err)=>{
+    res.json(err);
+  });
+})
 app.listen(31910, () => console.log('Server pokrenut na portu 31910'));

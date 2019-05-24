@@ -40,6 +40,7 @@ class ChatApp extends Component {
             messages: [],
             messageToSend: '',
             users: [],
+            usersAvatars: new Map(),
             rooms: [],
             hasErrorAddUser: null,
             hasErrorBlockUser: false,
@@ -73,10 +74,6 @@ class ChatApp extends Component {
         });
     }
     
-    componentWillMount() {
-        
-    }
-
     componentDidMount() {
         const chatManager = new ChatManager({
             instanceLocator: instanceLocator,
@@ -161,7 +158,7 @@ class ChatApp extends Component {
         this.setState({ messages: [] });
         this.state.currentUser.subscribeToRoom({
             roomId: roomId,
-            messageLimit: 5,
+            messageLimit: 20,
             hooks: {
                 onMessage: message => {
                     if(message.text === 'DELETED'){
@@ -190,10 +187,17 @@ class ChatApp extends Component {
                 },
             }
         }).then((room) => {
+            let usersMap = new Map();
+
+            room.users.map((user, index) => {
+                usersMap.set(user.id, user.avatarURL);
+            })
+
             this.setState({
                 currentRoom: room,
                 users: room.users,
-            })                
+                usersAvatars: usersMap
+            })
         })
     }
 
@@ -215,6 +219,7 @@ class ChatApp extends Component {
     }
 
     addMessage(text) {
+        console.log(this.state.currentUser);
         this.state.currentUser.sendMessage({
             text: text,
             roomId: this.state.currentRoom.id
@@ -235,6 +240,32 @@ class ChatApp extends Component {
                         roomId: this.state.currentRoom.id
                     })
                 }
+            }
+            else if(text.substr(0,11) === '@setAvatar '){
+                let url = text.substr(text.indexOf(' ') +1,text.length); 
+                Axios.post('http://localhost:31910/updateAvatar', {
+                    url: url,
+                    currentUId:this.state.currentUser.id
+                }).then(res => {
+                    window.alert('Avatar will change next time you log in.');
+
+                    let userCopy = this.state.currentUser;
+                    userCopy.avatarURL = url;
+
+                    let usersCopy = this.state.users;
+
+                    usersCopy.map((user, index) => {
+                        if(user.id === this.state.currentUser.id) user.avatarURL = url;
+                    });
+
+                    this.setState({
+                        currentUser: userCopy,
+                        users: usersCopy
+                    })
+
+                    this.forceUpdate();
+                })
+               .catch(e => console.log(e));            
             }
         }).catch(error => console.error('error', error));
     }
@@ -487,7 +518,8 @@ class ChatApp extends Component {
                 <div className="msg-wrapper">
                     <h2 style={{'background': colorScheme}} className="header">Let's Talk</h2>
                     <MessageList currentId={this.props.currentId} replyToMessage={this.handleReply}
-                        messages={this.state.messages} pinMessage={this.pinMessage} downloadClick={this.downloadClick} deleteClick={this.deleteClick}/>
+                        messages={this.state.messages} pinMessage={this.pinMessage} downloadClick={this.downloadClick} deleteClick={this.deleteClick}
+                        usersAvatars={this.state.usersAvatars} />
                     <TypingIndicator typingUsers={this.state.typingUsers} />
                     
                     <Input className="input-field" onSubmit={this.addMessage} onChange={this.sendTypingEvent} replyingTo={this.state.messageToSend}/>

@@ -28,6 +28,8 @@ class Input extends Component {
         this.state = {
             message: '',
             showEmojiPicker: false,
+            buttonValue:'Send',
+            porukaPlaceholder:'Say "Hi" to everyone'
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -43,7 +45,9 @@ class Input extends Component {
 
     handleChange(e) {
         this.setState({
-            message: e.target.value
+            message: e.target.value,
+            buttonValue: 'Send',
+            porukaPlaceholder: 'Say "Hi" to everyone'
         })
         this.props.onChange(e)
     }
@@ -61,7 +65,7 @@ class Input extends Component {
         return (
             <form onSubmit={this.handleSubmit} className="input-field">
                 <input className="input-group mb-3 message-input" type="text" style={inputStyle}
-                placeholder="Write something..." onChange={this.handleChange} value={this.state.message} />
+                placeholder={this.state.porukaPlaceholder} onChange={this.handleChange} value={this.state.message} />
                 
                 <ul className="emoji-popup">
                     {showEmojiPicker ? (
@@ -74,7 +78,7 @@ class Input extends Component {
                     onClick={this.toggleEmojiPicker}>
                     <Smile />
                 </button>
-                <input className="btn btn-outline-primary" style={buttonStyle} type="submit" value="Send" />
+                <input className="btn btn-outline-primary" style={buttonStyle} type="submit" value={this.state.buttonValue} />
             </form>
         )
     }

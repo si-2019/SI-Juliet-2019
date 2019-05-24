@@ -56,7 +56,7 @@ class UsersList extends Component {
                         })}
                     </ul>
                     <form  onSubmit={this.onSubmit.bind(this)} >
-                        <input  type="text" placeholder="Block User" onChange={this.handleChange} value={this.state.user} />
+                        <input  type="text" style={inpStyle} placeholder="Block User" onChange={this.handleChange} value={this.state.user} />
                         <input className="btn btn-outline-primary" type="submit" value="Block this user" />
                     </form>
                 </div>
@@ -69,5 +69,9 @@ class UsersList extends Component {
         }
     }
 }
-
+const inpStyle = {
+    borderRadius : '0.25rem',
+    height: '40px',
+    margin: '2px'
+}
 export default UsersList;
