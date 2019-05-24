@@ -28,7 +28,7 @@ export class NewEventForm extends Component {
     }
     handleSubmit(e){
         e.preventDefault();
-        this.props.addEvent(this.state.eventName, this.state.startDate, this.state.diffTime);
+        this.props.addEvent(this.state.eventName, this.state.startDate, this.state.endDate);
         this.setState({eventName:'NewEvent...'})
     }
   render() {

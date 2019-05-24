@@ -10,11 +10,12 @@ class EventPlanner extends Component {
             events: [],
             
             showForm:false,
-            pocinje:new Date(),
+            ulaz:new Date(),
             traje:null
         }
         this.addEvent = this.addEvent.bind(this);
         this.getEvents=this.getEvents.bind(this);
+        this.isToday=this.isToday.bind(this);
     }
     showEventForm(){
         this.setState({
@@ -23,12 +24,14 @@ class EventPlanner extends Component {
     }
     componentWillMount(){
         this.setState({
-            events: []
+            events: [],
+            ulaz: Date.now()
         });
         this.getEvents();
+        
     }
     getEvents(){
-        Axios.get('http://localhost:31910/events')//vidi koji link trebaš staviti
+        Axios.get('http://localhost:31910/events')
         .then(res => {
             this.setState({
                 events: res.data
@@ -36,16 +39,12 @@ class EventPlanner extends Component {
         })
         .catch(err => console.log(err));
     }
-    addEvent = (ime,pocinje,trajanje)=>{
-        this.setState({
-            pocinje:pocinje,
-            traje:trajanje
-        });
+    addEvent = (ime,pocinje,kraj)=>{
         Axios.post(`http://localhost:31910/event` , {
             kreirao:this.props.currentId,
             naziv:ime,
             pocetak:pocinje,
-            trajanje:trajanje
+            kraj:kraj
         })
         .then(res => {
             this.setState({ events: [] });
@@ -53,9 +52,18 @@ class EventPlanner extends Component {
         }).catch(err => {
             console.error(err);
             alert(err)
-        });//this.setState({events:[...this.state.events,]})}) vidjet ćemo jel nam treba
+        });
     }
-
+    isToday(event){
+        
+        if( ((Date.parse(event.pocetak)<=(86400000+this.state.ulaz))||(Date.parse(event.kraj)<=(86400000+this.state.ulaz))) && Date.parse(event.kraj)>=this.state.ulaz) return true;
+        return false
+    }
+    didPass(event){
+        if( (Date.parse(event.kraj)<this.state.ulaz)) return true;
+        return false
+    }
+    
     render(){
         const options = {
             year: 'numeric',
@@ -64,22 +72,30 @@ class EventPlanner extends Component {
             hour: 'numeric',
             minute: 'numeric'
           }
+          let todaysEvents=[];
+          let otherEvents=[];
+          if (this.state.events){todaysEvents = this.state.events.filter(event=>this.isToday(event));
+          otherEvents = this.state.events.filter(event=>!this.isToday(event) && !this.didPass(event));}
         return(
             <div>
                 <h3 style={{marginTop: '1rem', marginBottom: '1rem'}}>Event Planner</h3>
-
                 <ul style={{maxHeight: '300px', overflowY: 'scroll'}}>
-                {
-                    this.state.events ? 
-                        this.state.events.map((event, index) => (
-                            <li key={index} className='eventi' > 
-                                { event.naziv+ ' @ '+new Intl.DateTimeFormat('it-IT',options).format(new Date( Date.parse(event.pocetak)))} 
-                            </li>
-                        ))
-                    :
-                    null
-                }
-
+                    <h5>Događaji u sljedeća 24h</h5>
+                    {todaysEvents ? 
+                    todaysEvents.map((event, index) => {
+                        
+                        return <li className={"event" } key={index}>{ event.naziv+ ' @ '+new Intl.DateTimeFormat('it-IT',options).format(new Date( Date.parse(event.pocetak)))} </li>
+                    })
+                        :
+                        null  } 
+                        <h5>Ostali događaji</h5>
+                        {otherEvents ? 
+                        otherEvents.map((event, index) => (
+                            <li className={"event" } key={index}>{ event.naziv+ ' @ '+new Intl.DateTimeFormat('it-IT',options).format(new Date( Date.parse(event.pocetak)))} </li>
+                                ))
+                            :
+                            null  }           
+                         
                 </ul>
                 <button id='create-event-btn' onClick={()=>this.showEventForm()}>New Event</button>
                 {

@@ -241,7 +241,7 @@ app.post('/event',(req,res)=>{
     kreirao:req.body.kreirao,
     naziv: req.body.naziv,
     pocetak:req.body.pocetak,
-    trajanje:req.body.trajanje
+    kraj:req.body.kraj
   }
  
   console.log(newRow);
