@@ -15,6 +15,7 @@ class EventPlanner extends Component {
         }
         this.addEvent = this.addEvent.bind(this);
         this.getEvents=this.getEvents.bind(this);
+        this.isToday=this.isToday.bind(this);
     }
     showEventForm(){
         this.setState({
@@ -23,9 +24,11 @@ class EventPlanner extends Component {
     }
     componentWillMount(){
         this.setState({
-            events: []
+            events: [],
+            ulaz: Date.now()
         });
         this.getEvents();
+        
     }
     getEvents(){
         Axios.get('http://localhost:31910/events')
@@ -51,7 +54,16 @@ class EventPlanner extends Component {
             alert(err)
         });
     }
-
+    isToday(event){
+        
+        if( ((Date.parse(event.pocetak)<=(86400000+this.state.ulaz))||(Date.parse(event.kraj)<=(86400000+this.state.ulaz))) && Date.parse(event.kraj)>=this.state.ulaz) return true;
+        return false
+    }
+    didPass(event){
+        if( (Date.parse(event.kraj)<this.state.ulaz)) return true;
+        return false
+    }
+    
     render(){
         const options = {
             year: 'numeric',
@@ -60,21 +72,30 @@ class EventPlanner extends Component {
             hour: 'numeric',
             minute: 'numeric'
           }
+          let todaysEvents=[];
+          let otherEvents=[];
+          if (this.state.events){todaysEvents = this.state.events.filter(event=>this.isToday(event));
+          otherEvents = this.state.events.filter(event=>!this.isToday(event) && !this.didPass(event));}
         return(
             <div>
                 <h3 style={{marginTop: '1rem', marginBottom: '1rem'}}>Event Planner</h3>
                 <ul style={{maxHeight: '300px', overflowY: 'scroll'}}>
-                {
-                    this.state.events ? 
-                        this.state.events.map((event, index) => (
-                            <li key={index} className='eventi' > 
-                                { event.naziv+ ' @ '+new Intl.DateTimeFormat('it-IT',options).format(new Date( Date.parse(event.pocetak)))} 
-                            </li>
-                        ))
-                    :
-                    null
-                }
-
+                    <h5>Događaji u sljedeća 24h</h5>
+                    {todaysEvents ? 
+                    todaysEvents.map((event, index) => {
+                        
+                        return <li className={"event" } key={index}>{ event.naziv+ ' @ '+new Intl.DateTimeFormat('it-IT',options).format(new Date( Date.parse(event.pocetak)))} </li>
+                    })
+                        :
+                        null  } 
+                        <h5>Ostali događaji</h5>
+                        {otherEvents ? 
+                        otherEvents.map((event, index) => (
+                            <li className={"event" } key={index}>{ event.naziv+ ' @ '+new Intl.DateTimeFormat('it-IT',options).format(new Date( Date.parse(event.pocetak)))} </li>
+                                ))
+                            :
+                            null  }           
+                         
                 </ul>
                 <button id='create-event-btn' onClick={()=>this.showEventForm()}>New Event</button>
                 {
