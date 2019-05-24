@@ -1,11 +1,11 @@
 const Sequelize = require('sequelize')
 
 module.exports = (sequelize, DataTypes) => {
-    const events = sequelize.define('Dogadjaj', {
+    const events = sequelize.define('Dogadaj', {
         naziv: Sequelize.STRING,
         kreirao: Sequelize.STRING,
         pocetak: Sequelize.DATE,
-        trajanje: Sequelize.STRING,
+        kraj: Sequelize.DATE,
         napomena: Sequelize.STRING
     }, {freezeTableName : true})
 

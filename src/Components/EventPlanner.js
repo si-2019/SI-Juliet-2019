@@ -10,7 +10,7 @@ class EventPlanner extends Component {
             events: [],
             
             showForm:false,
-            pocinje:new Date(),
+            ulaz:new Date(),
             traje:null
         }
         this.addEvent = this.addEvent.bind(this);
@@ -28,7 +28,7 @@ class EventPlanner extends Component {
         this.getEvents();
     }
     getEvents(){
-        Axios.get('http://localhost:31910/events')//vidi koji link trebaš staviti
+        Axios.get('http://localhost:31910/events')
         .then(res => {
             this.setState({
                 events: res.data
@@ -36,16 +36,12 @@ class EventPlanner extends Component {
         })
         .catch(err => console.log(err));
     }
-    addEvent = (ime,pocinje,trajanje)=>{
-        this.setState({
-            pocinje:pocinje,
-            traje:trajanje
-        });
+    addEvent = (ime,pocinje,kraj)=>{
         Axios.post(`http://localhost:31910/event` , {
             kreirao:this.props.currentId,
             naziv:ime,
             pocetak:pocinje,
-            trajanje:trajanje
+            kraj:kraj
         })
         .then(res => {
             this.setState({ events: [] });
@@ -53,7 +49,7 @@ class EventPlanner extends Component {
         }).catch(err => {
             console.error(err);
             alert(err)
-        });//this.setState({events:[...this.state.events,]})}) vidjet ćemo jel nam treba
+        });
     }
 
     render(){
@@ -67,7 +63,6 @@ class EventPlanner extends Component {
         return(
             <div>
                 <h3 style={{marginTop: '1rem', marginBottom: '1rem'}}>Event Planner</h3>
-
                 <ul style={{maxHeight: '300px', overflowY: 'scroll'}}>
                 {
                     this.state.events ? 
