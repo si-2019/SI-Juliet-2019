@@ -33,11 +33,11 @@ export class NewEventForm extends Component {
     }
   render() {
     return (
-      <div className="new-event-form" style={{margin: '1%',backgroundColor:'#7856AD'}}>
+      <div className="new-event-form" style={{margin: '1%'}}>
         <form onSubmit={this.handleSubmit}>
-            <input onChange={this.handleChangeName} type='text' placeholder='New event...' value={this.state.eventName} />
-            <p>Event start</p>
-            <DatePicker
+            <input onChange={this.handleChangeName} type='text' placeholder='New event name...' value={this.state.eventName} />
+            <p style={{marginTop: '5px', marginBottom: '2px'}}>Event start</p>
+            <DatePicker style={{margin: '2px', padding:'2px'}}
                 selected={this.state.startDate}
                 timeInputLabel="Time:"
                 showTimeInput
@@ -48,8 +48,8 @@ export class NewEventForm extends Component {
                 endDate={this.state.endDate}
                 onChange={this.handleChangeStart}
             />
-            <p>Event end</p>
-             <DatePicker
+            <p style={{marginTop: '5px', marginBottom: '2px'}}>Event end</p>
+             <DatePicker style={{margin: '2px',padding:'2px'}}
               selected={this.state.endDate}
               timeInputLabel="Time:"
               showTimeInput

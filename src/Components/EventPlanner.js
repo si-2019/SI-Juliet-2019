@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import NewEventForm from './NewEventForm';
 import Axios from 'axios';
-
+import '../styles/EventPlanner.css';
 class EventPlanner extends Component {
     constructor(props){
         super(props);
@@ -28,7 +28,11 @@ class EventPlanner extends Component {
             ulaz: Date.now()
         });
         this.getEvents();
-        
+        setInterval(function(){
+            this.setState({
+                ulaz: Date.now()
+            });
+        }.bind(this), 60000);
     }
     getEvents(){
         Axios.get('http://localhost:31910/events')
@@ -63,7 +67,10 @@ class EventPlanner extends Component {
         if( (Date.parse(event.kraj)<this.state.ulaz)) return true;
         return false
     }
-    
+    isNow(event){
+        if( (Date.parse(event.kraj)>=this.state.ulaz) && (Date.parse(event.pocetak)<=this.state.ulaz)  ) return true;
+        return false
+    }
     render(){
         const options = {
             year: 'numeric',
@@ -77,18 +84,19 @@ class EventPlanner extends Component {
           if (this.state.events){todaysEvents = this.state.events.filter(event=>this.isToday(event));
           otherEvents = this.state.events.filter(event=>!this.isToday(event) && !this.didPass(event));}
         return(
-            <div>
+            <div className="planer">
                 <h3 style={{marginTop: '1rem', marginBottom: '1rem'}}>Event Planner</h3>
                 <ul style={{maxHeight: '300px', overflowY: 'scroll'}}>
-                    <h5>Događaji u sljedeća 24h</h5>
+                    <h4>Next 24hrs</h4>
                     {todaysEvents ? 
                     todaysEvents.map((event, index) => {
-                        
-                        return <li className={"event" } key={index}>{ event.naziv+ ' @ '+new Intl.DateTimeFormat('it-IT',options).format(new Date( Date.parse(event.pocetak)))} </li>
+                        const active = this.isNow(event)===true ?'active':'';
+                        const activeText = this.isNow(event)===true ?' ACTIVE!':'';
+                        return <li className={"event"+active } key={index}>{ event.naziv+ ' @ '+new Intl.DateTimeFormat('it-IT',options).format(new Date( Date.parse(event.pocetak)))+activeText} </li>
                     })
                         :
                         null  } 
-                        <h5>Ostali događaji</h5>
+                        <h4>Later events</h4>
                         {otherEvents ? 
                         otherEvents.map((event, index) => (
                             <li className={"event" } key={index}>{ event.naziv+ ' @ '+new Intl.DateTimeFormat('it-IT',options).format(new Date( Date.parse(event.pocetak)))} </li>
