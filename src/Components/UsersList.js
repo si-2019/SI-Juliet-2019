@@ -16,7 +16,7 @@ class UsersList extends Component {
         e.preventDefault();
         this.props.blockAUser(this.state.user);
         this.setState({
-            userName: ''
+            user: ''
         })
     }
     onChangeHandlerBlock(e){

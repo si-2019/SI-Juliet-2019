@@ -42,6 +42,7 @@ class ChatApp extends Component {
             users: [],
             rooms: [],
             hasErrorAddUser: null,
+            hasErrorBlockUser: false,
             typingUsers: [], 
             pinnedMessages: [], 
             colorForUser: null, 
@@ -398,23 +399,61 @@ class ChatApp extends Component {
     }
     blockAUser(userID){
         const UsersToBlock = this.state.users.filter(user => user.id === userID);
-    if(UsersToBlock.length !== 0){
-        this.setState({
-            blockedUsers: [...this.state.blockedUsers, UsersToBlock[0]]
-        })
-        this.state.currentUser.removeUserFromRoom({
-            userId: userID,
-            roomId: this.state.currentRoom.id
-          })
-            .then(() => {
-                console.log("blocked " + UsersToBlock[0].id);
-                this.joinRoomById(this.state.currentRoom.id);
+        const roomIfDelete = this.state.currentRoom.id;
+        if(this.state.currentUser.id === userID){
+            this.setState({ rooms: [...this.state.rooms.filter(roomaa => roomaa.id !== roomIfDelete)] });
+            this.state.currentUser.leaveRoom({ roomId: this.state.currentRoom.id })
+            .then(room => {
+                if(room.users.length === 0){
+                    this.state.currentUser.deleteRoom({ roomId: this.state.currentRoom.id })
+                    .then(() => {
+                        
+                        console.log('Deleted room with ID: ');
+                        
+                    })
+                    .catch(err => {
+                        console.log(`Err`);
+                    })
+                    
+                    
+                }
+                })
+                .catch(err => {
+                console.log(`Error leaving room ${this.state.currentRoom.id}: ${err}`)
+                })
+            this.setState({hasErrorBlockUser:false});
+            this.joinRoomById(this.state.rooms[0].id);
+        }else if(UsersToBlock.length !== 0){
+            this.setState({
+                blockedUsers: [...this.state.blockedUsers, UsersToBlock[0]]
             })
-            .catch(err => {
-              console.log('Error removing leah from room 123:'+ err);
-            })
-        
-    }else{
+            this.state.currentUser.removeUserFromRoom({
+                userId: userID,
+                roomId: this.state.currentRoom.id
+              })
+                .then(() => {
+                    this.joinRoomById(this.state.currentRoom.id);
+                    this.setState({hasErrorBlockUser:false});
+                    if(this.state.currentRoom.users.length === 0){
+                        this.state.currentUser.deleteRoom({ roomId: this.state.currentRoom.id })
+                        .then(() => {
+                            console.log('Deleted room with ID: '+ this.state.currentRoom.id);
+                                                    
+                    
+                        })
+                        .catch(err => {
+                            console.log(`Error deleted room ${this.state.currentRoom.id}: ${err}`)
+                        })
+                        
+                    }
+                
+                })
+                .catch(err => {
+                  console.log('Error removing user from room:'+ err);
+                })
+            
+        }else{
+        this.setState({hasErrorBlockUser:true});
         console.log('No such user');
     }
     }
@@ -468,6 +507,7 @@ class ChatApp extends Component {
                 </div>
                 <div style={{'background': colorScheme}} className="list-wrapper">
                     <UsersList openPrivateChat={this.openPrivateChat} blockAUser={this.blockAUser} users={this.state.users} />
+                    {this.state.hasErrorBlockUser?<p>This user doesn't exist</p>:null}
                     <FileSidebar downloadClick={this.downloadClick}/>
                 </div>
             </div>
