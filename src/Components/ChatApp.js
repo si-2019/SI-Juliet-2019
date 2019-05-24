@@ -16,6 +16,7 @@ import {SwatchesPicker} from 'react-color';
 import { Droplet } from 'react-feather';
 import FileSidebar from './FileSidebar';
 import NewPublicRoomForm from './NewPublicRoomForm';
+import EventPlanner  from './EventPlanner';
 
 let predmeti = require('../predmeti.json');
 
@@ -477,6 +478,7 @@ class ChatApp extends Component {
                 <div style={{'background': colorScheme}} className="list-wrapper">
                     <UsersList openPrivateChat={this.openPrivateChat} users={this.state.users} />
                     <FileSidebar downloadClick={this.downloadClick} />
+                    <EventPlanner currentId={this.props.currentId}/> 
                 </div>
             </div>
         )
