@@ -223,7 +223,7 @@ app.post('/updateAvatar', (req,res) =>{
     id:req.body.currentUId,
     avatarURL:req.body.url
   }).then(() => {
-    res.sendStatus(200);
+    res.json({message:'Avatar update-ovan'});
   }).catch((err)=>{
     res.json(err);
   });
@@ -248,6 +248,10 @@ app.post('/event',(req,res)=>{
   eventsTable.create(newRow)
   .then(x => res.send(x))
   .catch(err => res.send(err));
+})
+
+app.get('/test',(req, res)=>{
+  res.status(121).send();
 })
 
 app.listen(31910, () => console.log('Server pokrenut na portu 31910'));
