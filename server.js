@@ -250,4 +250,8 @@ app.post('/event',(req,res)=>{
   .catch(err => res.send(err));
 })
 
+app.get('/test',(req, res)=>{
+  res.status(121).send();
+})
+
 app.listen(31910, () => console.log('Server pokrenut na portu 31910'));
