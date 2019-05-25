@@ -223,7 +223,7 @@ app.post('/updateAvatar', (req,res) =>{
     id:req.body.currentUId,
     avatarURL:req.body.url
   }).then(() => {
-    res.sendStatus(200);
+    res.json({message:'Avatar update-ovan'});
   }).catch((err)=>{
     res.json(err);
   });
