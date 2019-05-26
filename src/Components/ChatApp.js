@@ -46,7 +46,8 @@ class ChatApp extends Component {
             pinnedMessages: [], 
             colorForUser: null, 
             showColorPicker: false,
-            joinableRooms:[]
+            joinableRooms:[],
+            isLoading: true
         }
         this.addMessage = this.addMessage.bind(this);
         this.openPrivateChat = this.openPrivateChat.bind(this);
@@ -70,11 +71,13 @@ class ChatApp extends Component {
         });
     }
     
-    componentWillMount() {
-        
+    componentDidMount() {
+        this.setState({
+            isLoading: false
+        })
     }
 
-    componentDidMount() {
+    componentWillMount() {
         const chatManager = new ChatManager({
             instanceLocator: instanceLocator,
             userId: this.props.currentId,
@@ -395,11 +398,12 @@ class ChatApp extends Component {
         });
     }
     render() {
-        let colorScheme = this.state.colorForUser != null ? this.state.colorForUser : "#5E0565";
+        let colorScheme = this.state.colorForUser != null ? this.state.colorForUser : "#FFF";
         const {
             showColorPicker,
         } = this.state;
         return (
+            this.state.isLoading ? "hehe" : 
             <div className="chat-app-wrapper">
                 <div style={{'background': colorScheme}} className="room-wrapper">
                     <RoomList room={this.state.currentRoom} joinRoomById={this.joinRoomById} rooms={this.state.rooms} joinableRooms={this.state.joinableRooms} />
@@ -411,7 +415,7 @@ class ChatApp extends Component {
                     <NewPublicRoomForm createPublicRoom={this.createPublicRoom}/>
                     <div>
                         <h3 style={{marginTop: '1rem', marginBottom: '1rem'}}>Pinned messages</h3>
-                        <ul style={{maxHeight: '200px', overflowY: 'scroll', overflowWrap: 'break-word'}}>
+                        <ul style={{maxHeight: '200px', overflowWrap: 'break-word'}}>
                             {this.state.pinnedMessages.filter(message => message.roomId == this.state.currentRoom.id).map((message,index) => (
                                 <div key={index} style={{
                                     'border' : '1px solid white'
@@ -422,28 +426,33 @@ class ChatApp extends Component {
                 </div>
 
                 <div className="msg-wrapper">
-                    <h2 style={{'background': colorScheme}} className="header">Let's Talk</h2>
-                    <MessageList currentId={this.props.currentId} replyToMessage={this.handleReply}
-                        messages={this.state.messages} pinMessage={this.pinMessage} downloadClick={this.downloadClick} deleteClick={this.deleteClick}/>
-                    <TypingIndicator typingUsers={this.state.typingUsers} />
                     
-                    <Input className="input-field" onSubmit={this.addMessage} onChange={this.sendTypingEvent} replyingTo={this.state.messageToSend}/>
-                    <UploadFile onSubmit={this.uploadFile} />
-                    <ul className="colors-popup" onMouseLeave={this.toggleColorPicker} >
-                    {this.state.showColorPicker ? 
-                        <SwatchesPicker onChange={this.handleColorChange}/> 
-                    : null}
-                    </ul>
-                    <button
-                        type="button"
-                        className="toggle-colors"
-                        onClick={this.toggleColorPicker}>
-                        <Droplet />
-                    </button>
+                    <div className="messages">
+                        <MessageList currentId={this.props.currentId} replyToMessage={this.handleReply} currentRoom={this.state.currentRoom}
+                            messages={this.state.messages.slice(0).slice(-30)} pinMessage={this.pinMessage} downloadClick={this.downloadClick} deleteClick={this.deleteClick}
+                            users={this.state.users}/>
+                        <TypingIndicator typingUsers={this.state.typingUsers} />
+                    </div>
+                    
+                    <div className="input-all">
+                        <Input onSubmit={this.addMessage} onChange={this.sendTypingEvent} replyingTo={this.state.messageToSend}/>
+                        <UploadFile onSubmit={this.uploadFile} />
+                        <ul className="colors-popup" onMouseLeave={this.toggleColorPicker} >
+                        {this.state.showColorPicker ? 
+                            <SwatchesPicker onChange={this.handleColorChange}/> 
+                        : null}
+                        </ul>
+                        {/* <button
+                            type="button"
+                            className="toggle-colors"
+                            onClick={this.toggleColorPicker}>
+                            <Droplet />
+                        </button> */}
+                    </div>
                     
                 </div>
                 <div style={{'background': colorScheme}} className="list-wrapper">
-                    <UsersList openPrivateChat={this.openPrivateChat} users={this.state.users} />
+                    <UsersList openPrivateChat={this.openPrivateChat} users={this.state.users} currentUser={this.state.currentUser}/>
                     <FileSidebar downloadClick={this.downloadClick}/>
                 </div>
             </div>

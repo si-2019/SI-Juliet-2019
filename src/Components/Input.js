@@ -60,7 +60,7 @@ class Input extends Component {
           } = this.state;
         return (
             <form onSubmit={this.handleSubmit} className="input-field">
-                <input className="input-group mb-3 message-input" type="text" style={inputStyle}
+                <input className="input-group message-input" type="text" style={inputStyle}
                 placeholder="Write something..." onChange={this.handleChange} value={this.state.message} />
                 
                 <ul className="emoji-popup">
@@ -74,7 +74,7 @@ class Input extends Component {
                     onClick={this.toggleEmojiPicker}>
                     <Smile />
                 </button>
-                <input className="btn btn-outline-primary" style={buttonStyle} type="submit" value="Send" />
+                {/* <input className="btn btn-outline-primary" style={buttonStyle} type="submit" value="Send" /> */}
             </form>
         )
     }
@@ -87,7 +87,11 @@ const buttonStyle = {
 
 const inputStyle = {
     width: '100%',
-    padding: '0'
+    padding: '0',
+    height: '60%',
+    position: 'relative',
+    top: '0',
+    bottom: '0'
 }
 
 export default Input;

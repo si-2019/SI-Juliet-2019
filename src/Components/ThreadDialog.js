@@ -48,16 +48,16 @@ export default class ThreadDialog extends Component {
                         <ul style={listStyle} className="list-group message-list">
                             {this.props.messagelist.map((message, index) => (
                                 <li
-                                    className="list-group-item" style={messageStyle} key={index}>
+                                    className="list-group-item juliet-message" style={messageStyle} key={index}>
                                     <h4 className="message-sender">{message.sender}</h4>
-                                    <p style={messageTextStyle} className="message-text" >
+                                    <p className="message-text" >
                                         {message.text}
                                     </p>
                                 </li>
                             ))}</ul>
                         <form onSubmit={this.handleSubmit}>
                             <input className="input-group mb-3 message-input" type="text" style={inputStyle}
-                                placeholder="Write something..." onChange={this.handleChange} value={this.state.messageToSend} />
+                                onChange={this.handleChange} value={this.state.messageToSend} />
                             <input className="btn btn-outline-primary" style={buttonStyle} type="submit" value="Send" />
                         </form>
                     </DialogContent>
@@ -70,15 +70,7 @@ export default class ThreadDialog extends Component {
     }
 }
 
-const messageTextStyle = {
-    color: 'black',
-    border: "1px solid #7856AD",
-    padding: '10px',
-    width: 'auto'
-}
-
 const listStyle = {
-    overflowX: 'hidden',
     height: '100%',
     textAlign: 'left'
 }

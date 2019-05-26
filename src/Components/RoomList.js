@@ -15,8 +15,8 @@ class RoomList extends Component {
         if(this.props.rooms && this.props.room){
             return(
                 <div style={{color: 'white' }}>
-                <h2 style={{marginTop: '5rem', marginBottom: '1rem'}}>Rooms</h2>
-                <ul style={{overflowY: 'scroll', overflowX: 'hidden', height:'400px'}}>
+                {/* <h2 style={{marginTop: '2rem', marginBottom: '1rem'}}>Rooms</h2> */}
+                <ul style={{overflowX: 'hidden', height:'400px'}}>
                 <h4>Joined Public Rooms</h4>
                         {this.props.rooms.filter(room => !room.isPrivate).map((room, index) => {
                             const active = this.props.room.id === room.id ? "active" : "";

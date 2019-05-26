@@ -51,14 +51,16 @@ class App extends Component {
     })
   }
 
+
   render() {
     let view = '';
-
+    console.log()
     if (this.state.currentView === "ChatMessage") {
       view = <ChatMessage changeView={this.changeView} />
     } else if (this.state.currentView === "signup") {
       view = <Signup onSubmit={this.createUser} />
     } else if (this.state.currentView === "chatApp") {
+      console.log(this.state.currentUsername)
       view = <ChatApp currentId={this.state.currentId} />
     }
     return (

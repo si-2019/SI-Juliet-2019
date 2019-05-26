@@ -1,24 +1,89 @@
 .chat-app-wrapper{
+    height: 100%;
     display: flex;
     flex-direction: row;
 }
 
 .list-wrapper{
-    width: 20%;
+    width: 15%;
+    border-left: 1px solid rgb(0,0,0,0.2);;
+    padding-left: 1rem;
     /*background: #5E0565;*/
     color: white;
 }
 
+
 .room-wrapper{
-    width: 20%;
+    overflow: auto;
+    width: 15%;
     /*background: #5E0565;*/
-    color: white;
+    color: black;
+    border-right: 1px solid rgb(0,0,0,0.2);
     /*display: grid*/
     
 }
 
+ul {
+    padding: 0px;
+    margin: 0px;
+}
+
+ul {
+    overflow: hidden;
+}
+
+ul:hover {
+    overflow-y: scroll;
+    
+}
+
+ul::-webkit-scrollbar {
+    width: 0.66rem;
+    padding-right: 3px;
+    background: transparent;
+}
+  
+  /* Track */
+ul::-webkit-scrollbar-track {
+    /* box-shadow: inset 0 0 5px grey;  */
+    border-radius: 5px;
+}
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #7856AD; 
+    border-radius: 5px;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #5E0565; 
+  }
+
 .msg-wrapper{
-    flex: 2.5;
+    width: 70%;
+    overflow: hidden;
+}
+
+.msg-wrapper .container {
+    height: 100%;
+    padding: 0px;
+}
+
+.input-all {
+    padding: 0 10px 10px 10px;
+    height: 15%;
+    /* border-top: 1px solid rgb(0,0,0,0.2); */
+    position: relative;
+    background: white;
+}
+
+.input-all > * {
+    background: white;
+}
+
+.messages {
+    height: 85%;
 }
 .create-room-wrapper{
     display: grid;

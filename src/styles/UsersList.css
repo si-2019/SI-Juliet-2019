@@ -1,11 +1,8 @@
-ul {
+div {
     list-style-type: none;
     text-align: left;
 }
 
-h3 {
-    padding: 10px;
-}
 
 .user {
     padding: 5px;
@@ -13,4 +10,22 @@ h3 {
 
 .user:hover {
     background-color: #7856AD
+}
+
+.user > * {
+    display: inline;
+}
+
+.remove {
+    display: none;
+    float: right;
+}
+
+.user:hover .remove {
+    display: inline;
+}
+
+.nameOfRoom h4{
+    text-align: left;
+    padding: 1rem;
 }

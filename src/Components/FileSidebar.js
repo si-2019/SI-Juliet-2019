@@ -33,7 +33,7 @@ class FileSidebar extends Component {
             <div>
                 <h3 style={{marginTop: '1rem', marginBottom: '1rem'}}>Shared files</h3>
 
-                <ul style={{maxHeight: '300px', overflowY: 'scroll'}}>
+                <ul style={{maxHeight: '300px'}}>
                 {
                     this.state.files ? 
                         this.state.files.map((file, index) => (

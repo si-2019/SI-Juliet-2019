@@ -1,8 +1,19 @@
+html {
+  height: 100%;
+  width: 100%;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
 body {
   margin: 0;
   padding: 0;
   font-family: 'Nunito', sans-serif;
   height: 100%;
+  width: 100%;
 }
 
 .chat-button {
@@ -63,7 +74,10 @@ body {
   width: 100%;
   margin: auto;
   height: 50px;
-  font-size: 20px
+  font-size: 16px;
+  border: 2px solid rgba(0,0,0,0.2);
+  padding-left: 12px;
+  border-radius: 0.375em;
 }
 
 .submit  {
@@ -83,7 +97,8 @@ body {
 }
 
 .header  {
-  padding: 20px;
+  padding: 0px;
+  height: 3rem;
   color: white;
   margin-top: 0;
   text-align: center;
@@ -93,9 +108,10 @@ body {
 
 .message-list  {
   list-style-type: none;
-  padding: 0px 20px;
+  padding: 0px 10px;
   overflow: scroll;
-  max-height: 100vh;
+  max-height: 100%;
+  width: 100%;
 }
 
 .message-sender  {
@@ -105,17 +121,22 @@ body {
 }
 
 .message-text  {
-  margin-bottom: 20px;
-  margin-top: 5px
+  margin-bottom: 10px;
+  margin-top: 5px;
+  color: 'black';
+  padding: '10px';
+  width: '90%';
+  word-wrap: break-word;
 }
 
 .message-input  {
-  width: 60%;
-  height: 50px;
+  background: white;
+
+  /* width: 60%; */
+  height: 40px;
   border: 0;
-  border-top: 1px solid #e0e0e0;
-  font-size: 18px;
-  padding-left: 5%;
+  /* border-top: 1px solid #e0e0e0; */
+  font-size: 15px;  
 }
 
 .message-submit  {
@@ -126,17 +147,37 @@ body {
   cursor: pointer;
 }
 
-.input-field {
-  display: flex;
-  flex-direction: row;
-  padding: 2%;
-  margin: 0%;
-  text-align: center;
+*:focus {
+  outline: none;
+  border-color: #616061
 }
+
+.input-field {
+  padding: 5px 10px 5px 10px;
+  height: 60%;
+  border-radius: 0.45em;
+  width: 100%;
+  display: flex;
+  box-shadow: none;
+  flex-direction: row;
+  margin: auto;
+  text-align: center;
+  border: 1px solid #7856AD;
+}
+
+.input-field > :nth-child(1n) {
+  margin: auto;
+}
+/* .input-field:focus {
+  border-color: #616061;
+} */
+
 .toggle-emoji {
+  background: white;
+  border-left: none;
   border: none;
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   padding: 0;
   margin-bottom: 0;
   display: flex;
