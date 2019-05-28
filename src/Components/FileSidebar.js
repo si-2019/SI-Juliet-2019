@@ -31,7 +31,7 @@ class FileSidebar extends Component {
     render(){
         return(
             <div>
-                <h3 style={{marginTop: '1rem', marginBottom: '1rem'}}>Shared files</h3>
+                {/* <h3 style={{marginTop: '1rem', marginBottom: '1rem'}}>Shared files</h3>
 
                 <ul style={{maxHeight: '300px'}}>
                 {
@@ -44,7 +44,7 @@ class FileSidebar extends Component {
                     :
                     null
                 }
-                </ul>
+                </ul> */}
             </div>
         )
     }

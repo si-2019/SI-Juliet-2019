@@ -61,7 +61,7 @@ class App extends Component {
       view = <Signup onSubmit={this.createUser} />
     } else if (this.state.currentView === "chatApp") {
       console.log(this.state.currentUsername)
-      view = <ChatApp currentId={this.state.currentId} />
+      view = <ChatApp currentId={this.state.currentId} chatkit={chatkit}/>
     }
     return (
       <div className="App">

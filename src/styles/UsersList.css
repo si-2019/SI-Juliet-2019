@@ -5,20 +5,26 @@ div {
 
 
 .user {
-    padding: 5px;
+    cursor: pointer;
+    padding: 0 3px 0px 3px;
+    font-size: 16px;
+    height: 25px;
 }
 
 .user:hover {
-    background-color: #7856AD
+    background-color: #DBD4E0;
 }
 
 .user > * {
-    display: inline;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .remove {
     display: none;
     float: right;
+    width: 7%;
 }
 
 .user:hover .remove {
@@ -28,4 +34,47 @@ div {
 .nameOfRoom h4{
     text-align: left;
     padding: 1rem;
+}
+
+
+
+.material-icons.md-12 {
+    font-size: 12px;
+}
+
+.material-icons-outlined.md-12 {
+    font-size: 12px;
+}
+
+.material-icons-outlined.md-14 {
+    font-size: 14px;
+}
+
+.material-icons.md-online { color: #2BAC76; }
+
+.hehe {
+    background-color: transparent;
+}
+
+.presence-state {
+    padding-right: 4px;
+    width: 10%;
+}
+
+.user-search-input {
+    width: 100%;
+    margin: 12px 0;
+    height: 30px;
+    padding: 0px 6px;
+}
+
+.username-name {
+    width: 83%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.section-header {
+    padding-top: 6px;
+    margin-bottom: 2px;
 }

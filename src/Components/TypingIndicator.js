@@ -15,7 +15,7 @@ class TypingIndicator extends Component {
 }
 
 const divStyle = {
-    border: '2px solid #5E0565',
+    border: '2px solid #fcfcfc',
     marginTop: '0px'
 }
 

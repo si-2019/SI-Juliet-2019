@@ -4,21 +4,20 @@
     flex-direction: row;
 }
 
-.list-wrapper{
-    width: 15%;
+.list-wrapper {
+    width: 20%;
     border-left: 1px solid rgb(0,0,0,0.2);;
-    padding-left: 1rem;
-    /*background: #5E0565;*/
-    color: white;
+    padding: 0 12px 0 15px;
+    /*background: #fcfcfc;*/
 }
 
 
 .room-wrapper{
     overflow: auto;
     width: 15%;
-    /*background: #5E0565;*/
-    color: black;
+    /*background: #fcfcfc;*/
     border-right: 1px solid rgb(0,0,0,0.2);
+    padding: 10px 10px 10px 10px;
     /*display: grid*/
     
 }
@@ -51,17 +50,17 @@ ul::-webkit-scrollbar-track {
    
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    background: #7856AD; 
+    background: #4f5a63    ; 
     border-radius: 5px;
   }
   
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
-    background: #5E0565; 
+    background: #212529; 
   }
 
 .msg-wrapper{
-    width: 70%;
+    width: 65%;
     overflow: hidden;
 }
 

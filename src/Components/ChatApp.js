@@ -398,7 +398,7 @@ class ChatApp extends Component {
         });
     }
     render() {
-        let colorScheme = this.state.colorForUser != null ? this.state.colorForUser : "#FFF";
+        let colorScheme = this.state.colorForUser != null ? this.state.colorForUser : "#fcfcfc";
         const {
             showColorPicker,
         } = this.state;
@@ -406,7 +406,7 @@ class ChatApp extends Component {
             this.state.isLoading ? "hehe" : 
             <div className="chat-app-wrapper">
                 <div style={{'background': colorScheme}} className="room-wrapper">
-                    <RoomList room={this.state.currentRoom} joinRoomById={this.joinRoomById} rooms={this.state.rooms} joinableRooms={this.state.joinableRooms} />
+                    {/* <RoomList room={this.state.currentRoom} joinRoomById={this.joinRoomById} rooms={this.state.rooms} joinableRooms={this.state.joinableRooms} /> */}
                     <div className="create-room-wrapper">                     
                         <CreateRoom  style={createRoomStyle} createRoom={this.createRoom}/>
                         <AddUser style={addUserStyle} addUser={this.addUser}/>
@@ -452,7 +452,16 @@ class ChatApp extends Component {
                     
                 </div>
                 <div style={{'background': colorScheme}} className="list-wrapper">
-                    <UsersList openPrivateChat={this.openPrivateChat} users={this.state.users} currentUser={this.state.currentUser}/>
+                    <UsersList 
+                        openPrivateChat={this.openPrivateChat} 
+                        users={this.state.users} 
+                        currentUser={this.state.currentUser}
+                        room={this.state.currentRoom}
+                        joinRoomById={this.joinRoomById}
+                        rooms={this.state.rooms}
+                        joinableRooms={this.state.joinableRooms}
+                        chatkit={this.props.chatkit}
+                    />
                     <FileSidebar downloadClick={this.downloadClick}/>
                 </div>
             </div>

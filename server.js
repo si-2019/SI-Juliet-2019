@@ -129,6 +129,8 @@ app.get('/roles', (req, res) => {
   })
   .catch(err => res.send(err))
 })
+
+app.post('/')
 app.get('/colorscheme/:name', (req, res) => {
   let chatColorsTabela = db.chatColorScheme;
   chatColorsTabela.count({
