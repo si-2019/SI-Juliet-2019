@@ -15,6 +15,7 @@ import Axios from 'axios';
 import {SwatchesPicker} from 'react-color';
 import { Droplet } from 'react-feather';
 import FileSidebar from './FileSidebar';
+import Members from './Members';
 import NewPublicRoomForm from './NewPublicRoomForm';
 
 let predmeti = require('../predmeti.json');
@@ -40,6 +41,7 @@ class ChatApp extends Component {
             messages: [],
             messageToSend: '',
             users: [],
+            room_users: [],
             rooms: [],
             hasErrorAddUser: null,
             typingUsers: [], 
@@ -192,7 +194,8 @@ class ChatApp extends Component {
         }).then((room) => {
             this.setState({
                 currentRoom: room,
-                users: room.users,
+                room_users: room.users,
+                users: this.state.currentUser.users,
             })
         })
     }
@@ -405,24 +408,24 @@ class ChatApp extends Component {
         return (
             this.state.isLoading ? "hehe" : 
             <div className="chat-app-wrapper">
-                <div style={{'background': colorScheme}} className="room-wrapper">
-                    {/* <RoomList room={this.state.currentRoom} joinRoomById={this.joinRoomById} rooms={this.state.rooms} joinableRooms={this.state.joinableRooms} /> */}
-                    <div className="create-room-wrapper">                     
-                        <CreateRoom  style={createRoomStyle} createRoom={this.createRoom}/>
-                        <AddUser style={addUserStyle} addUser={this.addUser}/>
-                        {this.state.hasErrorAddUser?<p style={{gridColumn: 1/3}}>Error adding user</p>:null} 
-                    </div>
-                    <NewPublicRoomForm createPublicRoom={this.createPublicRoom}/>
-                    <div>
-                        <h3 style={{marginTop: '1rem', marginBottom: '1rem'}}>Pinned messages</h3>
-                        <ul style={{maxHeight: '200px', overflowWrap: 'break-word'}}>
-                            {this.state.pinnedMessages.filter(message => message.roomId == this.state.currentRoom.id).map((message,index) => (
-                                <div key={index} style={{
-                                    'border' : '1px solid white'
-                                }}><li>{message.senderId + ' : ' + message.text}</li></div>
-                            ))}
-                        </ul>
-                </div>
+
+                <div style={{'background': colorScheme}} className="list-wrapper">
+                    <UsersList 
+                        openPrivateChat={this.openPrivateChat} 
+                        users={this.state.users} 
+                        room_users={this.state.room_users}
+                        currentUser={this.state.currentUser}
+                        room={this.state.currentRoom}
+                        joinRoomById={this.joinRoomById}
+                        rooms={this.state.rooms}
+                        joinableRooms={this.state.joinableRooms}
+                        chatkit={this.props.chatkit}
+                        createRoom={this.createRoom}
+                        createPublicRoom={this.createPublicRoom}
+                        addUser={this.addUser}
+                        hasErrorAddUser={this.state.hasErrorAddUser}
+                    />
+                    <FileSidebar downloadClick={this.downloadClick}/>
                 </div>
 
                 <div className="msg-wrapper">
@@ -452,28 +455,26 @@ class ChatApp extends Component {
                     
                 </div>
                 <div style={{'background': colorScheme}} className="list-wrapper">
-                    <UsersList 
+                    <Members 
                         openPrivateChat={this.openPrivateChat} 
-                        users={this.state.users} 
+                        room_users={this.state.room_users}
                         currentUser={this.state.currentUser}
                         room={this.state.currentRoom}
-                        joinRoomById={this.joinRoomById}
-                        rooms={this.state.rooms}
-                        joinableRooms={this.state.joinableRooms}
                         chatkit={this.props.chatkit}
+                        addUser={this.addUser}
                     />
-                    <FileSidebar downloadClick={this.downloadClick}/>
+
+                    <h3 style={{marginTop: '1rem', marginBottom: '1rem'}}>Pinned messages</h3>
+                    <ul style={{maxHeight: '200px', overflowWrap: 'break-word'}}>
+                        {this.state.pinnedMessages.filter(message => message.roomId == this.state.currentRoom.id).map((message,index) => (
+                            <div key={index} style={{
+                                'border' : '1px solid white'
+                            }}><li>{message.senderId + ' : ' + message.text}</li></div>
+                        ))}
+                    </ul>
                 </div>
             </div>
         )
     }
-}
-const createRoomStyle ={
-   
-    gridColumn: 1/2
-}
-const addUserStyle = {
-   
-    gridColumn: 2/3
 }
 export default ChatApp;

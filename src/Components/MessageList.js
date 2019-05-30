@@ -169,6 +169,7 @@ class MessageList extends Component {
                                 openPrivateChat={this.props.openPrivateChat}
                                 text={message.text}
                                 user={this.props.users.filter(d => d.id === message.senderId)[0]}
+                                date={message.createdAt}
                             />
                             <div className="actions">
                                 {

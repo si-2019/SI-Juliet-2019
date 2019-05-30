@@ -1,44 +1,40 @@
 import React, {Component} from 'react';
+import '../styles/Signup.css'
 
-    class  Signup extends Component {
-        constructor(props) {
-            super(props);
-            this.state = {
-                username: "",
-            }
-            this.handleChange = this.handleChange.bind(this);
-            this.handleSubmit = this.handleSubmit.bind(this);
+class  Signup extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            username: "",
         }
-        handleChange(e) {
-            this.setState({username: e.target.value});
-        }
-        handleSubmit(e) {
-            e.preventDefault()
-            this.props.onSubmit(this.state.username);
-        }
-        render() {
-            return(
-                <div style={signupStyle} className="form-container">
-                    <h1>Let's Talk</h1>
-                    <form onSubmit={this.handleSubmit} className="form">
-                        <label htmlFor="email">What is your email?</label>
-                        <input type="email" name="username" onChange={this.handleChange} className="input" />
-                        <button className="btn btn-outline-primary submit" style={submitButton}>Submit</button>
-                    </form>
-                </div>
-            )
-        }
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
+    handleChange(e) {
+        this.setState({username: e.target.value});
+    }
+    handleSubmit(e) {
+        e.preventDefault()
+        this.props.onSubmit(this.state.username);
+    }
+    render() {
+        return(
+            <div style={signupStyle} className="form-container">
+                <h1>Let's Talk</h1>
+                <form onSubmit={this.handleSubmit} className="form">
+                    <label htmlFor="email">What is your email?</label>
+                    <input type="email" name="username" onChange={this.handleChange} className="input" />
+                    <button className="submit submit-button">Submit</button>
+                </form>
+            </div>
+        )
+    }
+}
 
-    const signupStyle = {
-        width: '50%',
-        margin: 'auto',
-        marginTop: '10rem'
-    }
+const signupStyle = {
+    width: '50%',
+    margin: 'auto',
+    marginTop: '10rem'
+}
 
-    const submitButton = {
-        marginTop: '2%',
-        background: 'rgb(0,0,0,0.8)',
-        color: 'white'
-    }
-    export default Signup;
+export default Signup;

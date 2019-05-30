@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import '../styles/UsersList.css'
 import '../styles/RoomList.css';
-import Chatkit from '@pusher/chatkit-server';
+import NewPublicRoomForm from './NewPublicRoomForm';
+import CreateRoom from './CreateRoom';
 
 class UsersList extends Component {
     constructor(props) {
@@ -72,36 +73,23 @@ class UsersList extends Component {
                 <div style={{height: '100%', width: '100%'}}>           
                     <input placeholder="Pretraži..." className="user-search-input" value={this.state.input} type="text" onChange={this.onChangeHandler.bind(this)}/>
                     <ul style={{overflowX: 'hidden', height:'calc(100% - 54px)', margin: '0'}}>
-                        { favoriteUsers.length > 0 && <h5 className="section-header">Favorite users</h5> }
-                        {favoriteUsers.map((user, index) => {
-                                return <li className="user" key={index} onClick={() => this.props.openPrivateChat(user.id)} >
-                                    <div className="presence-state"> {user.presence.state === 'online' && <i class="material-icons md-12 md-online">fiber_manual_record</i> || user.presence.state === 'offline' && <i class="material-icons-outlined md-12">fiber_manual_record</i>}</div>
-                                    <div className="username-name">{user.name}</div>
-                                    <div className="remove" onClick={(e)=>{
-                                            e.stopPropagation();
-                                            e.preventDefault();
-                                            this.triggerDelete(user, index);
-                                    }}><i class="material-icons-outlined md-14">cancel</i></div>
-                                </li>
-                            })
-                        }
-                        
-                        <h5 className="section-header">Users</h5>
-                        {listSrc.filter((user) => (currentUser.customData == null || 
-                            typeof currentUser.customData.favoriteUsers !== "undefined" && !currentUser.customData.favoriteUsers.includes(user.id))).map((user, index) => {
-                            return <li onClick={() => this.props.openPrivateChat(user.id)} 
-                            className="user" key={index}>  
-                                <div className="presence-state"> {user.presence.state === 'online' && <i class="material-icons md-12 md-online">fiber_manual_record</i> || user.presence.state === 'offline' && <i class="material-icons-outlined md-12">fiber_manual_record</i>}</div>
-                                <div className="username-name">{user.name}</div>
-                                <div className="remove" onClick={(e)=> {
-                                    e.stopPropagation();
-                                    e.preventDefault();
-                                    this.triggerAdd(user, index);
-                                }}><i class="material-icons-outlined md-14">add_circle_outline</i></div> 
-                            </li>
-                        })}
-
-                        <h5 className="section-header">Rooms</h5>
+                        <div className="section-h">
+                            <div className="section-header"><h5>Rooms</h5></div>
+                            <div className="remove section-icon" onClick={(e)=> {
+                                var node = document.getElementById('addRoom')
+                                var display = node.style.display;
+                                node.style.display = display == "block" ? 'none' : "block"
+                                }}><i class="material-icons-outlined md-14">add_circle_outline</i>
+                            </div>
+                        </div>
+                        <div id="addRoom" style={{display: 'none'}}>
+                            <div>                     
+                                <CreateRoom  style={createRoomStyle} createRoom={this.props.createRoom}/>
+                                {/* <AddUser style={addUserStyle} addUser={this.props.addUser}/>
+                                {this.props.hasErrorAddUser?<p style={{gridColumn: 1/3}}>Error adding user</p>:null}  */}
+                                <NewPublicRoomForm style={createRoomStyle} createPublicRoom={this.props.createPublicRoom}/>
+                            </div>
+                        </div>
                         {this.props.rooms.filter(room => !room.isPrivate && room.name.includes(this.state.input)).map((room, index) => {
                             const active = this.props.room.id === room.id ? "active" : "";
                             return <li className={"room" + active + " user"} onClick={() => this.props.joinRoomById(room.id)}
@@ -129,6 +117,35 @@ class UsersList extends Component {
                             </li>                        
                             )
                         })}
+                        
+                        {favoriteUsers.length > 0 && <h5 className="section-header">Favorite users</h5> }
+                        {favoriteUsers.map((user, index) => {
+                                return <li className="user" key={index} onClick={() => this.props.openPrivateChat(user.id)} >
+                                    <div className="presence-state"> {user.presence.state === 'online' && <i class="material-icons md-12 md-online">fiber_manual_record</i> || user.presence.state === 'offline' && <i class="material-icons-outlined md-12">fiber_manual_record</i>}</div>
+                                    <div className="username-name">{user.name}</div>
+                                    <div className="remove" onClick={(e)=>{
+                                            e.stopPropagation();
+                                            e.preventDefault();
+                                            this.triggerDelete(user, index);
+                                    }}><i class="material-icons-outlined md-14">cancel</i></div>
+                                </li>
+                            })
+                        }
+                        
+                        <h5 className="section-header">Users</h5>
+                        {listSrc.filter((user) => (currentUser.customData == null || 
+                            typeof currentUser.customData.favoriteUsers !== "undefined" && !currentUser.customData.favoriteUsers.includes(user.id))).map((user, index) => {
+                            return <li onClick={() => this.props.openPrivateChat(user.id)} 
+                            className="user" key={index}>  
+                                <div className="presence-state"> {user.presence.state === 'online' && <i class="material-icons md-12 md-online">fiber_manual_record</i> || user.presence.state === 'offline' && <i class="material-icons-outlined md-12">fiber_manual_record</i>}</div>
+                                <div className="username-name">{user.name}</div>
+                                <div className="remove" onClick={(e)=> {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    this.triggerAdd(user, index);
+                                }}><i class="material-icons-outlined md-14">add_circle_outline</i></div> 
+                            </li>
+                        })}
                     </ul>
                     
                 </div>
@@ -140,6 +157,15 @@ class UsersList extends Component {
             )
         }
     }
+}
+
+const createRoomStyle ={
+    gridColumn: 1/2
+}
+
+const addUserStyle = {
+   
+    gridColumn: 2/3
 }
 
 export default UsersList;

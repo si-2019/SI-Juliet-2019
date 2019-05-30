@@ -25,23 +25,20 @@ class CreateRoom extends Component{
     }
     render() {
         return (
-        
-            <form onSubmit={this.handleSubmit} className="create-room-form">
-            
-            <input className="input-group mb-3 message-input" type="text" style={inputStyle}
-            placeholder="Create room" onChange={this.handleChange} value={this.state.roomName} />
-            <input className="btn btn-outline-primary" style={buttonStyle} type="submit" value="Create" />
-        </form>
+        // <button id='create-room-btn' type="submit">+</button>
+            <form onSubmit={this.handleSubmit} className="new-room-form">
+                <input className="input-group mb-3 message-input" type="text" style={inputStyle}
+                placeholder="Create private room..." onChange={this.handleChange} value={this.state.roomName} />
+                <button id='create-private-room-btn' type="submit" style={{width: '10%'}}>+</button>
+                {/* <input className="btn btn-outline-primary" style={buttonStyle} type="submit" value="Create" /> */}
+            </form>
         )
     }
 }
-const buttonStyle = {
-    height: '40%',
-
-}
 
 const inputStyle = {
-    width: '100%',
-    padding: '0'
+    width: '90%',
+    padding: '0',
+    display: 'inline-block'
 }
 export default CreateRoom;

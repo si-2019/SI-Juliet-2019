@@ -90,3 +90,9 @@
   border: none;
   display: block;
 }
+
+.message-time {
+  font-weight: 300;
+  font-size: 12px;
+  padding-left: 5px;
+}

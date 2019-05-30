@@ -11,16 +11,17 @@
     /*background: #fcfcfc;*/
 }
 
-
-.room-wrapper{
-    overflow: auto;
-    width: 15%;
-    /*background: #fcfcfc;*/
-    border-right: 1px solid rgb(0,0,0,0.2);
-    padding: 10px 10px 10px 10px;
-    /*display: grid*/
+.right-wrapper {
     
 }
+
+
+/* .room-wrapper{
+    overflow: auto;
+    width: 20%;
+    border-right: 1px solid rgb(0,0,0,0.2);
+    padding: 0px 12px 0px 10px;
+} */
 
 ul {
     padding: 0px;
@@ -84,8 +85,8 @@ ul::-webkit-scrollbar-track {
 .messages {
     height: 85%;
 }
-.create-room-wrapper{
-    display: grid;
-    grid-row: 2/3;
-    grid-template-columns: 50% 50%;
-}
+/* .create-room-wrapper{ */
+    /* display: grid; */
+    /* grid-row: 2/3; */
+    /* grid-template-columns: 50% 50%; */
+/* } */
