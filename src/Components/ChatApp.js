@@ -16,6 +16,7 @@ import {SwatchesPicker} from 'react-color';
 import { Droplet } from 'react-feather';
 import FileSidebar from './FileSidebar';
 import Members from './Members';
+import PinnedMessages from './PinnedMessages';
 import NewPublicRoomForm from './NewPublicRoomForm';
 
 let predmeti = require('../predmeti.json');
@@ -425,7 +426,6 @@ class ChatApp extends Component {
                         addUser={this.addUser}
                         hasErrorAddUser={this.state.hasErrorAddUser}
                     />
-                    <FileSidebar downloadClick={this.downloadClick}/>
                 </div>
 
                 <div className="msg-wrapper">
@@ -463,15 +463,8 @@ class ChatApp extends Component {
                         chatkit={this.props.chatkit}
                         addUser={this.addUser}
                     />
-
-                    <h3 style={{marginTop: '1rem', marginBottom: '1rem'}}>Pinned messages</h3>
-                    <ul style={{maxHeight: '200px', overflowWrap: 'break-word'}}>
-                        {this.state.pinnedMessages.filter(message => message.roomId == this.state.currentRoom.id).map((message,index) => (
-                            <div key={index} style={{
-                                'border' : '1px solid white'
-                            }}><li>{message.senderId + ' : ' + message.text}</li></div>
-                        ))}
-                    </ul>
+                    <FileSidebar downloadClick={this.downloadClick}/>
+                    <PinnedMessages pinnedMessages={this.state.pinnedMessages}/>
                 </div>
             </div>
         )

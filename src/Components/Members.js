@@ -32,13 +32,13 @@ class Members extends Component {
                             let node = document.getElementById('all-members')
                             let display = node.style.display;
                             node.style.display = display == "block" ? 'none' : "block";
-                            node = document.getElementById('arrow');
+                            node = document.getElementById('arrow-members');
                             let innerHTML = node.innerHTML; 
                             console.log(innerHTML);
                             node.innerHTML = innerHTML == "keyboard_arrow_right" ? "keyboard_arrow_down" : "keyboard_arrow_right"
                         }}>
                         <div className="section-header"><h5>Members</h5></div>
-                        <i id="arrow" class="material-icons-outlined md-14">keyboard_arrow_right</i>
+                        <i id="arrow-members" class="material-icons-outlined md-14">keyboard_arrow_right</i>
                     </div> 
                     <ul style={{overflowX: 'hidden', height:'80%', margin: '0', display: 'none'}} id="all-members">
                         {this.props.room_users.map((user, index) => {
@@ -59,20 +59,7 @@ class Members extends Component {
             )
         }
     }
-}
-
-                        // <div className="remove section-icon" onClick={(e)=> {
-                        //     var node = document.getElementById('addUser')
-                        //     var display = node.style.display;
-                        //     node.style.display = display == "block" ? 'none' : "block"
-                        //     }}><i class="material-icons-outlined md-14">add_circle_outline</i>
-                        // </div>
-                        // <div id="addUser" style={{display: 'none'}}>
-                        // <div>                  
-                        //     <AddUser style={createRoomStyle} addUser={this.props.addUser}/>
-                        //     {this.props.hasErrorAddUser?<p style={{gridColumn: 1/3}}>Error adding user</p>:null} 
-                        // </div>
-                        // </div>     
+}   
 
 const createRoomStyle ={
    
