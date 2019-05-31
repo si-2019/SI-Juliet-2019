@@ -7,6 +7,8 @@ const app = express();
 const upload = multer();
 const Chatkit = require('@pusher/chatkit-server')
 const sequelize = require('sequelize');
+const swagger_document=require('./swagger-document.js');
+
 
 db.sequelize.sync()
 .then(() => console.log('Konektovano na bazu.'))
@@ -15,6 +17,7 @@ db.sequelize.sync()
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(cors());
+
 
 app.get('/files', (req, res) => {
   let filesTable = db.files;
@@ -253,5 +256,7 @@ app.post('/event',(req,res)=>{
 app.get('/test',(req, res)=>{
   res.status(121).send();
 })
+
+swagger_document(app);
 
 app.listen(31910, () => console.log('Server pokrenut na portu 31910'));
