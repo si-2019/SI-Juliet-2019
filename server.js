@@ -50,6 +50,9 @@ app.get('/files', (req, res) => {
     .catch(err => res.send(err));
 })
 
+
+
+
 app.post('/upload', upload.any(), (req, res) => {
     let filesTable = db.files;
 
@@ -65,6 +68,8 @@ app.post('/upload', upload.any(), (req, res) => {
     .then(x => res.send(x))
     .catch(err => res.send(err));
 });
+
+
 
 app.get('/download/:name', (req, res) => {
   let filesTable = db.files;
@@ -106,6 +111,32 @@ app.get('/pinovanePoruke/:name', (req, res) => {
     })
     .catch(e => res.status(400).send(e))
 });
+
+
+/**
+ * @swagger
+ * /pinovanePoruke:
+ *    get:
+ *      tags:
+ *       - Poruke 
+ *      description: 'Omogućava pregled svih pinovanih poruka.
+ *      Autor: Marko Nedić'
+ *      consumes:
+ *       - application/x-www-form-urlencoded
+ *      parameters:
+ *      required:
+ *      responses:
+ *       200:
+ *         description: Vraca se JSON objekat data koji sadrži sve poruke koje su pinovane.
+ *         content: 
+ *           application/json:
+ *               data: 
+ *                 type: object
+ *       400:
+ *          description: Greška.
+ */
+
+
 app.get('/pinovanePoruke', (req, res) => {
   let pinovanePorukeTabela = db.pinovanePoruke;
   pinovanePorukeTabela.findAll({
@@ -271,11 +302,13 @@ app.post('/updateAvatar', (req,res) =>{
  *      required:
  *      responses:
  *       200:
- *         description: Vraca se JSON objekat data koji sadrži sve atribute koji predstavljaju kolone unutar tabele fajlova.
+ *         description: Vraca se niz objekata koji predstavljaju događaje.
  *         content: 
  *           application/json:
  *               data: 
  *                 type: object
+ *       400:
+ *          description: Greska.
  */
 
 app.get('/events', (req, res) => {
@@ -283,7 +316,7 @@ app.get('/events', (req, res) => {
   eventsTable.findAll({}).then(data =>  {
     console.log(data);
     res.status(200).json(data)})
-    .catch(err => res.send(err));
+    .catch(err => res.status(400).send(err));
 })
 
 app.post('/event',(req,res)=>{
