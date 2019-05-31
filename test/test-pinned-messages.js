@@ -7,5 +7,14 @@ chai.use(chaiHttp);
 chai.should();
 
 describe('Pripremanje podataka', () => {
-    describe('GET /') 
+    describe('GET /pinovanePoruke', () => {
+        it('Vratit će se poruke iz baze', (done) => {
+            chai.request('http://localhost:31910')
+                .get('/pinovanePoruke')
+                .end((err, res) => {
+                    res.should.have.status(200)
+                    done()
+                })
+        })
+    }) 
 })

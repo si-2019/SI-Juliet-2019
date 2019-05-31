@@ -123,7 +123,6 @@ app.post('/pinujPoruku', (req, res) => {
     senderId: req.body.senderId,
     text: req.body.text
   }
-  console.log(newRow);
   pinovanePorukeTabela.create(newRow)
   .then(x => console.log(x))
   .catch(err => res.send(err));
@@ -184,7 +183,6 @@ app.post('/colorscheme', (req, res) => {
     userId: req.body.userId,
     colorId: req.body.colorId.hex,
   }
-  console.log(newRow);
   chatColorsTabela.create(newRow)
   .then(x => console.log(x))
   .catch(err => res.send(err));
@@ -281,7 +279,6 @@ app.post('/updateAvatar', (req,res) =>{
 app.get('/events', (req, res) => {
   let eventsTable = db.events;
   eventsTable.findAll({}).then(data =>  {
-    console.log(data);
     res.status(200).json(data)})
     .catch(err => res.send(err));
 })
@@ -295,7 +292,6 @@ app.post('/event',(req,res)=>{
     kraj:req.body.kraj
   }
  
-  console.log(newRow);
   eventsTable.create(newRow)
   .then(x => res.send(x))
   .catch(err => res.send(err));

@@ -18,8 +18,7 @@ describe("kreiranje", () => {
                 .send(podaci)
                 .end((err, res) => {
                     res.should.have.status(200)
-                    res.body.should.have.property('message')
-                    res.body.should.have.property('message').eql('Avatar update-ovan')
+                    res.body.should.have.property()
                     done()
                 })
         })
