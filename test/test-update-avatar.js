@@ -1,7 +1,6 @@
 // Import the dependencies for testing
 var chai = require('chai');
 var chaiHttp = require('chai-http');
-var app = require('../server');
 
 // Configure chai
 chai.use(chaiHttp);
