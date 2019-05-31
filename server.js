@@ -18,7 +18,31 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(cors());
 
+//GET: /files
 
+/**
+ * @swagger
+ * /files:
+ *    get:
+ *      tags:
+ *       - Dohvatanje svih fajlova 
+ *      description: 'Omogucava uvid u sve poslane fajlove unutar chata.
+ *      Šalje se obični GET zahtjev, bez ikakvih dodatnih specifikacija u tijelu zahtjeva.
+ *      Autor: Nedzad Džindo'
+ *      consumes:
+ *       - application/x-www-form-urlencoded
+ *      parameters:
+ *      required:
+ *      responses:
+ *       200:
+ *         description: Vraca se JSON objekat data koji sadrži sve atribute koji predstavljaju kolone unutar tabele fajlova.
+ *         content: 
+ *           application/json:
+ *               data: 
+ *                 type: object
+ *       500:
+ *         description: Vraca se JSON objekat - error poruka o grešci.
+ */
 app.get('/files', (req, res) => {
   let filesTable = db.files;
 
@@ -220,7 +244,7 @@ app.put('/thread/:messageId', (req, res) => {
 });
 
 app.post('/updateAvatar', (req,res) =>{
-  console.log('Evo radi!');
+
 
   chatkit.updateUser({
     id:req.body.currentUId,
@@ -232,9 +256,33 @@ app.post('/updateAvatar', (req,res) =>{
   });
 })
 
+
+/**
+ * @swagger
+ * /events:
+ *    get:
+ *      tags:
+ *       - Događaji za kalendar 
+ *      description: 'Omogućava pregled svih dodanih događaja (datuma početka kraj i sl.).
+ *      Autor: Marko Nedić'
+ *      consumes:
+ *       - application/x-www-form-urlencoded
+ *      parameters:
+ *      required:
+ *      responses:
+ *       200:
+ *         description: Vraca se JSON objekat data koji sadrži sve atribute koji predstavljaju kolone unutar tabele fajlova.
+ *         content: 
+ *           application/json:
+ *               data: 
+ *                 type: object
+ */
+
 app.get('/events', (req, res) => {
   let eventsTable = db.events;
-  eventsTable.findAll({}).then(data => res.status(200).json(data))
+  eventsTable.findAll({}).then(data =>  {
+    console.log(data);
+    res.status(200).json(data)})
     .catch(err => res.send(err));
 })
 
@@ -252,6 +300,24 @@ app.post('/event',(req,res)=>{
   .then(x => res.send(x))
   .catch(err => res.send(err));
 })
+
+/**
+ * @swagger
+ * /test:
+ *    get:
+ *      tags: 
+ *       - Test statusa servera
+ *      description: 'Omogućava testiranje statusa servera.
+ *      Autor: Nedžad Džidno'
+ *      consumes:
+ *       - application/x-www-form-urlencoded
+ *      parameters:
+ *      required:
+ *      responses:
+ *       121:
+ *         description: Request vraća samo statusni kod a to je 121.
+ *        
+ */
 
 app.get('/test',(req, res)=>{
   res.status(121).send();
