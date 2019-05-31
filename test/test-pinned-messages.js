@@ -6,4 +6,6 @@ var chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 chai.should();
 
-
+describe('Pripremanje podataka', () => {
+    describe('GET /') 
+})
