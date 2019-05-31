@@ -218,4 +218,38 @@ app.put('/thread/:messageId', (req, res) => {
   });
 });
 
+app.post('/updateAvatar', (req,res) =>{
+  console.log('Evo radi!');
+
+  chatkit.updateUser({
+    id:req.body.currentUId,
+    avatarURL:req.body.url
+  }).then(() => {
+    res.sendStatus(200);
+  }).catch((err)=>{
+    res.json(err);
+  });
+})
+
+app.get('/events', (req, res) => {
+  let eventsTable = db.events;
+  eventsTable.findAll({}).then(data => res.status(200).json(data))
+    .catch(err => res.send(err));
+})
+
+app.post('/event',(req,res)=>{
+  let eventsTable = db.events;
+  let newRow = {
+    kreirao:req.body.kreirao,
+    naziv: req.body.naziv,
+    pocetak:req.body.pocetak,
+    kraj:req.body.kraj
+  }
+ 
+  console.log(newRow);
+  eventsTable.create(newRow)
+  .then(x => res.send(x))
+  .catch(err => res.send(err));
+})
+
 app.listen(31910, () => console.log('Server pokrenut na portu 31910'));

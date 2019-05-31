@@ -7,7 +7,8 @@ class RoomList extends Component {
     
         this.state = {
             joinableRooms:this.props.joinableRooms,
-            rooms: this.props.rooms
+            rooms: this.props.rooms,
+            user: this.props.user
         }
     }
 

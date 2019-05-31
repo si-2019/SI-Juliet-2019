@@ -10,7 +10,6 @@ class AddUser extends Component{
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-
     handleChange(e) {
         this.setState({
             userName: e.target.value
@@ -26,20 +25,27 @@ class AddUser extends Component{
     render() {
         return (
             <form onSubmit={this.handleSubmit} className="add-user-form">
-            <input className="input-group mb-3 message-input" type="text" style={inputStyle}
-            placeholder="Add user to the room..." onChange={this.handleChange} value={this.state.userName} />
-            <input className="btn btn-outline-primary" style={buttonStyle} type="submit" value="Add" />
-        </form>
+                <input className="input-group mb-3 message-input" type="text" style={inputStyle}
+                placeholder="Add user to the room..." onChange={this.handleChange} value={this.state.userName} />
+                <input className="btn btn-outline-primary" style={buttonStyle} type="submit" value="Add" />
+            </form>
         )
     }
 }
 const buttonStyle = {
-    height: '40%',
-
+    width: '25%',
+    color: 'white',
+    background: 'rgb(0,0,0,0.6)',
 }
 
 const inputStyle = {
-    width: '100%',
-    padding: '0'
+    width: '72%',
+    marginRight: '3%',
+    padding: '3px 6px',
+    borderRadius: '10px',
+    border: 'border-right: 1px solid rgb(0,0,0,0.2)',
+    display: 'inline-block',
+    border: '0.5px solid rgb(0, 0, 0, 0.6)'
+
 }
 export default AddUser;

@@ -28,6 +28,7 @@ class App extends Component {
     chatkit.createUser({
       id: username,
       name: username,
+      avatarURL: 'https://cdn2.iconfinder.com/data/icons/ninja/500/Ninja_4-512.png'
     }).then((currentUser) => {
         this.setState({
           currentUsername: username,

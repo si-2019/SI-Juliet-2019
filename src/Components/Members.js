@@ -11,10 +11,12 @@ class Members extends Component {
         this.state = {
             room_users: this.props.room_users, 
             input: '',
-            currentUser: this.props.currentUser,
             joinableRooms:this.props.joinableRooms,
-            rooms: this.props.rooms
+            rooms: this.props.rooms,
+            userName: ""
         }
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     onChangeHandler(e){
@@ -23,9 +25,22 @@ class Members extends Component {
         })
     }
 
+    handleChange(e) {
+        this.setState({
+            userName: e.target.value
+        })
+    }
+
+    handleSubmit(e) {
+        e.preventDefault();
+        this.props.addUser(this.state.userName);
+        this.setState({
+            userName: ''
+        })
+    }
+
     render(){
         if(this.props.room_users && this.props.currentUser){
-            const currentUser = this.props.currentUser;
             return(
                 <div style={{width: '100%', padding: '10px 0'}}>     
                     <div className="section-h" onClick={(e) => {
@@ -41,6 +56,11 @@ class Members extends Component {
                         <i id="arrow-members" class="material-icons-outlined md-14">keyboard_arrow_right</i>
                     </div> 
                     <ul style={{overflowX: 'hidden', height:'80%', margin: '0', display: 'none'}} id="all-members">
+                    <form onSubmit={this.handleSubmit} style={{width: '100%'}}>
+                        <input className="input-group mb-3 message-input" type="text" style={inputStyle}
+                        placeholder="Add user to the room..." onChange={this.handleChange} value={this.state.userName} />
+                    </form>
+                        {/* <AddUser style={addUserStyle} addUser={this.props.addUser}/>   */}
                         {this.props.room_users.map((user, index) => {
                             return <li onClick={() => this.props.openPrivateChat(user.id)} 
                             className="user" key={index}>  
@@ -66,4 +86,17 @@ const createRoomStyle ={
     gridColumn: 1/2
 }
 
+const addUserStyle = {
+   
+    gridColumn: 2/3
+}
+
+const inputStyle = {
+    width: '80%',
+    padding: '3px 6px',
+    borderRadius: '10px',
+    border: '0.5px solid rgb(0, 0, 0, 0.3)',
+    height: '35px'
+
+}
 export default Members;

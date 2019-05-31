@@ -18,6 +18,9 @@ import FileSidebar from './FileSidebar';
 import Members from './Members';
 import PinnedMessages from './PinnedMessages';
 import NewPublicRoomForm from './NewPublicRoomForm';
+import EventPlanner  from './EventPlanner';
+import BlockedUsers  from './BlockedUsers';
+
 
 let predmeti = require('../predmeti.json');
 
@@ -45,12 +48,13 @@ class ChatApp extends Component {
             room_users: [],
             rooms: [],
             hasErrorAddUser: null,
+            hasErrorBlockUser: false,
             typingUsers: [], 
             pinnedMessages: [], 
             colorForUser: null, 
             showColorPicker: false,
             joinableRooms:[],
-            isLoading: true
+            blockedUsers: []
         }
         this.addMessage = this.addMessage.bind(this);
         this.openPrivateChat = this.openPrivateChat.bind(this);
@@ -67,6 +71,7 @@ class ChatApp extends Component {
         this.toggleColorPicker = this.toggleColorPicker.bind(this);
         this.handleReply = this.handleReply.bind(this);
         this.createPublicRoom = this.createPublicRoom.bind(this);
+        this.blockAUser = this.blockAUser.bind(this);
     }
     toggleColorPicker() {
         this.setState({
@@ -75,12 +80,6 @@ class ChatApp extends Component {
     }
     
     componentDidMount() {
-        this.setState({
-            isLoading: false
-        })
-    }
-
-    componentWillMount() {
         const chatManager = new ChatManager({
             instanceLocator: instanceLocator,
             userId: this.props.currentId,
@@ -164,15 +163,15 @@ class ChatApp extends Component {
         this.setState({ messages: [] });
         this.state.currentUser.subscribeToRoom({
             roomId: roomId,
-            messageLimit: 100,
+            messageLimit: 20,
             hooks: {
                 onMessage: message => {
                     if(message.text === 'DELETED'){
                         return;
                     }
                     this.setState({
-                        messages: [...this.state.messages, message]
-                    })
+                        messages: [...this.state.messages, message]                      
+                    })                  
                 },
                 onPresenceChanged: () => this.forceUpdate(),
                 onUserJoinedRoom: () => this.forceUpdate(),
@@ -193,6 +192,12 @@ class ChatApp extends Component {
                 },
             }
         }).then((room) => {
+            let usersMap = new Map();
+
+            room.users.map((user, index) => {
+                usersMap.set(user.id, user.avatarURL);
+            })
+
             this.setState({
                 currentRoom: room,
                 room_users: room.users,
@@ -210,7 +215,7 @@ class ChatApp extends Component {
             this.state.currentUser.createRoom({
                 name: userId,
                 private: true,
-                addUserIds: [userId]
+                addUserIds: [userId]               
             }).then((room) => {
                 this.setState({ rooms: [...this.state.rooms, room] });
                 this.joinRoomById(room.id);
@@ -219,10 +224,11 @@ class ChatApp extends Component {
     }
 
     addMessage(text) {
+        console.log(this.state.currentUser);
         this.state.currentUser.sendMessage({
             text: text,
             roomId: this.state.currentRoom.id
-        }).then(() => {
+        }).then(() => {       
             if(text.substr(0, 11) === "@izvjestaj ") {
                 var name = text.substr(11);
                 var predmetGodina = name.split(", ");
@@ -240,13 +246,39 @@ class ChatApp extends Component {
                     })
                 }
             }
+            else if(text.substr(0,11) === '@setAvatar '){
+                let url = text.substr(text.indexOf(' ') +1,text.length); 
+                Axios.post('http://localhost:31910/updateAvatar', {
+                    url: url,
+                    currentUId:this.state.currentUser.id
+                }).then(res => {
+                    window.alert('Avatar will change next time you log in.');
+
+                    let userCopy = this.state.currentUser;
+                    userCopy.avatarURL = url;
+
+                    let usersCopy = this.state.users;
+
+                    usersCopy.map((user, index) => {
+                        if(user.id === this.state.currentUser.id) user.avatarURL = url;
+                    });
+
+                    this.setState({
+                        currentUser: userCopy,
+                        users: usersCopy
+                    })
+
+                    this.forceUpdate();
+                })
+               .catch(e => console.log(e));            
+            }
         }).catch(error => console.error('error', error));
     }
 
     createRoom(roomName){
         this.state.currentUser.createRoom({
             name: roomName,
-            private: true
+            private: true            
         }).then(room => {
             this.setState({ rooms: [...this.state.rooms, room] });
             this.joinRoomById(room.id);
@@ -270,14 +302,14 @@ class ChatApp extends Component {
               this.setState({hasErrorAddUser:true});
             })
     }
-
+    
     createPublicRoom(roomName){
         this.state.currentUser.createRoom({
             name: roomName,
-            private: false
+            private: false           
         }).then(room => {
             this.setState({ rooms: [...this.state.rooms, room] });
-            this.joinRoomById(room.id);
+            this.joinRoomById(room.id);            
         })
         .catch(err=> console.log("err wth cr room", err))
     }
@@ -401,13 +433,72 @@ class ChatApp extends Component {
             
         });
     }
+    blockAUser(userID){
+        const UsersToBlock = this.state.users.filter(user => user.id === userID);
+        const roomIfDelete = this.state.currentRoom.id;
+        if(this.state.currentUser.id === userID){
+            this.setState({ rooms: [...this.state.rooms.filter(roomaa => roomaa.id !== roomIfDelete)] });
+            this.state.currentUser.leaveRoom({ roomId: this.state.currentRoom.id })
+            .then(room => {
+                if(room.users.length === 0){
+                    this.state.currentUser.deleteRoom({ roomId: this.state.currentRoom.id })
+                    .then(() => {
+                        
+                        console.log('Deleted room with ID: ');
+                        
+                    })
+                    .catch(err => {
+                        console.log(`Err`);
+                    })
+                    
+                    
+                }
+                })
+                .catch(err => {
+                console.log(`Error leaving room ${this.state.currentRoom.id}: ${err}`)
+                })
+            this.setState({hasErrorBlockUser:false});
+            this.joinRoomById(this.state.rooms[0].id);
+        } else if(UsersToBlock.length !== 0){
+            this.setState({
+                blockedUsers: [...this.state.blockedUsers, UsersToBlock[0]]
+            })
+            this.state.currentUser.removeUserFromRoom({
+                userId: userID,
+                roomId: this.state.currentRoom.id
+              })
+                .then(() => {
+                    this.joinRoomById(this.state.currentRoom.id);
+                    this.setState({hasErrorBlockUser:false});
+                    if(this.state.currentRoom.users.length === 0){
+                        this.state.currentUser.deleteRoom({ roomId: this.state.currentRoom.id })
+                        .then(() => {
+                            console.log('Deleted room with ID: '+ this.state.currentRoom.id);
+                                                    
+                    
+                        })
+                        .catch(err => {
+                            console.log(`Error deleted room ${this.state.currentRoom.id}: ${err}`)
+                        })
+                        
+                    }
+                
+                })
+                .catch(err => {
+                  console.log('Error removing user from room:'+ err);
+                })
+            
+        }else{
+        this.setState({hasErrorBlockUser:true});
+        console.log('No such user');
+    }
+    }
     render() {
         let colorScheme = this.state.colorForUser != null ? this.state.colorForUser : "#fcfcfc";
         const {
             showColorPicker,
         } = this.state;
-        return (
-            this.state.isLoading ? "hehe" : 
+        return ( 
             <div className="chat-app-wrapper">
 
                 <div style={{'background': colorScheme}} className="list-wrapper">
@@ -455,6 +546,7 @@ class ChatApp extends Component {
                     
                 </div>
                 <div style={{'background': colorScheme}} className="list-wrapper">
+                    <BlockedUsers blockAUser={this.blockAUser}/>
                     <Members 
                         openPrivateChat={this.openPrivateChat} 
                         room_users={this.state.room_users}
@@ -465,6 +557,7 @@ class ChatApp extends Component {
                     />
                     <FileSidebar downloadClick={this.downloadClick}/>
                     <PinnedMessages pinnedMessages={this.state.pinnedMessages}/>
+                    <EventPlanner currentId={this.props.currentId}/> 
                 </div>
             </div>
         )

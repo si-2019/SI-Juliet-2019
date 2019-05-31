@@ -147,7 +147,6 @@ class UsersList extends Component {
                             </li>
                         })}
                     </ul>
-                    
                 </div>
             )
         }
@@ -163,9 +162,14 @@ const createRoomStyle ={
     gridColumn: 1/2
 }
 
-const addUserStyle = {
-   
-    gridColumn: 2/3
+const inpStyle = {
+    borderRadius : '0.25rem',
+    height: '40px',
+    margin: '2px'
 }
-
+const userSearch = {
+    borderRadius : '0.25rem',
+    height: '40px',
+    margin: '2px'
+}
 export default UsersList;

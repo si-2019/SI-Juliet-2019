@@ -22,6 +22,7 @@ db.pinovanePoruke = sequelize.import(path.join(__dirname, 'Pinovane.js'));
 db.chatColorScheme = sequelize.import(path.join(__dirname, 'ColorScheme.js'));
 db.threads = sequelize.import(path.join(__dirname, 'Threads.js'));
 db.threadMessage = sequelize.import(path.join(__dirname, 'ThreadMessage.js'));
+db.events=sequelize.import(path.join(__dirname, 'Events.js'));
 
 db.threads.hasMany(db.threadMessage, { 
     foreignKey: 'threadId', 

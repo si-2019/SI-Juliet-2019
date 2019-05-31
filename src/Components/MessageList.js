@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import '../styles/MessageList.css';
 import { IconButton, Tooltip } from '@material-ui/core';
-import { Reply, Place, Message, CloudDownload, Delete } from '@material-ui/icons';
+import { Reply, Place, Message, CloudDownload, Delete, SlowMotionVideo, SlowMotionVideoOutlined } from '@material-ui/icons';
 import { format } from 'date-fns';
 import ThreadDialog from './ThreadDialog';
 import Message_ from './Message_'
 import Axios from 'axios';
+import { thisTypeAnnotation } from 'babel-types';
 
 function RoomName(props) {
     console.log(typeof props.currentRoom.name)
@@ -25,6 +26,8 @@ class MessageList extends Component {
             deleteStyleArray: [],
             adminUser: false,
             messages: [],
+            users: [],
+            avatars: [],
             openThread: false,
             selectedMessage: {},
             threadMessages: [], 
@@ -104,14 +107,17 @@ class MessageList extends Component {
     }
 
     componentDidMount() {
-        // localStorage.clear();
+        localStorage.clear();
+        
         this.setState({
-            messages: this.props.messages
+            messages: this.props.messages,
+            users: this.props.users
         })
+
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (this.props.messages !== nextProps.messages || !this.state.messages.length) this.scrollToBottom();
+    componentDidUpdate() {
+        this.scrollToBottom();
     }
 
     handleDownloadClick(message) {
@@ -245,6 +251,14 @@ const messageStyle = {
     alignContent: 'center',
     border: 'none',
     paddingLeft: '2rem'
+}
+
+const imgStyle = {
+    height: '50px',
+    width: '50px',
+    borderRadius: '50%',
+    border: '1px solid black',
+    marginTop:'6px'
 }
 
 export default MessageList;

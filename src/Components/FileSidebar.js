@@ -7,10 +7,13 @@ class FileSidebar extends Component {
         super(props);
 
         this.state = {
-            files: []
+            files: [],
+            input:''
+
         }
 
         this.handleItemClick = this.handleItemClick.bind(this);
+        this.onChangeHandler = this.onChangeHandler.bind(this);
     }
 
     componentWillMount(){
@@ -26,8 +29,19 @@ class FileSidebar extends Component {
     handleItemClick(name){
         this.props.downloadClick(name);
     }
+    onChangeHandler(e){
+        this.setState({
+          input: e.target.value,
+        })
+    }
 
     render(){
+
+
+
+
+        //Filter
+        const resultFiles = this.state.files.filter(f => this.state.input === '' || f.naziv.toLowerCase().includes(this.state.input.toLowerCase()) || f.posiljaoc.toLowerCase()===this.state.input.toLowerCase() );
         return(
             <div style={{width: '100%', padding: '10px 0'}}>     
                 <div className="section-h" onClick={(e) => {
@@ -42,9 +56,9 @@ class FileSidebar extends Component {
                     <i id="arrow-files" class="material-icons-outlined md-14">keyboard_arrow_right</i>
                 </div> 
                 <ul style={{overflowX: 'hidden', height:'80%', margin: '0', display: 'none'}} id="shared-files">
-                {
-                    this.state.files ? 
-                        this.state.files.map((file, index) => (
+                <input className="pretragaFajlovaText" placeholder="Search files..." value={this.state.input} type="text" onChange={this.onChangeHandler.bind(this)} style={fileSearchCSS}/>
+                {resultFiles ? 
+                        resultFiles.map((file, index) => (
                             <li key={index} className='user' onClick={() => {this.handleItemClick(file.naziv)}}> 
                                 { file.posiljaoc + ': ' + file.naziv} 
                             </li>
@@ -58,5 +72,13 @@ class FileSidebar extends Component {
         )
     }
 }
+
+const fileSearchCSS ={
+    padding:'3px 6px',
+    marginBottom:'10px',
+    width: '90%',
+    borderRadius: '10px',
+    border: '0.5px solid rgb(0,0,0,0.2)'
+};
 
 export default FileSidebar;
