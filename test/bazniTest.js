@@ -2,13 +2,14 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var app = require('../server');
+
 // Configure chai
 chai.use(chaiHttp);
 chai.should();
 
-describe("Hotel", () => {
+describe("Juliet", () => {
     describe("GET /test", () => {
-        it ("treba vratit nesto bzvz", (done) => {
+        it ("Treba vratiti dummy", (done) => {
             chai.request('http://localhost:31910')
                 .get('/test')
                 .end((err, res) => {

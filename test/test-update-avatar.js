@@ -2,6 +2,7 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var app = require('../server');
+
 // Configure chai
 chai.use(chaiHttp);
 chai.should();
@@ -12,7 +13,6 @@ describe("kreiranje", () => {
             const podaci = {
                 currentUId: 'bot@bot',
                 url: 'https://cdn4.iconfinder.com/data/icons/superheroes/512/batman-512.png',
-                
             }
             chai.request('http://localhost:31910')
                 .post('/updateAvatar')
