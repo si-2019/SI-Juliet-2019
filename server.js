@@ -31,7 +31,6 @@ app.use(cors());
  *      Autor: Nedzad Džindo'
  *      consumes:
  *       - application/x-www-form-urlencoded
- *      parameters:
  *      required:
  *      responses:
  *       200:
@@ -123,7 +122,6 @@ app.get('/pinovanePoruke/:name', (req, res) => {
  *      Autor: Marko Nedić'
  *      consumes:
  *       - application/x-www-form-urlencoded
- *      parameters:
  *      required:
  *      responses:
  *       200:
@@ -296,8 +294,6 @@ app.post('/updateAvatar', (req,res) =>{
  *      Autor: Marko Nedić'
  *      consumes:
  *       - application/x-www-form-urlencoded
- *      parameters:
- *      required:
  *      responses:
  *       200:
  *         description: Vraca se niz objekata koji predstavljaju događaje.
@@ -340,16 +336,15 @@ app.post('/event',(req,res)=>{
  *      Autor: Nedžad Džidno'
  *      consumes:
  *       - application/x-www-form-urlencoded
- *      parameters:
  *      required:
  *      responses:
- *       121:
+ *       200:
  *         description: Request vraća samo statusni kod a to je 121.
  *        
  */
 
 app.get('/test',(req, res)=>{
-  res.status(121).send();
+  res.status(200).send();
 })
 
 swagger_document(app);
