@@ -49,8 +49,16 @@ app.get('/files', (req, res) => {
     .catch(err => res.send(err));
 })
 
+app.get('/files/:roomId', (req, res) => {
+  let filesTable = db.files;
 
-
+  filesTable.findAll({
+    where: {
+      soba: roomId
+    }
+  }).then(data => res.status(200).json(data))
+  .catch(err => res.send(err));
+})
 
 app.post('/upload', upload.any(), (req, res) => {
     let filesTable = db.files;
