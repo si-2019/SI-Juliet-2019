@@ -25,9 +25,10 @@ app.use(cors());
  * /files:
  *    get:
  *      tags:
- *       - Dohvatanje svih fajlova 
+ *       - Fajlovi 
  *      description: 'Omogucava uvid u sve poslane fajlove unutar chata.
  *      Šalje se obični GET zahtjev, bez ikakvih dodatnih specifikacija u tijelu zahtjeva.
+ *      Zato što vraća sve uploadovane fajlove u binarnom formatu ne preporučuje se pokretanje ove rute preko swagger-a.
  *      Autor: Nedzad Džindo'
  *      consumes:
  *       - application/x-www-form-urlencoded
@@ -44,21 +45,118 @@ app.use(cors());
  */
 app.get('/files', (req, res) => {
   let filesTable = db.files;
-
   filesTable.findAll({}).then(data => res.status(200).json(data))
     .catch(err => res.send(err));
 })
 
+
+/**
+ * @swagger
+ * /files/{roomId}:
+ *    get:
+ *      tags:
+ *       - Fajlovi
+ *      description: 'Dohvatanje svih fajlova koji upload-ovani u sobi sa proslijeđenim id-jem sobe (roomId).
+ *      Autor: Marko Nedić'
+ *      consumes:
+ *       - application/x-www-form-urlencoded
+ *      parameters:
+ *       - in: path
+ *         name: roomId
+ *         required: true
+ *      required:
+ *      responses:
+ *       200:
+ *         description: Vraca se JSON objekat data koji sadrži sve fajlove koji su upload-ovani u toj sobi.
+ *         content: 
+ *           application/json:
+ *               data: 
+ *                 type: object
+ *       400:
+ *         description: Greška.
+ */
+
 app.get('/files/:roomId', (req, res) => {
   let filesTable = db.files;
+
 
   filesTable.findAll({
     where: {
       soba: roomId
     }
   }).then(data => res.status(200).json(data))
-  .catch(err => res.send(err));
+  .catch(err => res.status(400).send(err));
 })
+
+/**
+ * @swagger
+ * /postTest/{m1}:
+ *    post:
+ *      tags:
+ *       - Test statusa servera 
+ *      description: 'Testiranje post methode sa .params u njoj.
+ *      Autor: Nedzad Džindo'
+ *      consumes:
+ *       - application/x-www-form-urlencoded
+ *      parameters:
+ *       - in: path
+ *         name: m1
+ *         required: true
+ *         type: string
+ *      required:
+ *      responses:
+ *       200:
+ *         description: Vraca se JSON objekat data koji sadrži sve atribute koji predstavljaju kolone unutar tabele fajlova.
+ *         content: 
+ *           application/json:
+ *               data: 
+ *                 type: object
+ */
+
+app.post('/postTest/:m1', (req,res)=>{
+  let var1=req.params.m1;
+  res.status(400).json(var1);
+});
+
+/**
+ * @swagger
+ * /upload:
+ *    post:
+ *      tags:
+ *       - Fajlovi 
+ *      description: 'Upload-ovanje fajlova
+ *      Autor: Nedzad Džindo'
+ *      consumes:
+ *       - application/x-www-form-urlencoded
+ *      parameters:
+ *       - in: body
+ *         schema:
+ *           type: object
+ *           properties:
+ *              name:
+ *                type: string
+ *              sender:
+ *                type: string
+ *              room:
+ *                type: integer
+ *       - in: files
+ *         schema:
+ *           type: object
+ *           properties:
+ *              mimetype:
+ *                type: mimetype
+ *              buffer:
+ *                type: buffer
+ *            
+ *      required:
+ *      responses:
+ *       200:
+ *         description: Vraca status da je dodan file i red iz tabele.
+ *         content: 
+ *           application/json:
+ *               data: 
+ *                 type: object
+ */
 
 app.post('/upload', upload.any(), (req, res) => {
     let filesTable = db.files;
@@ -72,10 +170,38 @@ app.post('/upload', upload.any(), (req, res) => {
     }
 
     filesTable.create(newRow)
-    .then(x => res.send(x))
+    .then(x => res.status(200).send(x))
     .catch(err => res.send(err));
 });
 
+
+
+/**
+ * @swagger
+ * /download/{name}:
+ *    get:
+ *      tags:
+ *       - Fajlovi
+ *      description: 'Preuzimanje fajla sa proslijeđenim nazivom.
+ *      Autor: Marko Nedić'
+ *      consumes:
+ *       - application/x-www-form-urlencoded
+ *      parameters:
+ *       - in: path
+ *         name: name
+ *         type: string
+ *         required: true
+ *      required:
+ *      responses:
+ *       200:
+ *         description: Preuzima se fajl.
+ *         content: 
+ *           application/json:
+ *               data: 
+ *                 type: object
+ *       400:
+ *         description: Greška.
+ */
 
 
 app.get('/download/:name', (req, res) => {
@@ -96,6 +222,28 @@ const chatkit = new Chatkit.default({
   key: '1a6a40ad-eeb9-4c58-bed1-5def937b2998:lIOkO8lw/1aRrATwiFKCpwWebBgc8H59o+zYomXdPTM='
 });
 
+
+/**
+ * @swagger
+ * /deleteMessage:
+ *    post:
+ *      tags:
+ *       - Poruke 
+ *      description: 'Brisanje poruka tako što se proslijedi id poruke.
+ *      Autor: Marko Nedić'
+ *      consumes:
+ *       - application/x-www-form-urlencoded
+ *      responses:
+ *       200:
+ *         description: Vraca se JSON objekat data koji sadrži podatke o obrisanoj poruci.
+ *         content: 
+ *           application/json:
+ *               data: 
+ *                 type: object
+ *       400:
+ *          description: Greska.
+ */
+
 app.post('/deleteMessage', (req, res) => {
   chatkit.deleteMessage({
     id: req.body.message_id
@@ -103,9 +251,35 @@ app.post('/deleteMessage', (req, res) => {
   .then(data => {
     res.status(200).json(data);
   })
-  .catch(err => res.send(err))
+  .catch(err => res.status(400).send(err))
 })
 
+/**
+ * @swagger
+ * /pinovanePoruke/{name}:
+ *    get:
+ *      tags:
+ *       - Fajlovi
+ *      description: 'Podaci i sadržaj pinovane poruke sa prosliđenim id-jem.
+ *      Autor: Nedžad Džindo'
+ *      consumes:
+ *       - application/x-www-form-urlencoded
+ *      parameters:
+ *       - in: path
+ *         name: name
+ *         type: string
+ *         required: true
+ *      required:
+ *      responses:
+ *       200:
+ *         description: Vraca se JSON objekat data koji sadrži podatke pinovanoj poruci.
+ *         content: 
+ *           application/json:
+ *               data: 
+ *                 type: object
+ *       400:
+ *         description: Greška.
+ */
 
 app.get('/pinovanePoruke/:name', (req, res) => {
   let pinovanePorukeTabela = db.pinovanePoruke;
@@ -151,6 +325,9 @@ app.get('/pinovanePoruke', (req, res) => {
     })
     .catch(e => res.status(400).send(e))
 });
+
+//__NASTAVAK
+
 app.post('/pinujPoruku', (req, res) => {
   let pinovanePorukeTabela = db.pinovanePoruke;
   let newRow = {
@@ -183,6 +360,30 @@ app.post('/assignRoleAsAdmin', (req, res) => {
   .catch(err => res.send(err));
 })
 
+
+/**
+ * @swagger
+ * /roles:
+ *    get:
+ *      tags:
+ *       - Uloge 
+ *      description: 'Omogućava pregled svih Uloga na chatu.
+ *      Autor: Marko Nedić'
+ *      consumes:
+ *       - application/x-www-form-urlencoded
+ *      produces:
+ *       - application/x-www-form-urlencoded
+ *      responses:
+ *       200:
+ *         description: Vraca se objekat sa parametrima za uloge.
+ *         content: 
+ *           application/json:
+ *               data: 
+ *                 type: object
+ *       400:
+ *          description: Greska.
+ */
+
 app.get('/roles', (req, res) => {
   chatkit.getUserRoles({
     id: req.body.user_id
@@ -190,8 +391,11 @@ app.get('/roles', (req, res) => {
   .then(data => {
     res.status(200).json(data);
   })
-  .catch(err => res.send(err))
+  .catch(err => res.status(400).send(err))
 })
+
+
+
 app.get('/colorscheme/:name', (req, res) => {
   let chatColorsTabela = db.chatColorScheme;
   chatColorsTabela.count({
@@ -203,6 +407,9 @@ app.get('/colorscheme/:name', (req, res) => {
     })
     .catch(e => res.status(400).send(e))
 });
+
+
+
 app.get('/colorschemeUser/:name', (req, res) => {
   let chatColorsTabela = db.chatColorScheme;
   chatColorsTabela.findOne({
