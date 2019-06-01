@@ -57,7 +57,7 @@ app.get('/files', (req, res) => {
  *      tags:
  *       - Fajlovi
  *      description: 'Dohvatanje svih fajlova koji upload-ovani u sobi sa proslijeđenim id-jem sobe (roomId).
- *      Autor: Marko Nedić'
+ *      Autor: Nedžad Džindo'
  *      consumes:
  *       - application/x-www-form-urlencoded
  *      parameters:
@@ -301,7 +301,7 @@ app.get('/pinovanePoruke/:name', (req, res) => {
  *      tags:
  *       - Poruke 
  *      description: 'Omogućava pregled svih pinovanih poruka.
- *      Autor: Marko Nedić'
+ *      Autor: Nedžad Džindo'
  *      consumes:
  *       - application/x-www-form-urlencoded
  *      required:
@@ -326,7 +326,41 @@ app.get('/pinovanePoruke', (req, res) => {
     .catch(e => res.status(400).send(e))
 });
 
-//__NASTAVAK
+/**
+ * @swagger
+ * /pinujPoruku:
+ *    post:
+ *      tags:
+ *       - Poruke
+ *      description: 'Upis poruke koja će se pinovati u bazu.
+ *      Autor: Nedžad Džindo'
+ *      consumes:
+ *       - application/x-www-form-urlencoded
+ *      parameters:
+ *       - in: body
+ *         schema:
+ *           type: object
+ *           properties:
+ *              messageCreatedAt:
+ *                type: string
+ *              messageId:
+ *                type: integer
+ *              room:
+ *                type: integer
+ *              senderId:
+ *                type: integer
+ *              text:
+ *                type: integer
+ *      responses:
+ *       200:
+ *         description: Vraća se red koji je ubačen u tabelu.
+ *         content: 
+ *           application/json:
+ *               data: 
+ *                 type: object
+ *       400:
+ *         description: Greška.
+ */
 
 app.post('/pinujPoruku', (req, res) => {
   let pinovanePorukeTabela = db.pinovanePoruke;
@@ -338,9 +372,38 @@ app.post('/pinujPoruku', (req, res) => {
     text: req.body.text
   }
   pinovanePorukeTabela.create(newRow)
-  .then(x => console.log(x))
-  .catch(err => res.send(err));
+  .then(x => res.status(200).send(x))
+  .catch(err => res.status(400).send(err));
 });
+
+
+/**
+ * @swagger
+ * /pinujPoruku/{name}:
+ *    delete:
+ *      tags:
+ *       - Poruke
+ *      description: 'Brisanje pinovane poruke sa određenim id-jem poruke.
+ *      Autor: Marko Nedić'
+ *      consumes:
+ *       - application/x-www-form-urlencoded
+ *      parameters:
+ *       - in: path
+ *         name: name
+ *         type: string
+ *         required: true
+ *      required:
+ *      responses:
+ *       200:
+ *         description: Vraca se JSON objekat data koji sadrži sve podatke o obrisanoj poruci.
+ *         content: 
+ *           application/json:
+ *               data: 
+ *                 type: object
+ *       400:
+ *         description: Greška.
+ */
+
 app.delete('/pinujPoruku/:name', (req, res) => {
   let pinovanePorukeTabela = db.pinovanePoruke;
   pinovanePorukeTabela.destroy({
@@ -352,12 +415,41 @@ app.delete('/pinujPoruku/:name', (req, res) => {
     })
     .catch(e => res.status(400).send(e))
 });
+
+
+/**
+ * @swagger
+ * /assignRoleAsAdmin:
+ *    post:
+ *      tags:
+ *       - Uloge
+ *      description: 'Dodjeljivanje Admin privilegije korisnicima.
+ *      Autor: Nedžad Džindo'
+ *      consumes:
+ *       - application/x-www-form-urlencoded
+ *      parameters:
+ *       - in: body
+ *         name: user_id
+ *         type: string
+ *         required: true
+ *      required:
+ *      responses:
+ *       200:
+ *         description: Vraća samo status 200.
+ *         content: 
+ *           application/json:
+ *               data: 
+ *                 type: object
+ *       400:
+ *         description: Greška.
+ */
+
 app.post('/assignRoleAsAdmin', (req, res) => {
   chatkit.assignGlobalRoleToUser({
     userId: req.body.user_id,
     name: 'admin'
   }).then(res => res.sendStatus(200))
-  .catch(err => res.send(err));
+  .catch(err => res.status(400).send(err));
 })
 
 
@@ -394,7 +486,32 @@ app.get('/roles', (req, res) => {
   .catch(err => res.status(400).send(err))
 })
 
-
+/**
+ * @swagger
+ * /colorscheme/{name}:
+ *    get:
+ *      tags:
+ *       - Boje
+ *      description: 'Vraća podatke o boji sa proslijeđenim id-jem.
+ *      Autor: Marko Nedić'
+ *      consumes:
+ *       - application/x-www-form-urlencoded
+ *      parameters:
+ *       - in: path
+ *         name: name
+ *         type: string
+ *         required: true
+ *      required:
+ *      responses:
+ *       200:
+ *         description: Vraca se JSON objekat data koji sadrži sve podatke o boji.
+ *         content: 
+ *           application/json:
+ *               data: 
+ *                 type: object
+ *       400:
+ *         description: Greška.
+ */
 
 app.get('/colorscheme/:name', (req, res) => {
   let chatColorsTabela = db.chatColorScheme;
@@ -407,6 +524,34 @@ app.get('/colorscheme/:name', (req, res) => {
     })
     .catch(e => res.status(400).send(e))
 });
+
+//PREPRAVITI
+/**
+ * @swagger
+ * /colorschemeUser/{name}:
+ *    get:
+ *      tags:
+ *       - Boje
+ *      description: 'Vraća podatke o boji sa proslijeđenim id-jem.
+ *      Autor: Marko Nedić'
+ *      consumes:
+ *       - application/x-www-form-urlencoded
+ *      parameters:
+ *       - in: path
+ *         name: name
+ *         type: string
+ *         required: true
+ *      required:
+ *      responses:
+ *       200:
+ *         description: Vraca se JSON objekat data koji sadrži sve podatke o boji.
+ *         content: 
+ *           application/json:
+ *               data: 
+ *                 type: object
+ *       400:
+ *         description: Greška.
+ */
 
 
 
@@ -421,6 +566,40 @@ app.get('/colorschemeUser/:name', (req, res) => {
     })
     .catch(e => res.status(400).send(e))
 });
+
+/**
+ * @swagger
+ * /colorscheme:
+ *    post:
+ *      tags:
+ *       - Boje
+ *      description: 'Dodavanje nove boje u bazu.
+ *      Autor: Nedžad Džindo'
+ *      consumes:
+ *       - application/x-www-form-urlencoded
+ *      parameters:
+ *       - in: body
+ *         schema:
+ *           type: object
+ *           properties:
+ *              userId:
+ *                type: string
+ *              colorId.hex:
+ *                type: string
+ *      required:
+ *      responses:
+ *       200:
+ *         description: Vraća se red iz tabele koji je ubačen.
+ *         content: 
+ *           application/json:
+ *               data: 
+ *                 type: object
+ *       400:
+ *         description: Greška.
+ */
+
+
+
 app.post('/colorscheme', (req, res) => {
   let chatColorsTabela = db.chatColorScheme;
   let newRow = {
@@ -428,9 +607,36 @@ app.post('/colorscheme', (req, res) => {
     colorId: req.body.colorId.hex,
   }
   chatColorsTabela.create(newRow)
-  .then(x => console.log(x))
-  .catch(err => res.send(err));
+  .then(x => res.status(200).send(x))
+  .catch(err => res.status(400).send(err));
 });
+
+/**
+ * @swagger
+ * /colorscheme/{name}:
+ *    delete:
+ *      tags:
+ *       - Boje
+ *      description: 'Briše boju sa specificiranim id-jem.
+ *      Autor: Marko Nedić'
+ *      consumes:
+ *       - application/x-www-form-urlencoded
+ *      parameters:
+ *       - in: path
+ *         name: name
+ *         type: string
+ *         required: true
+ *      responses:
+ *       200:
+ *         description: Vraca se JSON objekat data koji sadrži sve podatke o boji.
+ *         content: 
+ *           application/json:
+ *               data: 
+ *                 type: object
+ *       400:
+ *         description: Greška.
+ */
+
 app.delete('/colorscheme/:name', (req, res) => {
   let chatColorsTabela = db.chatColorScheme;
   chatColorsTabela.destroy({
@@ -442,6 +648,33 @@ app.delete('/colorscheme/:name', (req, res) => {
     })
     .catch(e => res.status(400).send(e))
 });
+
+
+/**
+ * @swagger
+ * /thread/{messageId}:
+ *    get:
+ *      tags:
+ *       - Threads
+ *      description: 'DODATI OPIS!
+ *      Autor: Marko Nedić'
+ *      consumes:
+ *       - application/x-www-form-urlencoded
+ *      parameters:
+ *       - in: path
+ *         name: messageId
+ *         type: string
+ *         required: true
+ *      responses:
+ *       200:
+ *         description: Ok.
+ *         content: 
+ *           application/json:
+ *               data: 
+ *                 type: object
+ *       400:
+ *         description: Greška.
+ */
 
 app.get('/thread/:messageId', (req, res) => {
   db.threads.findOne({
@@ -461,6 +694,33 @@ app.get('/thread/:messageId', (req, res) => {
   })
 });
 
+
+/**
+ * @swagger
+ * /thread:
+ *    post:
+ *      tags:
+ *       - Threads
+ *      description: 'DODATI OPIS!
+ *      Autor: Marko Nedić'
+ *      consumes:
+ *       - application/x-www-form-urlencoded
+ *      parameters:
+ *       - in: body
+ *         name: messageId
+ *         type: string
+ *         required: true
+ *      responses:
+ *       200:
+ *         description: Ok.
+ *         content: 
+ *           application/json:
+ *               data: 
+ *                 type: object
+ *       400:
+ *         description: Greška.
+ */
+
 app.post('/thread', (req, res) => {
   db.threads.create({
     messageId: req.body.messageId
@@ -468,6 +728,43 @@ app.post('/thread', (req, res) => {
       res.status(200).send("New thread created")
   }).catch(err => res.status(400).send(err));
 })
+
+
+/**
+ * @swagger
+ * /thread/{messageId}:
+ *    put:
+ *      tags:
+ *       - Threads
+ *      description: 'DODATI OPIS!
+ *      Autor: Marko Nedić'
+ *      consumes:
+ *       - application/x-www-form-urlencoded
+ *      parameters:
+ *       - in: path
+ *         name: messageId
+ *         type: string
+ *         required: true
+*       - in: body
+ *         schema:
+ *           type: object
+ *           properties:
+ *              sender:
+ *                type: string
+ *              text:
+ *                type: string
+ *              id:
+ *                type: integer
+ *      responses:
+ *       200:
+ *         description: Ok.
+ *         content: 
+ *           application/json:
+ *               data: 
+ *                 type: object
+ *       400:
+ *         description: Greška.
+ */
 
 app.put('/thread/:messageId', (req, res) => {
   db.threads.findOne({
@@ -481,9 +778,41 @@ app.put('/thread/:messageId', (req, res) => {
         threadId: result.id
     }).then(message => {
       res.status(200).send(JSON.stringify(message));
-    });
+    }).catch(err => res.status(400).send(err));
   });
 });
+
+
+/**
+ * @swagger
+ * /updateAvatar:
+ *    post:
+ *      tags:
+ *       - Avatar
+ *      description: 'Promjena avatara na chat-u.
+ *      Autor: Nedžad Džindo'
+ *      consumes:
+ *       - application/x-www-form-urlencoded
+ *      parameters:
+ *       - in: body
+ *         schema:
+ *           type: object
+ *           properties:
+ *              currentUId:
+ *                type: string
+ *              url:
+ *                type: string
+ *      responses:
+ *       200:
+ *         description: Vraća json sa porukom da je update-ovan avatar.
+ *         content: 
+ *           application/json:
+ *               data: 
+ *                 type: object
+ *       400:
+ *         description: Greška.
+ */
+
 
 app.post('/updateAvatar', (req,res) =>{
 
@@ -492,9 +821,9 @@ app.post('/updateAvatar', (req,res) =>{
     id:req.body.currentUId,
     avatarURL:req.body.url
   }).then(() => {
-    res.json({message:'Avatar update-ovan'});
+    res.status(200).json({message:'Avatar update-ovan'});
   }).catch((err)=>{
-    res.json(err);
+    res.status(400).json(err);
   });
 })
 
@@ -527,6 +856,40 @@ app.get('/events', (req, res) => {
     .catch(err => res.status(400).send(err));
 })
 
+/**
+ * @swagger
+ * /event:
+ *    post:
+ *      tags:
+ *       - Događaji za kalendar
+ *      description: 'Dodavanje novog događaja za kalendar.
+ *      Autor: Nedžad Džindo'
+ *      consumes:
+ *       - application/x-www-form-urlencoded
+ *      parameters:
+ *       - in: body
+ *         schema:
+ *           type: object
+ *           properties:
+ *              kreirao:
+ *                type: string
+ *              naziv:
+ *                type: integer
+ *              pocetak:
+ *                type: date
+ *              kraj:
+ *                type: date
+ *      responses:
+ *       200:
+ *         description: Vraća se red koji je ubačen u tabelu.
+ *         content: 
+ *           application/json:
+ *               data: 
+ *                 type: object
+ *       400:
+ *         description: Greška.
+ */
+
 app.post('/event',(req,res)=>{
   let eventsTable = db.events;
   let newRow = {
@@ -537,8 +900,8 @@ app.post('/event',(req,res)=>{
   }
  
   eventsTable.create(newRow)
-  .then(x => res.send(x))
-  .catch(err => res.send(err));
+  .then(x => res.status(200).send(x))
+  .catch(err => res.status(400).send(err));
 })
 
 /**
@@ -548,7 +911,7 @@ app.post('/event',(req,res)=>{
  *      tags: 
  *       - Test statusa servera
  *      description: 'Omogućava testiranje statusa servera.
- *      Autor: Nedžad Džidno'
+ *      Autor: Nedžad Džindo'
  *      consumes:
  *       - application/x-www-form-urlencoded
  *      required:
