@@ -893,10 +893,10 @@ app.get('/events', (req, res) => {
 app.post('/event',(req,res)=>{
   let eventsTable = db.events;
   let newRow = {
-    kreirao:req.body.kreirao,
+    kreirao: req.body.kreirao,
     naziv: req.body.naziv,
-    pocetak:req.body.pocetak,
-    kraj:req.body.kraj
+    pocetak: req.body.pocetak,
+    kraj: req.body.kraj
   }
  
   eventsTable.create(newRow)
