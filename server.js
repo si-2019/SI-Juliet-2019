@@ -725,7 +725,9 @@ app.post('/thread', (req, res) => {
   db.threads.create({
     messageId: req.body.messageId
   }).then(() => {
-      res.status(200).send("New thread created")
+      res.status(200).send({
+        message: 'New thread created!'
+      })
   }).catch(err => res.status(400).send(err));
 })
 
