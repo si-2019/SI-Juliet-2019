@@ -13,8 +13,8 @@ describe('Pripremanje podataka', () => {
                 .get('/pinovanePoruke')
                 .end((err, res) => {
                     res.should.have.status(200)
-                    done()
                 })
+                done()
         })
     }) 
 })

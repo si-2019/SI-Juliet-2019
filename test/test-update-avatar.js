@@ -19,8 +19,8 @@ describe("kreiranje", () => {
                 .end((err, res) => {
                     res.should.have.status(200)
                     res.body.should.have.property()
-                    done()
                 })
+                done()
         })
     });
 });

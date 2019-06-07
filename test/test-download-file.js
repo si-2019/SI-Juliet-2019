@@ -16,8 +16,8 @@ describe('Pripremanje podataka', () => {
                 .end((err, res) => {
                     res.should.have.status(200);
                     assert.equal(res.body.naziv, imeFajla)
-                    done()
                 })
+                done()
         })
     })
 })
