@@ -584,7 +584,7 @@ app.get('/colorschemeUser/:name', (req, res) => {
  *           properties:
  *              userId:
  *                type: string
- *              colorId.hex:
+ *              colorId:
  *                type: string
  *      required:
  *      responses:
@@ -604,7 +604,7 @@ app.post('/colorscheme', (req, res) => {
   let chatColorsTabela = db.chatColorScheme;
   let newRow = {
     userId: req.body.userId,
-    colorId: req.body.colorId.hex,
+    colorId: req.body.colorId,
   }
   chatColorsTabela.create(newRow)
   .then(x => res.status(200).send(x))
