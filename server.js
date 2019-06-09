@@ -38,7 +38,24 @@ app.post('/upload', upload.any(), (req, res) => {
     .then(x => res.send(x))
     .catch(err => res.send(err));
 });
-
+app.post('/blockedUser', (req,res) =>{
+  let blockedUserTable = db.blockedUsers;
+  let newRow = {
+    blockedUserId: req.body.user_id
+  }
+  blockedUserTable.create(newRow)
+  .then(x => console.log(x))
+  .catch(err => res.send(err));
+})
+app.get('/blockedUser/:name',(req,res)=>{
+  db.blockedUsers.findOne({
+    where:{
+      blockedUserId : req.params.name
+    }
+  }).then(data=>{
+    res.status(200).json(data);
+  }).catch(e => res.status(400).send(e))
+})
 app.get('/download/:name', (req, res) => {
   let filesTable = db.files;
 
@@ -129,6 +146,16 @@ app.get('/roles', (req, res) => {
   })
   .catch(err => res.send(err))
 })
+app.get('/users/:user_id/roles', (req, res) => {
+  chatkit.getUserRoles({
+    id: req.params.user_id
+  })
+  .then(data => {
+    res.status(200).json(data);
+  })
+  .catch(err => res.send(err))
+})
+
 app.get('/colorscheme/:name', (req, res) => {
   let chatColorsTabela = db.chatColorScheme;
   chatColorsTabela.count({
