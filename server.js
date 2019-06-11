@@ -8,7 +8,7 @@ const upload = multer();
 const Chatkit = require('@pusher/chatkit-server')
 const sequelize = require('sequelize');
 const swagger_document=require('./swagger-document.js');
-
+var PORT = process.env.PORT || 31910;
 
 db.sequelize.sync()
 .then(() => console.log('Konektovano na bazu.'))
@@ -956,4 +956,6 @@ app.get('/test',(req, res)=>{
 
 swagger_document(app);
 
-app.listen(31910, () => console.log('Server pokrenut na portu 31910'));
+app.listen(PORT,function(){
+  console.log('server successfully started on port '+PORT);
+  });
