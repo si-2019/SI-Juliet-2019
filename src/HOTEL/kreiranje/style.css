@@ -1,0 +1,17 @@
+#formaAnk {
+    margin: 0 0 0 0;
+    text-align: left;
+    max-width: 5000px;
+}
+#containerKreiranje {
+    background-color:#d9d9d9;
+    position: absolute;
+    height: 100%;
+    width: 100%; 
+    overflow-y: scroll;
+}
+
+#headerKreiranje{
+    height: 10%;
+    background-color: #2C3E50
+ }

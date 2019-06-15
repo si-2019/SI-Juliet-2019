@@ -1,0 +1,53 @@
+.App {
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    height: 100%;
+  }
+h1{
+  text-align: center; 
+}
+.tabtip{
+  border: rgba(50, 50, 50, 0.52);
+  background-color:#2C3E50;
+  color: white;
+}
+.tabtip1{
+  background-color: white;
+  color:black;
+  border: rgba(50, 50, 50, 0.52);
+}
+#prikaziButton, #urediButton, #obrisiButton{
+  width: 96%;
+  margin: 2%;
+}
+
+.NavPadding {
+  background-color: #2C3E50
+}
+
+.okvirListe {
+    position: absolute;
+    height: 100%;
+    width: 100%; 
+    overflow-y: scroll;
+}
+
+.naslovliste{
+  height: 10%;
+  color: white;
+  background: #2C3E50
+}
+
+.tabelaLista {
+  width: 90%;
+  margin-bottom: 5%;
+}
+
+#urediBody {
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  padding: 5%
+}

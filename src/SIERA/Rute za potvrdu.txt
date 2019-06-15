@@ -1,0 +1,8 @@
+//ruta za ime i prezime: /update/imeprezime/:idStudent
+//za drzavljanstvo: /update/drzavljanstvo/:idStudent
+//za adresu: /update/adresa/:idStudent
+//za telefon: /update/tel/:idStudent
+//za mail: /update/mail/:idStudent
+//za linked in: /update/linkedin/:idStudent
+//za website: /update/website/:idStudent
+//kada se kreira potvrda potrebno joj je poslati props "successful" i "msg" koji se dobiju kao response iz apija. U apijima se isti zovu success i message. Ako je successful=true, poruka je zelena tj uspjesne su promjene, u suprotnom crvena.
