@@ -81,7 +81,7 @@ app.get('/files/:roomId', (req, res) => {
 
   filesTable.findAll({
     where: {
-      soba: roomId
+      soba: req.params.roomId
     }
   }).then(data => res.status(200).json(data))
   .catch(err => res.status(400).send(err));
