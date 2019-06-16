@@ -7,11 +7,11 @@ const sequelize = new Sequelize(
     "TYQcLL35gV",   // username
     "BLysSj9ZrP",   // password
     */
-   "cHVC4EIVNS",
-   "cHVC4EIVNS",
-   "testTEST123",
+   "OqqrfDbBYG",
+   "OqqrfDbBYG",
+   "8yMM1uoRkk",
     {
-        host:"37.59.55.185",
+        host:"remotemysql.com",
         dialect:"mysql"
     }
 
