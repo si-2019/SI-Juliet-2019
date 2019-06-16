@@ -9,7 +9,7 @@ const sequelize = new Sequelize(
     */
    "cHVC4EIVNS",
    "cHVC4EIVNS",
-   "AzreiKIy8F"
+   "AzreiKIy8F",
     {
         host:"37.59.55.185",
         dialect:"mysql"
