@@ -2,16 +2,11 @@ const Sequelize = require('sequelize');
 const path = require('path')
 
 const sequelize = new Sequelize(
-    /*
     "TYQcLL35gV",   // database
     "TYQcLL35gV",   // username
     "BLysSj9ZrP",   // password
-    */
-   "OqqrfDbBYG",
-   "OqqrfDbBYG",
-   "8yMM1uoRkk",
     {
-        host:"remotemysql.com",
+        host:"37.59.55.185",
         dialect:"mysql"
     }
 
