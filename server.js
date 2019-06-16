@@ -270,7 +270,8 @@ app.post('/deleteMessage', (req, res) => {
 
     filesTable.destroy({
       where: {
-        id: req.body.message_id
+        naziv: req.body.fileName,
+        posiljaoc: req.body.sender
       }
     })
     .then(data => res.status(200).json(data))
