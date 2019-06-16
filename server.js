@@ -266,7 +266,15 @@ app.post('/deleteMessage', (req, res) => {
     id: req.body.message_id
   })
   .then(data => {
-    res.status(200).json(data);
+    let filesTable = db.files;
+
+    filesTable.destroy({
+      where: {
+        id: req.body.message_id
+      }
+    })
+    .then(data => res.status(200).json(data))
+    .catch(err => res.status(400).send(err))
   })
   .catch(err => res.status(400).send(err))
 })
