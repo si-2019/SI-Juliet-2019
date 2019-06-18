@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const path = require('path')
 
-const sequelize = new Sequelize(
+/*const sequelize = new Sequelize(
     "TYQcLL35gV",   // database
     "TYQcLL35gV",   // username
     "BLysSj9ZrP",   // password
@@ -11,6 +11,14 @@ const sequelize = new Sequelize(
     }
 
     );
+*/
+
+const sequelize = new Sequelize("TYQcLL35gV", "TYQcLL35gV", "BLysSj9ZrP", {
+  host: "mysql-3213-0.cloudclusters.net",
+  dialect: "mysql",
+  port: 10021,
+  logging: false
+});
 
 const db={};
 db.Sequelize = Sequelize;
